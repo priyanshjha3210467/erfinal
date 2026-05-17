@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Class 12 Resources - ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="animations.css">
+<style>
+  :root { --red:#e8211a; --black:#0d0d0d; --gray:#f4f4f4; --gray2:#e8e8e8; --text:#1a1a1a; --muted:#666; --radius:16px; }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html, body { overflow-x:hidden; width:100%; }
+  body { display:flex; flex-direction:column; min-height:100vh; font-family:'Nunito',sans-serif; background:#fff; color:var(--text); }
+
+  header { background:var(--black); padding:0 24px; position:sticky; top:0; z-index:1000; display:flex; align-items:center; justify-content:space-between; height:64px; box-shadow:0 2px 16px rgba(0,0,0,0.3); }
+  .logo-wrap { display:flex; align-items:center; gap:10px; text-decoration:none; }
+  nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  nav a { color:#ccc; font-weight:700; font-size:14px; padding:8px 14px; border-radius:8px; text-decoration:none; transition:.2s; }
+  nav a:hover, nav a.active { color:#fff; background:rgba(255,255,255,0.1); }
+  .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:8px; }
+  .hamburger span { width:24px; height:2px; background:#fff; border-radius:2px; }
+
+  .page-hero { background:linear-gradient(135deg,#0d0d0d 0%,#1a1a1a 50%,#2a0a0a 100%); padding:60px 24px; position:relative; overflow:hidden; }
+  .page-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 70% 50%,rgba(232,33,26,0.15) 0%,transparent 60%); pointer-events:none; }
+  .page-hero-inner { max-width:1200px; margin:0 auto; position:relative; z-index:1; }
+  .breadcrumb { color:rgba(255,255,255,0.45); font-size:13px; font-weight:700; margin-bottom:14px; }
+  .breadcrumb a { color:rgba(255,255,255,0.45); text-decoration:none; }
+  .hero-badge { display:inline-block; background:var(--red); color:#fff; font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 14px; border-radius:20px; margin-bottom:20px; }
+  .page-hero h1 { font-family:'Bebas Neue'; font-size:clamp(48px,8vw,88px); color:#fff; letter-spacing:2px; line-height:1; margin-bottom:16px; }
+  .page-hero h1 span { color:var(--red); }
+  .page-hero p { color:#aaa; font-size:18px; max-width:720px; line-height:1.7; font-weight:600; }
+  .hero-stats { display:flex; gap:40px; margin-top:40px; flex-wrap:wrap; }
+  .stat-num { font-family:'Bebas Neue'; font-size:42px; color:var(--red); line-height:1; }
+  .stat-label { color:#888; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+
+  main { max-width:1200px; margin:0 auto; padding:48px 24px 56px; width:100%; flex:1; }
+  .section-label { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:var(--muted); margin-bottom:16px; }
+  .section-divider { width:40px; height:3px; background:var(--red); border-radius:3px; margin-bottom:28px; }
+
+  /* Stream groups */
+  .stream-section { background:#fff; border:1px solid var(--gray2); border-radius:22px; padding:22px; margin-bottom:22px; }
+  .stream-title { font-family:'Bebas Neue'; font-size:24px; letter-spacing:1px; margin-bottom:18px; display:flex; align-items:center; gap:10px; }
+  .stream-title span { color:var(--red); }
+  .stream-divider { flex:1; height:2px; background:var(--gray2); border-radius:2px; }
+  .stream-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; }
+
+  .subject-card {
+    background:#fff; border:2px solid var(--gray2); border-radius:20px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:10px; cursor:pointer; transition:.25s; padding:16px 12px;
+    text-align:center; text-decoration:none; color:inherit; aspect-ratio:1/1;
+  }
+  .subject-card:hover { border-color:var(--red); box-shadow:0 8px 28px rgba(232,33,26,0.15); transform:translateY(-4px); background:#fff8f8; }
+  .subject-card:active { transform:translateY(-1px) scale(0.98); }
+  .subject-card-emoji { font-size:32px; line-height:1; }
+  .subject-card-name { font-size:12px; font-weight:900; line-height:1.3; }
+  .subject-card-count { font-size:10px; font-weight:800; color:var(--red); background:#fff0f0; padding:3px 8px; border-radius:20px; }
+
+  .no-subjects { text-align:center; padding:48px 24px; background:var(--gray); border-radius:20px; color:var(--muted); }
+  .no-subjects h3 { font-size:20px; font-weight:900; color:var(--text); margin-bottom:8px; }
+
+  footer { background:var(--black); color:#aaa; padding:40px 24px 24px; margin-top:auto; }
+  .footer-inner { max-width:1200px; margin:0 auto; }
+  .footer-top { display:flex; gap:40px; flex-wrap:wrap; margin-bottom:32px; }
+  .footer-brand { flex:1; min-width:220px; }
+  .footer-brand p { font-size:13px; line-height:1.7; color:#888; }
+  .footer-links { flex:2; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:24px; }
+  .footer-col h4 { color:#fff; font-size:14px; font-weight:800; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; }
+  .footer-col a { display:block; color:#888; text-decoration:none; font-size:13px; font-weight:600; margin-bottom:8px; }
+  .footer-col a:hover { color:#fff; }
+  .footer-bottom { border-top:1px solid #222; padding-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .footer-bottom p { font-size:12px; color:#555; }
+  .footer-bottom span { color:var(--red); }
+
+  @media(max-width:1100px) { .stream-grid { grid-template-columns:repeat(4,1fr); } }
+  @media(max-width:900px)  { .stream-grid { grid-template-columns:repeat(3,1fr); } }
+  @media(max-width:768px)  { nav { display:none; } .hamburger { display:flex; } .page-hero { padding:40px 16px; } main { padding:32px 16px 48px; } .stream-section { padding:16px; } }
+  @media(max-width:540px)  { .stream-grid { grid-template-columns:repeat(2,1fr); gap:10px; } }
+</style>
+</head>
+<body>
+<header>
+  <a class="logo-wrap" href="index.html"><img src="logo.png" alt="ExamReady" style="height:44px;"></a>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="class9.html">Class 9</a>
+    <a href="class10.html">Class 10</a>
+    <a href="class11.html" >Class 11</a>
+    <a href="class12.html"class="active">Class 12</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="pyq.html">PYQs</a>
+    <a href="quizzes.html">Quizzes</a>
+  </nav>
+  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</header>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Class 12</div>
+    <div class="hero-badge">CBSE Class 12</div>
+    <h1>CLASS <span>12</span> RESOURCES</h1>
+    <p>PYQs, question banks, SPQs, institutional papers, short notes, solutions, and quizzes for every subject in one place.</p>
+    <div class="hero-stats">
+      <div><div class="stat-num">6+</div><div class="stat-label">Resource Types</div></div>
+      <div><div class="stat-num" id="subjectCount">—</div><div class="stat-label">Subjects</div></div>
+      <div><div class="stat-num">Free</div><div class="stat-label">Always</div></div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="section-label">Choose a Stream &amp; Subject</div>
+  <div class="section-divider"></div>
+  <div id="subjectGrid"></div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div style="font-family:'Bebas Neue';font-size:28px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
+        <p>Free study resources for CBSE students in Class 9 to 12. PYQs, question banks, SPQs, notes, quizzes, and solutions — all free.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Classes</h4>
+          <a href="class9.html">Class 9</a><a href="class10.html">Class 10</a>
+          <a href="class11.html">Class 11</a><a href="class12.html"class="active">Class 12</a>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="solutions.html">CBSE Solutions</a><a href="pyq.html">PYQ Papers</a>
+          <a href="questionbank.html">Question Banks</a><a href="quizzes.html">Quizzes</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ExamReady. Made with <span>&hearts;</span> for students.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script src="animations.js"></script>
+<script src="ads.js"></script>
+<script>
+const CLASS = '12';
+
+function renderGrid() {
+  const container = document.getElementById('subjectGrid');
+  if (!container) return;
+  const subjects   = getSubjectsMap()[CLASS] || [];
+  const allPdfs    = getData('pdfs')    || {};
+  const allQuizzes = getData('quizzes') || {};
+  const countEl    = document.getElementById('subjectCount');
+  if (countEl) countEl.textContent = subjects.length;
+
+  if (!subjects.length) {
+    container.innerHTML = `<div class="no-subjects"><h3>No subjects configured</h3><p>Add subjects for Class ${CLASS} from the Admin panel.</p></div>`;
+    return;
+  }
+
+  const TYPES = ['pyq','qb','spq','ip','notes'];
+  const groups = {};
+  subjects.forEach(sub => {
+    const stream = sub.stream || 'Subjects';
+    if (!groups[stream]) groups[stream] = [];
+    groups[stream].push(sub);
+  });
+
+  container.innerHTML = Object.entries(groups).map(([stream, items]) => {
+    const cards = items.map(subject => {
+      const total = TYPES.reduce((sum, t) => sum + ((allPdfs[`${CLASS}-${subject.key}-${t}`] || []).length), 0)
+        + getSolutionPostsByClassAndSubject(CLASS, subject.key).length
+        + ((allQuizzes[`${CLASS}-${subject.key}`] || []).length);
+      return `<a class="subject-card" href="${buildSubjectPageUrl(CLASS, subject.key)}" aria-label="Open ${escapeHtml(subject.label)}">
+        <div class="subject-card-emoji">${subject.icon || '📚'}</div>
+        <div class="subject-card-name">${escapeHtml(subject.label)}</div>
+        <div class="subject-card-count">${total} resource${total !== 1 ? 's' : ''}</div>
+      </a>`;
+    }).join('');
+    return `<div class="stream-section">
+      <div class="stream-title"><span>${escapeHtml(stream)}</span><div class="stream-divider"></div></div>
+      <div class="stream-grid">${cards}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleMenu() {
+  const nav = document.getElementById('mainNav');
+  if (nav.dataset.open === '1') {
+    nav.removeAttribute('style');
+    nav.dataset.open = '0';
+  } else {
+    nav.style.display = 'flex';
+    nav.style.flexDirection = 'column';
+    nav.style.position = 'absolute';
+    nav.style.top = '64px';
+    nav.style.left = '0';
+    nav.style.right = '0';
+    nav.style.background = '#111';
+    nav.style.padding = '16px';
+    nav.style.zIndex = '999';
+    nav.dataset.open = '1';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', renderGrid);
+</script>
+</body>
+</html>

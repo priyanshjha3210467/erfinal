@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>PYQ Papers – ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --red:#e8211a; --black:#0d0d0d; --gray:#f4f4f4; --gray2:#e8e8e8; --text:#1a1a1a; --muted:#666; --radius:14px; --card-shadow:0 4px 20px rgba(0,0,0,0.08); }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html, body { overflow-x:hidden; width:100%; }
+  body { font-family:'Nunito',sans-serif; background:#fff; color:var(--text); display:flex; flex-direction:column; min-height:100vh; }
+
+  header { background:var(--black); padding:0 24px; position:sticky; top:0; z-index:1000; display:flex; align-items:center; justify-content:space-between; height:64px; box-shadow:0 2px 16px rgba(0,0,0,0.3); }
+  .logo-wrap { display:flex; align-items:center; gap:10px; text-decoration:none; }
+  nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  nav a { color:#ccc; font-weight:700; font-size:14px; padding:8px 14px; border-radius:8px; text-decoration:none; transition:.2s; }
+  nav a:hover, nav a.active { color:#fff; background:rgba(255,255,255,0.1); }
+  .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:8px; }
+  .hamburger span { width:24px; height:2px; background:#fff; border-radius:2px; }
+
+  .page-hero {
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 50%, #2a0a0a 100%);
+    padding: 60px 24px; position:relative; overflow:hidden;
+  }
+  .page-hero::before {
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(circle at 70% 50%, rgba(232,33,26,0.15) 0%, transparent 60%);
+  }
+  .page-hero-inner { max-width:1200px; margin:0 auto; position:relative; z-index:1; }
+  .breadcrumb { color:rgba(255,255,255,0.45); font-size:13px; font-weight:700; margin-bottom:14px; }
+  .breadcrumb a { color:rgba(255,255,255,0.45); text-decoration:none; transition:.2s; }
+  .breadcrumb a:hover { color:#fff; }
+  .hero-badge { display:inline-block; background:var(--red); color:#fff; font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 14px; border-radius:20px; margin-bottom:20px; }
+  .page-hero h1 { font-family:'Bebas Neue'; font-size:clamp(48px,8vw,88px); color:#fff; letter-spacing:2px; line-height:1; margin-bottom:16px; }
+  .page-hero h1 span { color:var(--red); }
+  .page-hero p { color:#aaa; font-size:18px; max-width:500px; line-height:1.7; font-weight:600; margin-bottom:0; }
+  .hero-stats { display:flex; gap:40px; margin-top:40px; flex-wrap:wrap; }
+  .stat-num { font-family:'Bebas Neue'; font-size:42px; color:var(--red); line-height:1; }
+  .stat-label { color:#888; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+
+  main { flex:1; max-width:1200px; margin:0 auto; padding:52px 24px; width:100%; }
+
+  .filters-wrap { display:flex; gap:24px; flex-wrap:wrap; margin-bottom:40px; }
+  .filter-group { display:flex; flex-direction:column; gap:8px; }
+  .filter-group-label { font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+  .filter-pills { display:flex; gap:8px; flex-wrap:wrap; }
+  .filter-btn { padding:8px 20px; border-radius:30px; border:2px solid var(--gray2); background:#fff; font-weight:800; font-size:13px; cursor:pointer; transition:.2s; color:var(--text); }
+  .filter-btn.active, .filter-btn:hover { background:var(--red); border-color:var(--red); color:#fff; }
+
+  .divider { width:50px; height:4px; background:var(--red); border-radius:4px; margin-bottom:12px; }
+
+  .class-section { margin-bottom:60px; }
+  .class-section-header { display:flex; align-items:center; gap:16px; margin-bottom:28px; padding-bottom:16px; border-bottom:2px solid var(--gray2); }
+  .class-badge { background:var(--black); color:#fff; font-family:'Bebas Neue'; font-size:14px; letter-spacing:2px; padding:6px 16px; border-radius:8px; }
+  .class-section-title { font-family:'Bebas Neue'; font-size:30px; letter-spacing:1px; }
+  .class-section-title span { color:var(--red); }
+
+  .subject-group { margin-bottom:32px; }
+  .subject-group-title { font-size:15px; font-weight:900; display:flex; align-items:center; gap:8px; margin-bottom:14px; padding:8px 0; }
+  .subject-dot { width:6px; height:6px; background:var(--red); border-radius:50%; flex-shrink:0; }
+
+  .pdf-list { display:flex; flex-direction:column; gap:10px; }
+  .pdf-item { display:flex; align-items:center; justify-content:space-between; background:#fff; border:1px solid var(--gray2); border-radius:12px; padding:16px 20px; transition:.2s; }
+  .pdf-item:hover { border-color:var(--red); box-shadow:0 4px 16px rgba(232,33,26,0.1); }
+  .pdf-info { display:flex; align-items:center; gap:14px; }
+  .pdf-icon { font-size:26px; flex-shrink:0; }
+  .pdf-name { font-weight:800; font-size:14px; }
+  .pdf-meta { font-size:12px; color:var(--muted); font-weight:600; margin-top:2px; }
+  .year-badge { display:inline-block; background:#fff0f0; color:var(--red); font-size:11px; font-weight:800; padding:2px 8px; border-radius:20px; margin-left:8px; }
+  .pdf-actions { display:flex; gap:8px; flex-shrink:0; }
+  .btn-dl { background:var(--red); color:#fff; border:none; padding:8px 18px; border-radius:8px; font-weight:800; font-size:13px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:.2s; }
+  .btn-dl:hover { background:#c41a14; transform:translateY(-1px); box-shadow:0 6px 16px rgba(232,33,26,0.3); }
+
+  .empty-state { text-align:center; padding:32px 24px; color:var(--muted); background:var(--gray); border-radius:var(--radius); }
+  .empty-state span { font-size:36px; display:block; margin-bottom:8px; }
+  .empty-state p { font-weight:700; font-size:14px; }
+
+  /* Footer */
+  footer { background:var(--black); color:#aaa; padding:40px 24px 24px; margin-top:auto; }
+  .footer-inner { max-width:1200px; margin:0 auto; }
+  .footer-top { display:flex; gap:40px; flex-wrap:wrap; margin-bottom:32px; }
+  .footer-brand { flex:1; min-width:220px; }
+  .footer-brand p { font-size:13px; line-height:1.7; color:#888; }
+  .footer-links { flex:2; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:24px; }
+  .footer-col h4 { color:#fff; font-size:14px; font-weight:800; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; }
+  .footer-col a { display:block; color:#888; text-decoration:none; font-size:13px; font-weight:600; margin-bottom:8px; transition:.2s; }
+  .footer-col a:hover { color:#fff; }
+  .footer-bottom { border-top:1px solid #222; padding-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .footer-bottom p { font-size:12px; color:#555; }
+  .footer-bottom span { color:var(--red); }
+
+  @media(max-width:768px) {
+    nav { display:none; }
+    .hamburger { display:flex; }
+    .page-hero { padding:40px 16px; }
+    main { padding:32px 16px; }
+    .pdf-item { flex-direction:column; align-items:flex-start; gap:10px; }
+    .pdf-actions { width:100%; }
+    .btn-dl { width:100%; justify-content:center; }
+  }
+</style>
+<link rel="stylesheet" href="animations.css">
+</head>
+<body>
+
+<header>
+  <a class="logo-wrap" href="index.html">
+    <img src="logo.png" alt="ExamReady" style="height:44px;">
+  </a>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="class9.html">Class 9</a>
+    <a href="class10.html">Class 10</a>
+    <a href="class11.html">Class 11</a>
+    <a href="class12.html">Class 12</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="pyq.html" class="active">PYQs</a>
+    <a href="quizzes.html">Quizzes</a>
+  </nav>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> / PYQ Papers</div>
+    <div class="hero-badge">📄 Previous Year Questions</div>
+    <h1>PYQ <span>PAPERS</span></h1>
+    <p>Previous Year Question Papers with answer keys for Class 9 to 12 — all subjects, all years. Free PDF downloads.</p>
+    <div class="hero-stats">
+      <div><div class="stat-num" id="totalPyqs">0</div><div class="stat-label">PYQ Papers</div></div>
+      <div><div class="stat-num">4</div><div class="stat-label">Classes</div></div>
+      <div><div class="stat-num">10+</div><div class="stat-label">Subjects</div></div>
+      <div><div class="stat-num">Free</div><div class="stat-label">Always</div></div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="filters-wrap">
+    <div class="filter-group">
+      <div class="filter-group-label">Filter by Class</div>
+      <div class="filter-pills" id="classFilters">
+        <button class="filter-btn active" onclick="setFilter('class','all',this)">All Classes</button>
+        <button class="filter-btn" onclick="setFilter('class','9',this)">Class 9</button>
+        <button class="filter-btn" onclick="setFilter('class','10',this)">Class 10</button>
+        <button class="filter-btn" onclick="setFilter('class','11',this)">Class 11</button>
+        <button class="filter-btn" onclick="setFilter('class','12',this)">Class 12</button>
+      </div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-group-label">Filter by Year</div>
+      <div class="filter-pills" id="yearFilters"></div>
+    </div>
+  </div>
+
+  <div id="pyqContent"></div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div style="font-family:'Bebas Neue';font-size:28px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
+        <p>Free study resources for CBSE students in Class 9 to 12. PYQs, Question Banks, Quizzes & Solutions — all free.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Classes</h4>
+          <a href="class9.html">Class 9</a>
+          <a href="class10.html">Class 10</a>
+          <a href="class11.html">Class 11</a>
+          <a href="class12.html">Class 12</a>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="solutions.html">CBSE Solutions</a>
+          <a href="pyq.html">PYQ Papers</a>
+          <a href="questionbank.html">Question Banks</a>
+          <a href="quizzes.html">Quizzes</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 ExamReady. Made with <span>♥</span> for students.</p>
+      <p>CBSE Resources for Class 9–12</p>
+    </div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script src="animations.js"></script>
+<script src="ads.js"></script>
+<script>
+let filters = { class: 'all' };
+let yearFilter = 'all';
+
+function setFilter(type, val, btn) {
+  filters[type] = val;
+  btn.closest('.filter-pills').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPYQs();
+}
+
+function buildYearFilters() {
+  const allPdfs = getData('pdfs') || {};
+  const years = new Set();
+  getClassCatalog().forEach(cls =>
+    cls.subjects.forEach(sub => {
+      (allPdfs[`${cls.cls}-${sub.key}-pyq`] || []).forEach(p => {
+        if (p.year) years.add(String(p.year));
+      });
+    })
+  );
+
+  const sorted = [...years].sort((a, b) => {
+    const diff = Number(b) - Number(a);
+    return Number.isNaN(diff) ? String(b).localeCompare(String(a)) : diff;
+  });
+  const container = document.getElementById('yearFilters');
+  if (!container) return;
+  if (yearFilter !== 'all' && !sorted.includes(String(yearFilter))) yearFilter = 'all';
+  container.innerHTML = '';
+
+  const appendBtn = (label, value) => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (String(yearFilter) === String(value) ? ' active' : '');
+    btn.textContent = label;
+    btn.onclick = function() {
+      container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      yearFilter = value;
+      renderPYQs();
+    };
+    container.appendChild(btn);
+  };
+
+  appendBtn('All Years', 'all');
+  sorted.forEach(year => appendBtn(year, year));
+}
+
+function renderPYQs() {
+  const allPdfs = getData('pdfs') || {};
+  const container = document.getElementById('pyqContent');
+  let html = '';
+  let total = 0;
+  const classesData = getClassCatalog();
+  const toShow = filters.class === 'all' ? classesData : classesData.filter(c => c.cls === filters.class);
+
+  toShow.forEach(classData => {
+    let subjectsHtml = '';
+    classData.subjects.forEach(sub => {
+      const key = classData.cls + '-' + sub.key + '-pyq';
+      let pyqs = allPdfs[key] || [];
+      if (yearFilter !== 'all') pyqs = pyqs.filter(p => String(p.year) === String(yearFilter));
+      total += pyqs.length;
+      let listHtml = '';
+      if (pyqs.length === 0) {
+        listHtml = `<div class="empty-state"><span>📭</span><p>Coming soon</p></div>`;
+      } else {
+        listHtml = '<div class="pdf-list">' + pyqs.map(p => `
+          <div class="pdf-item">
+            <div class="pdf-info">
+              <div class="pdf-icon">📄</div>
+              <div>
+                <div class="pdf-name">${p.name}${p.year ? `<span class="year-badge">${p.year}</span>` : ''}</div>
+                <div class="pdf-meta">${p.size || ''}</div>
+              </div>
+            </div>
+            <div class="pdf-actions">
+              <a href="${buildPdfPreviewUrl(p)}" class="btn-dl">Preview PDF</a>
+            </div>
+          </div>`).join('') + '</div>';
+      }
+      subjectsHtml += `<div class="subject-group"><div class="subject-group-title"><div class="subject-dot"></div>${sub.icon} ${sub.label}</div>${listHtml}</div>`;
+    });
+
+    html += `
+      <div class="class-section" data-class="${classData.cls}">
+        <div class="class-section-header">
+          <div class="class-badge">CBSE · ${classData.cls}</div>
+          <div class="class-section-title">${classData.icon} ${classData.label} <span>PYQ Papers</span></div>
+        </div>
+        ${subjectsHtml}
+      </div>`;
+  });
+
+  container.innerHTML = html || '<div class="empty-state"><span>📭</span><p>No papers found.</p></div>';
+  document.getElementById('totalPyqs').textContent = total || '50+';
+}
+
+function toggleMenu() {
+  const nav = document.getElementById('mainNav');
+  // Use dataset flag instead of style check — avoids CSS vs inline style conflicts
+  if (nav.dataset.open === '1') {
+    nav.removeAttribute('style');
+    nav.dataset.open = '0';
+  } else {
+    nav.style.display = 'flex';
+    nav.style.flexDirection = 'column';
+    nav.style.position = 'absolute';
+    nav.style.top = '64px';
+    nav.style.left = '0';
+    nav.style.right = '0';
+    nav.style.background = '#111';
+    nav.style.padding = '16px';
+    nav.style.zIndex = '999';
+    nav.dataset.open = '1';
+  }
+}
+
+buildYearFilters();
+renderPYQs();
+</script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>PDF Preview - ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red:#e8211a; --black:#0d0d0d; --gray:#f4f4f4; --gray2:#e8e8e8;
+    --text:#1a1a1a; --muted:#666; --radius:12px;
+    --header-h: 64px;
+    --toolbar-h: 56px;
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html, body { overflow:hidden; width:100%; height:100%; }
+  body {
+    font-family:'Nunito',sans-serif; background:#1a1a1a;
+    color:var(--text); display:flex; flex-direction:column;
+  }
+
+  /* ── Header ── */
+  header {
+    background:var(--black); padding:0 20px;
+    position:relative; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    height:var(--header-h); flex-shrink:0;
+    box-shadow:0 2px 16px rgba(0,0,0,0.4);
+  }
+  .logo-wrap { display:flex; align-items:center; text-decoration:none; flex-shrink:0; }
+  nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  nav a { color:#ccc; font-weight:700; font-size:13px; padding:7px 12px; border-radius:8px; text-decoration:none; transition:.2s; }
+  nav a:hover { color:#fff; background:rgba(255,255,255,0.1); }
+  .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:8px; }
+  .hamburger span { width:22px; height:2px; background:#fff; border-radius:2px; }
+
+  /* ── Toolbar ── */
+  .pdf-toolbar {
+    background:#111; border-bottom:1px solid #2a2a2a;
+    height:var(--toolbar-h); flex-shrink:0;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 18px; gap:14px; flex-wrap:wrap;
+  }
+  .pdf-title-area {
+    display:flex; align-items:center; gap:10px; min-width:0; flex:1;
+    overflow:hidden;
+  }
+  .pdf-back-btn {
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12);
+    color:#ddd; text-decoration:none; padding:7px 13px;
+    border-radius:8px; font-size:12px; font-weight:800;
+    transition:.2s; flex-shrink:0; white-space:nowrap;
+  }
+  .pdf-back-btn:hover { background:rgba(255,255,255,0.14); color:#fff; }
+  .pdf-doc-name {
+    font-size:13px; font-weight:800; color:#fff;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .pdf-actions { display:flex; gap:8px; flex-shrink:0; }
+  .pdf-action-btn {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:7px 14px; border-radius:8px; font-size:12px; font-weight:800;
+    cursor:pointer; text-decoration:none; transition:.2s; white-space:nowrap;
+    border:none;
+  }
+  .pdf-action-btn.outline {
+    background:rgba(255,255,255,0.07); color:#ccc;
+    border:1px solid rgba(255,255,255,0.12);
+  }
+  .pdf-action-btn.outline:hover { background:rgba(255,255,255,0.14); color:#fff; }
+  .pdf-action-btn.primary { background:var(--red); color:#fff; }
+  .pdf-action-btn.primary:hover { background:#c41a14; box-shadow:0 4px 14px rgba(232,33,26,0.4); }
+
+  /* ── PDF Viewer — fills ALL remaining space ── */
+  .pdf-viewer-area {
+    flex:1; display:flex; flex-direction:column;
+    overflow:hidden; position:relative;
+    /* calc: full viewport minus header and toolbar */
+    height: calc(100vh - var(--header-h) - var(--toolbar-h));
+  }
+  #pdfFrame {
+    width:100%; height:100%; border:none;
+    background:#2a2a2a; display:block;
+    flex:1;
+  }
+
+  /* ── Fallback / error card ── */
+  .fallback-wrap {
+    flex:1; display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .fallback {
+    background:#fff; border-radius:18px; padding:36px 32px; text-align:center;
+    max-width:480px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.3);
+  }
+  .fallback-icon { font-size:52px; margin-bottom:16px; }
+  .fallback h2 { font-size:22px; font-weight:900; margin-bottom:8px; color:var(--text); }
+  .fallback p { font-size:14px; color:var(--muted); font-weight:600; line-height:1.7; margin-bottom:20px; }
+  .fallback-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .fallback-btn {
+    padding:10px 20px; border-radius:10px; font-size:13px; font-weight:800;
+    text-decoration:none; cursor:pointer; border:none; display:inline-flex; align-items:center; gap:6px;
+  }
+  .fallback-btn.primary { background:var(--red); color:#fff; }
+  .fallback-btn.ghost { background:var(--gray); color:var(--text); }
+
+  /* ── Loading overlay inside viewer ── */
+  #pdfLoading {
+    position:absolute; inset:0; background:#1a1a1a;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:14px; z-index:10; pointer-events:none;
+    transition:opacity .35s ease;
+  }
+  #pdfLoading.hidden { opacity:0; pointer-events:none; }
+  .loading-spinner {
+    width:44px; height:44px; border-radius:50%;
+    border:3px solid rgba(232,33,26,0.2);
+    border-top-color:var(--red);
+    animation:spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .loading-text { color:#888; font-size:13px; font-weight:700; }
+
+  /* ── Note bar at the bottom ── */
+  .pdf-note-bar {
+    background:#111; border-top:1px solid #2a2a2a;
+    padding:7px 18px;
+    font-size:11px; font-weight:700; color:#555;
+    text-align:center; flex-shrink:0;
+  }
+  .pdf-note-bar a { color:#888; text-decoration:none; }
+  .pdf-note-bar a:hover { color:#fff; }
+
+  /* ── Mobile ── */
+  @media(max-width:768px) {
+    nav { display:none; }
+    .hamburger { display:flex; }
+    .pdf-toolbar { height:auto; min-height:var(--toolbar-h); padding:10px 14px; flex-wrap:wrap; }
+    .pdf-doc-name { font-size:12px; }
+    :root { --toolbar-h: 104px; }
+  }
+  @media(max-width:480px) {
+    .pdf-actions { width:100%; }
+    .pdf-action-btn { flex:1; justify-content:center; }
+    :root { --toolbar-h: 120px; }
+  }
+</style>
+<link rel="stylesheet" href="animations.css">
+</head>
+<body data-no-loader>
+
+<!-- Header -->
+<header>
+  <a class="logo-wrap" href="index.html">
+    <img src="logo.png" alt="ExamReady" style="height:40px;">
+  </a>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="class9.html">Class 9</a>
+    <a href="class10.html">Class 10</a>
+    <a href="class11.html">Class 11</a>
+    <a href="class12.html">Class 12</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="pyq.html">PYQs</a>
+    <a href="quizzes.html">Quizzes</a>
+  </nav>
+  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</header>
+
+<!-- Toolbar with title + actions -->
+<div class="pdf-toolbar" id="pdfToolbar" style="display:none">
+  <div class="pdf-title-area">
+    <a class="pdf-back-btn" id="backBtn" href="#">← Back</a>
+    <span class="pdf-doc-name" id="pdfDocName">PDF Preview</span>
+  </div>
+  <div class="pdf-actions">
+    <a class="pdf-action-btn outline" id="openOriginalBtn" href="#" target="_blank" rel="noopener noreferrer">🔗 Open Original</a>
+    <a class="pdf-action-btn primary" id="downloadBtn" href="#" target="_blank" rel="noopener noreferrer" download>⬇ Download</a>
+  </div>
+</div>
+
+<!-- Full-screen PDF area -->
+<div class="pdf-viewer-area" id="pdfViewerArea" style="display:none">
+  <div id="pdfLoading">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading PDF…</div>
+  </div>
+  <iframe id="pdfFrame" title="PDF Preview" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" loading="lazy"></iframe>
+</div>
+
+<!-- Note bar -->
+<div class="pdf-note-bar" id="pdfNoteBar" style="display:none">
+  If the PDF doesn't load, <a id="openOriginalLink" href="#" target="_blank" rel="noopener noreferrer">open it directly</a> or <a id="downloadLink" href="#" download>download it</a>.
+</div>
+
+<!-- Fallback (shown when no URL) -->
+<div class="fallback-wrap" id="fallbackWrap" style="display:none">
+  <div class="fallback">
+    <div class="fallback-icon">📄</div>
+    <h2>Preview Unavailable</h2>
+    <p>This file could not be loaded for preview. The link may be missing or the file is no longer available.</p>
+    <div class="fallback-actions">
+      <button class="fallback-btn ghost" onclick="history.back()">← Go Back</button>
+    </div>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script src="animations.js"></script>
+<script src="ads.js"></script>
+<script>
+/* ── Helpers ── */
+function getQueryParam(key) {
+  return new URLSearchParams(window.location.search).get(key) || '';
+}
+
+function toggleMenu() {
+  const nav = document.getElementById('mainNav');
+  if (nav.dataset.open === '1') { nav.removeAttribute('style'); nav.dataset.open = '0'; }
+  else {
+    Object.assign(nav.style, { display:'flex', flexDirection:'column', position:'absolute', top:'64px', left:'0', right:'0', background:'#111', padding:'16px', zIndex:'999' });
+    nav.dataset.open = '1';
+  }
+}
+
+/* ── Resize handler: keep iframe exactly filling the gap ── */
+function resizeViewer() {
+  const viewerArea = document.getElementById('pdfViewerArea');
+  if (!viewerArea || viewerArea.style.display === 'none') return;
+  const header  = document.querySelector('header');
+  const toolbar = document.getElementById('pdfToolbar');
+  const noteBar = document.getElementById('pdfNoteBar');
+
+  // Do NOT filter by offsetParent — AdSense <ins> tags return null for
+  // offsetParent until they fully render, which would always make adHeight=0.
+  // Elements that are truly hidden (display:none) have offsetHeight=0 anyway.
+  const adHeight = Array.from(document.querySelectorAll('.er-pdf-ad-slot'))
+    .reduce((sum, el) => sum + el.offsetHeight, 0);
+
+  const headerH  = header  ? header.offsetHeight  : 64;
+  const toolbarH = toolbar ? toolbar.offsetHeight  : 56;
+  const noteH    = noteBar && noteBar.style.display !== 'none' ? noteBar.offsetHeight : 0;
+  viewerArea.style.height = `calc(100vh - ${headerH + toolbarH + noteH + adHeight}px)`;
+}
+
+window.addEventListener('resize', resizeViewer);
+
+/* ── Main render ── */
+function renderViewer() {
+  const rawUrl   = getQueryParam('url');
+  const title    = decodeURIComponent(getQueryParam('title') || 'PDF Preview');
+  const resolved = typeof getResolvedFileUrl  === 'function' ? getResolvedFileUrl(rawUrl)  : rawUrl;
+  const embedUrl = typeof getPreviewEmbedUrl  === 'function' ? getPreviewEmbedUrl(rawUrl)  : rawUrl;
+
+  document.title = `${title} – ExamReady`;
+
+  if (!rawUrl || !resolved || resolved === '#') {
+    document.getElementById('fallbackWrap').style.display = 'flex';
+    return;
+  }
+
+  /* Update toolbar */
+  document.getElementById('pdfDocName').textContent      = title;
+  document.getElementById('backBtn').onclick             = e => { e.preventDefault(); history.back(); };
+  document.getElementById('openOriginalBtn').href        = resolved;
+  document.getElementById('downloadBtn').href            = resolved;
+  document.getElementById('openOriginalLink').href       = resolved;
+  document.getElementById('downloadLink').href           = resolved;
+
+  /* Show all viewer elements */
+  document.getElementById('pdfToolbar').style.display    = 'flex';
+  document.getElementById('pdfViewerArea').style.display = 'flex';
+  document.getElementById('pdfNoteBar').style.display    = 'block';
+
+  /* Set iframe src */
+  const frame = document.getElementById('pdfFrame');
+  frame.src = embedUrl;
+
+  /* Hide loading spinner once iframe loads (or after timeout) */
+  const loading = document.getElementById('pdfLoading');
+  frame.addEventListener('load', () => {
+    loading.classList.add('hidden');
+    setTimeout(() => { loading.style.display = 'none'; }, 380);
+  });
+  /* Safety timeout — hide spinner after 8s regardless */
+  setTimeout(() => {
+    loading.classList.add('hidden');
+    setTimeout(() => { loading.style.display = 'none'; }, 380);
+  }, 8000);
+
+  /* Size the viewer correctly — run immediately, then again after AdSense
+     has had time to render (offsetHeight is 0 until the <ins> tag fills). */
+  setTimeout(resizeViewer, 0);
+  setTimeout(resizeViewer, 1000);
+  setTimeout(resizeViewer, 3000);
+}
+
+renderViewer();
+</script>
+</body>
+</html>

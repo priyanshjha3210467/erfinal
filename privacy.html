@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Privacy Policy - ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --red:#e8211a; --black:#0d0d0d; --gray:#f4f4f4; --gray2:#e8e8e8; --text:#1a1a1a; --muted:#666; --radius:18px; }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html, body { overflow-x:hidden; width:100%; }
+  body { font-family:'Nunito',sans-serif; background:#fff; color:var(--text); min-height:100vh; display:flex; flex-direction:column; }
+  header { background:var(--black); padding:0 24px; position:sticky; top:0; z-index:1000; display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .logo-wrap { display:flex; align-items:center; text-decoration:none; }
+  nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  nav a { color:#ccc; font-weight:700; font-size:14px; padding:8px 14px; border-radius:8px; text-decoration:none; }
+  nav a:hover, nav a.active { color:#fff; background:rgba(255,255,255,0.1); }
+  .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:8px; }
+  .hamburger span { width:24px; height:2px; background:#fff; border-radius:2px; }
+  .hero { background:linear-gradient(135deg,#0d0d0d 0%,#1a1a1a 55%,#2a0a0a 100%); padding:42px 24px; position:relative; overflow:hidden; }
+  .hero::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 75% 40%,rgba(232,33,26,0.12),transparent 50%); }
+  .hero-inner { max-width:1100px; margin:0 auto; position:relative; z-index:1; }
+  .hero-badge { display:inline-block; background:var(--red); color:#fff; font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 14px; border-radius:20px; margin-bottom:18px; }
+  .breadcrumb { color:rgba(255,255,255,0.45); font-size:13px; font-weight:700; margin-bottom:14px; }
+  .breadcrumb a { color:rgba(255,255,255,0.45); text-decoration:none; }
+  .hero h1 { font-family:'Bebas Neue'; font-size:clamp(38px,6vw,72px); color:#fff; letter-spacing:2px; line-height:1; margin-bottom:10px; }
+  .hero p { color:#bbb; font-size:16px; line-height:1.7; max-width:760px; font-weight:600; }
+  .hero-meta { display:flex; gap:16px; margin-top:18px; flex-wrap:wrap; }
+  .hero-chip { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:999px; padding:7px 14px; font-size:12px; font-weight:800; color:#fff; }
+  main { flex:1; padding:34px 24px 56px; }
+  .main-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:minmax(0,2.2fr) 260px; gap:32px; align-items:start; }
+  .legal-card { background:#fff; border:1px solid var(--gray2); border-radius:24px; padding:32px; box-shadow:0 10px 30px rgba(0,0,0,0.06); }
+  .legal-card section { padding:26px 0; border-bottom:1px solid var(--gray2); }
+  .legal-card section:first-child { padding-top:0; }
+  .legal-card section:last-child { border-bottom:none; padding-bottom:0; }
+  .section-num { font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--red); margin-bottom:6px; }
+  .legal-card h2 { font-size:20px; font-weight:900; margin-bottom:12px; color:var(--text); }
+  .legal-card p { font-size:14px; line-height:1.85; color:var(--muted); font-weight:600; margin-bottom:10px; }
+  .legal-card p:last-child { margin-bottom:0; }
+  .legal-card ul { margin:10px 0 10px 20px; display:flex; flex-direction:column; gap:6px; }
+  .legal-card li { font-size:14px; line-height:1.7; color:var(--muted); font-weight:600; }
+  .highlight-box { background:#fff8f8; border:1px solid #ffd8d5; border-radius:14px; padding:14px 18px; margin-top:12px; }
+  .highlight-box p { color:#8f1d18 !important; font-weight:700; margin-bottom:0; }
+  .sidebar { display:flex; flex-direction:column; gap:16px; position:sticky; top:84px; }
+  .toc-card { background:#fff; border:1px solid var(--gray2); border-radius:18px; padding:20px; box-shadow:0 4px 16px rgba(0,0,0,0.04); }
+  .toc-card h3 { font-size:13px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:14px; }
+  .toc-list { display:flex; flex-direction:column; gap:4px; }
+  .toc-link { display:block; font-size:13px; font-weight:700; color:var(--muted); text-decoration:none; padding:7px 10px; border-radius:8px; transition:.2s; }
+  .toc-link:hover { background:#fff0f0; color:var(--red); }
+  .contact-card { background:linear-gradient(135deg,#0d0d0d,#1a0505); border-radius:18px; padding:20px; color:#fff; }
+  .contact-card h3 { font-size:14px; font-weight:900; margin-bottom:8px; }
+  .contact-card p { font-size:12px; color:#aaa; line-height:1.6; font-weight:600; margin-bottom:12px; }
+  .contact-social { display:flex; gap:8px; }
+  .social-btn { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:10px; text-decoration:none; color:#fff; flex-shrink:0; transition:.2s; }
+  .social-btn:hover { transform:translateY(-2px); }
+  .social-btn.instagram { background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045); }
+  .social-btn.youtube { background:#ff0000; }
+  footer { background:var(--black); color:#aaa; padding:40px 24px 24px; margin-top:auto; }
+  .footer-inner { max-width:1100px; margin:0 auto; }
+  .footer-top { display:flex; gap:40px; flex-wrap:wrap; margin-bottom:32px; }
+  .footer-brand { flex:1; min-width:220px; }
+  .footer-brand p { font-size:13px; line-height:1.7; color:#888; }
+  .footer-links { flex:2; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:24px; }
+  .footer-col h4 { color:#fff; font-size:14px; font-weight:800; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; }
+  .footer-col a { display:block; color:#888; text-decoration:none; font-size:13px; font-weight:600; margin-bottom:8px; }
+  .footer-col a:hover { color:#fff; }
+  .footer-bottom { border-top:1px solid #222; padding-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .footer-bottom p { font-size:12px; color:#555; }
+  .footer-bottom span { color:var(--red); }
+  .social-icon-link { display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:10px; text-decoration:none; color:#fff; flex-shrink:0; transition:.2s; }
+  .social-icon-link:hover { transform:translateY(-2px); }
+  @media(max-width:900px) { .main-inner { grid-template-columns:1fr; } .sidebar { position:static; } }
+  @media(max-width:768px) { nav { display:none; } .hamburger { display:flex; } main { padding:24px 16px 40px; } .hero { padding:34px 16px; } .legal-card { padding:22px; } }
+</style>
+<link rel="stylesheet" href="animations.css">
+</head>
+<body>
+<header>
+  <a class="logo-wrap" href="index.html"><img src="logo.png" alt="ExamReady" style="height:44px;"></a>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="pyq.html">PYQs</a>
+    <a href="quizzes.html">Quizzes</a>
+    <a href="privacy.html" class="active">Privacy</a>
+  </nav>
+  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</header>
+<section class="hero">
+  <div class="hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Privacy Policy</div>
+    <div class="hero-badge">Legal Document</div>
+    <h1>PRIVACY POLICY</h1>
+    <p>This Privacy Policy explains how ExamReady collects, stores, and handles information when you use our platform. We believe in full transparency about what data stays on your device and how nothing is shared with third parties.</p>
+    <div class="hero-meta">
+      <div class="hero-chip">Last Updated: April 2026</div>
+      <div class="hero-chip">Effective Immediately</div>
+      <div class="hero-chip">CBSE Students · Class 9–12</div>
+    </div>
+  </div>
+</section>
+<main>
+  <div class="main-inner">
+    <div class="legal-card">
+      <section id="overview">
+        <div class="section-num">Section 1</div>
+        <h2>Overview &amp; Scope</h2>
+        <p>ExamReady is a free educational platform designed for CBSE students in Class 9 to 12. This Privacy Policy applies to all users who visit our website, use our quiz tools, access PDF resources, read solution articles, or interact with any feature of the platform.</p>
+        <p>By using ExamReady, you agree to the data practices described in this document. If you do not agree, please discontinue use of the site. We update this policy periodically and will always post the most current version on this page.</p>
+        <p>This policy covers: what information we store, how that storage works, what third-party services may be involved, and what rights you have as a user.</p>
+      </section>
+      <section id="data-collected">
+        <div class="section-num">Section 2</div>
+        <h2>Information We Store</h2>
+        <p>ExamReady does not require user registration, login, or any account creation. We do not collect personal information such as your name, email address, phone number, or payment details.</p>
+        <p>The following data may be stored locally in your browser using localStorage — this means it stays on your own device and is never sent to a server or third party:</p>
+        <ul>
+          <li>Quiz content created or edited by the site administrator</li>
+          <li>PDF resource entries and their associated URLs or Google Drive links</li>
+          <li>Solution articles published via the admin panel</li>
+          <li>Site configuration settings such as branding, colors, and navigation</li>
+          <li>Admin session authentication (stored in sessionStorage, cleared when you close the tab)</li>
+          <li>Announcement bar content, feature toggles, and logo images (if uploaded)</li>
+        </ul>
+        <div class="highlight-box">
+          <p>Important: All of this data resides entirely in your own browser. If you clear your browser's local storage or cache, this content will be removed from that browser.</p>
+        </div>
+      </section>
+      <section id="browser-storage">
+        <div class="section-num">Section 3</div>
+        <h2>How Browser Storage Works</h2>
+        <p>ExamReady uses two native browser storage mechanisms: localStorage for persistent content (quizzes, PDFs, settings) and sessionStorage for temporary admin authentication that clears when the browser tab is closed.</p>
+        <p>Data stored this way never leaves your device automatically, is not transmitted to any ExamReady server, is not accessible by other websites due to browser same-origin policies, can be cleared at any time by clearing your browser data, and may be shared across tabs within the same browser on the same device.</p>
+        <p>If an administrator uses the Export Data feature, a JSON file is generated and downloaded to their device. This file contains all stored content and should be handled responsibly.</p>
+      </section>
+      <section id="third-party">
+        <div class="section-num">Section 4</div>
+        <h2>Third-Party Services &amp; External Links</h2>
+        <p>Some features of ExamReady connect to external platforms. We have no control over these third-party services and are not responsible for their data practices. Third-party services that may be involved include:</p>
+        <ul>
+          <li><strong>Google Drive:</strong> PDF files may be hosted on Google Drive and embedded via iframe. When you open a PDF preview, Google's servers serve that file and Google's privacy policy applies.</li>
+          <li><strong>Google Fonts:</strong> We use Google Fonts to display typography. Google may log font requests from your browser.</li>
+          <li><strong>YouTube:</strong> Our YouTube channel (@EXAMREADY_STUDY) is hosted by Google/YouTube. Clicking YouTube links is governed by YouTube's privacy policy.</li>
+          <li><strong>Instagram:</strong> Our Instagram page (@examready.co) is hosted by Meta. Visiting it is governed by Meta's privacy policy.</li>
+        </ul>
+        <p>We do not embed advertising cookies, tracking pixels, or third-party analytics scripts on ExamReady pages.</p>
+      </section>
+      <section id="student-use">
+        <div class="section-num">Section 5</div>
+        <h2>Student Use &amp; Data Safety</h2>
+        <p>ExamReady is designed for students aged 13 and above. We do not knowingly collect personal data from children under 13. If you are under 13, please use this platform with parental or guardian supervision.</p>
+        <p>Students should avoid entering real personal information in quiz titles, notes, or file names. They should not upload sensitive personal documents through the file upload feature, and should use the platform on a personal or trusted device rather than shared public computers.</p>
+        <p>No user behavior, quiz scores, or study habits are tracked or stored anywhere other than your own local device. ExamReady is a study tool, not a data-collection platform.</p>
+      </section>
+      <section id="admin-data">
+        <div class="section-num">Section 6</div>
+        <h2>Administrator Data Responsibilities</h2>
+        <p>If you use the ExamReady admin panel to manage content, you accept responsibility for the material you add to the platform. Administrators should ensure:</p>
+        <ul>
+          <li>All uploaded PDF links and file URLs are from sources you have permission to share</li>
+          <li>Quiz questions and solution content do not infringe on third-party copyright</li>
+          <li>The admin password is kept secure and not shared with unauthorized individuals</li>
+          <li>Exported data backups (JSON files) are stored securely on your own device</li>
+          <li>Student-facing content is accurate, appropriate, and educationally responsible</li>
+        </ul>
+        <p>Since all data is browser-local, the admin is the custodian of that data on their device. ExamReady cannot access, retrieve, or delete your stored content remotely.</p>
+      </section>
+      <section id="cookies">
+        <div class="section-num">Section 7</div>
+        <h2>Cookies &amp; Tracking</h2>
+        <p>ExamReady does not use first-party cookies for tracking, advertising, or user identification. We do not place any analytics tracking scripts on our pages.</p>
+        <p>Browser storage (localStorage and sessionStorage) is used strictly for site functionality, not tracking. These are not cookies in the traditional sense — they cannot be sent with HTTP requests and are inaccessible to external servers.</p>
+        <p>Third-party services accessed via links (Google Drive, YouTube, Instagram) may set their own cookies in your browser. These are outside our control and governed by those platforms' policies.</p>
+      </section>
+      <section id="your-rights">
+        <div class="section-num">Section 8</div>
+        <h2>Your Rights &amp; Data Control</h2>
+        <p>Because ExamReady stores all data locally on your device, you have complete control at all times:</p>
+        <ul>
+          <li><strong>Access:</strong> View all stored data using your browser's developer tools under Application > Local Storage</li>
+          <li><strong>Delete:</strong> Clear your browser's site data or local storage to remove all ExamReady content instantly</li>
+          <li><strong>Export:</strong> Admins can export all content as a JSON backup file using Settings > Export</li>
+          <li><strong>Reset:</strong> The admin panel includes a "Reset to Defaults" option that wipes all custom content</li>
+          <li><strong>Portability:</strong> Exported JSON files can be imported on another device to transfer content</li>
+        </ul>
+        <p>Since we do not operate a user database or collect personal information, there is no need to submit a formal data deletion request to us.</p>
+      </section>
+      <section id="changes">
+        <div class="section-num">Section 9</div>
+        <h2>Changes to This Policy</h2>
+        <p>We may update this Privacy Policy from time to time to reflect changes in our practices or for legal reasons. When we do, we will update the "Last Updated" date at the top of this page.</p>
+        <p>We encourage users and administrators to review this policy periodically. Continued use of ExamReady after any changes constitutes acceptance of the revised policy.</p>
+        <p>If you have questions about this policy or how your data is handled, please reach out to us through our social media channels listed on this page.</p>
+      </section>
+    </div>
+    <aside class="sidebar">
+      <div class="toc-card">
+        <h3>Contents</h3>
+        <div class="toc-list">
+          <a href="#overview" class="toc-link">1. Overview &amp; Scope</a>
+          <a href="#data-collected" class="toc-link">2. Information We Store</a>
+          <a href="#browser-storage" class="toc-link">3. Browser Storage</a>
+          <a href="#third-party" class="toc-link">4. Third-Party Services</a>
+          <a href="#student-use" class="toc-link">5. Student Use</a>
+          <a href="#admin-data" class="toc-link">6. Admin Responsibilities</a>
+          <a href="#cookies" class="toc-link">7. Cookies &amp; Tracking</a>
+          <a href="#your-rights" class="toc-link">8. Your Rights</a>
+          <a href="#changes" class="toc-link">9. Changes to Policy</a>
+        </div>
+      </div>
+      <div class="contact-card">
+        <h3>Connect With Us</h3>
+        <p>Have questions about privacy? Reach out on our social channels.</p>
+        <div class="contact-social">
+          <a href="https://www.instagram.com/examready.co/" target="_blank" rel="noopener noreferrer" class="social-btn instagram" title="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@EXAMREADY_STUDY" target="_blank" rel="noopener noreferrer" class="social-btn youtube" title="YouTube">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div style="font-family:'Bebas Neue';font-size:28px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
+        <p>Free study resources for CBSE students in Class 9 to 12. Practice, preview, and revise in one place.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="solutions.html">Solutions</a>
+          <a href="pyq.html">PYQs</a>
+          <a href="questionbank.html">Question Banks</a>
+          <a href="quizzes.html">Quizzes</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms &amp; Conditions</a>
+          <a href="disclaimer.html">Disclaimer</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ExamReady. Made with <span>&hearts;</span> for students.</p>
+      <div style="display:flex;align-items:center;gap:10px">
+        <a href="https://www.instagram.com/examready.co/" target="_blank" rel="noopener noreferrer" title="Follow us on Instagram" class="social-icon-link" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@EXAMREADY_STUDY" target="_blank" rel="noopener noreferrer" title="Subscribe on YouTube" class="social-icon-link" style="background:#ff0000">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="shared.js"></script>
+<script src="animations.js"></script>
+<script src="ads.js"></script>
+<script>
+function toggleMenu() {
+  const nav = document.getElementById('mainNav');
+  if (nav.dataset.open === '1') {
+    nav.removeAttribute('style');
+    nav.dataset.open = '0';
+  } else {
+    nav.style.display = 'flex';
+    nav.style.flexDirection = 'column';
+    nav.style.position = 'absolute';
+    nav.style.top = '64px';
+    nav.style.left = '0';
+    nav.style.right = '0';
+    nav.style.background = '#111';
+    nav.style.padding = '16px';
+    nav.style.zIndex = '999';
+    nav.dataset.open = '1';
+  }
+}
+</script>
+</body>
+</html>

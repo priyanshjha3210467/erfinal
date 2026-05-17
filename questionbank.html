@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Question Banks – ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --red:#e8211a; --black:#0d0d0d; --gray:#f4f4f4; --gray2:#e8e8e8; --text:#1a1a1a; --muted:#666; --radius:14px; --card-shadow:0 4px 20px rgba(0,0,0,0.08); }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html, body { overflow-x:hidden; width:100%; }
+  body { font-family:'Nunito',sans-serif; background:#fff; color:var(--text); display:flex; flex-direction:column; min-height:100vh; }
+
+  header { background:var(--black); padding:0 24px; position:sticky; top:0; z-index:1000; display:flex; align-items:center; justify-content:space-between; height:64px; box-shadow:0 2px 16px rgba(0,0,0,0.3); }
+  .logo-wrap { display:flex; align-items:center; gap:10px; text-decoration:none; }
+  nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  nav a { color:#ccc; font-weight:700; font-size:14px; padding:8px 14px; border-radius:8px; text-decoration:none; transition:.2s; }
+  nav a:hover, nav a.active { color:#fff; background:rgba(255,255,255,0.1); }
+  .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:8px; }
+  .hamburger span { width:24px; height:2px; background:#fff; border-radius:2px; }
+
+  .page-hero {
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 50%, #2a0a0a 100%);
+    padding: 60px 24px; position:relative; overflow:hidden;
+  }
+  .page-hero::before {
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(circle at 70% 50%, rgba(232,33,26,0.15) 0%, transparent 60%);
+  }
+  .page-hero-inner { max-width:1200px; margin:0 auto; position:relative; z-index:1; }
+  .breadcrumb { color:rgba(255,255,255,0.45); font-size:13px; font-weight:700; margin-bottom:14px; }
+  .breadcrumb a { color:rgba(255,255,255,0.45); text-decoration:none; transition:.2s; }
+  .breadcrumb a:hover { color:#fff; }
+  .hero-badge { display:inline-block; background:var(--red); color:#fff; font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 14px; border-radius:20px; margin-bottom:20px; }
+  .page-hero h1 { font-family:'Bebas Neue'; font-size:clamp(48px,8vw,88px); color:#fff; letter-spacing:2px; line-height:1; margin-bottom:16px; }
+  .page-hero h1 span { color:var(--red); }
+  .page-hero p { color:#aaa; font-size:18px; max-width:500px; line-height:1.7; font-weight:600; }
+  .hero-stats { display:flex; gap:40px; margin-top:40px; flex-wrap:wrap; }
+  .stat-num { font-family:'Bebas Neue'; font-size:42px; color:var(--red); line-height:1; }
+  .stat-label { color:#888; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+
+  main { flex:1; max-width:1200px; margin:0 auto; padding:52px 24px; width:100%; }
+
+  .filter-wrap { display:flex; flex-direction:column; gap:12px; margin-bottom:40px; }
+  .filter-bar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .filter-label { font-weight:800; font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+  .filter-btn { padding:8px 20px; border-radius:30px; border:2px solid var(--gray2); background:#fff; font-weight:800; font-size:13px; cursor:pointer; transition:.2s; color:var(--text); }
+  .filter-btn.active, .filter-btn:hover { background:var(--red); border-color:var(--red); color:#fff; }
+
+  .class-section { margin-bottom:60px; }
+  .class-section-header { display:flex; align-items:center; gap:16px; margin-bottom:28px; padding-bottom:16px; border-bottom:2px solid var(--gray2); }
+  .class-badge { background:var(--black); color:#fff; font-family:'Bebas Neue'; font-size:14px; letter-spacing:2px; padding:6px 16px; border-radius:8px; }
+  .class-section-title { font-family:'Bebas Neue'; font-size:30px; letter-spacing:1px; }
+  .class-section-title span { color:var(--red); }
+
+  .qb-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(290px,1fr)); gap:16px; }
+  .qb-card { background:#fff; border:1px solid var(--gray2); border-radius:var(--radius); padding:24px; transition:.25s; position:relative; overflow:hidden; }
+  .qb-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--red); }
+  .qb-card:hover { border-color:var(--red); box-shadow:0 8px 28px rgba(232,33,26,0.12); transform:translateY(-3px); }
+  .qb-card-top { display:flex; align-items:start; gap:12px; margin-bottom:14px; }
+  .qb-icon { font-size:32px; flex-shrink:0; }
+  .qb-subject { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:4px; }
+  .qb-title { font-size:15px; font-weight:900; line-height:1.3; }
+  .qb-meta { font-size:12px; color:var(--muted); font-weight:600; margin-bottom:14px; }
+  .qb-badge { display:inline-block; background:#fff0f0; color:var(--red); font-size:10px; font-weight:800; padding:3px 8px; border-radius:20px; margin-bottom:10px; }
+  .qb-coming { background:var(--gray); border-radius:8px; padding:16px; text-align:center; color:var(--muted); font-size:13px; font-weight:700; }
+  .btn-dl { background:var(--red); color:#fff; border:none; padding:8px 18px; border-radius:8px; font-weight:800; font-size:13px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:.2s; }
+  .btn-dl:hover { background:#c41a14; transform:translateY(-1px); box-shadow:0 6px 16px rgba(232,33,26,0.3); }
+
+  /* Footer */
+  footer { background:var(--black); color:#aaa; padding:40px 24px 24px; margin-top:auto; }
+  .footer-inner { max-width:1200px; margin:0 auto; }
+  .footer-top { display:flex; gap:40px; flex-wrap:wrap; margin-bottom:32px; }
+  .footer-brand { flex:1; min-width:220px; }
+  .footer-brand p { font-size:13px; line-height:1.7; color:#888; }
+  .footer-links { flex:2; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:24px; }
+  .footer-col h4 { color:#fff; font-size:14px; font-weight:800; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; }
+  .footer-col a { display:block; color:#888; text-decoration:none; font-size:13px; font-weight:600; margin-bottom:8px; transition:.2s; }
+  .footer-col a:hover { color:#fff; }
+  .footer-bottom { border-top:1px solid #222; padding-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .footer-bottom p { font-size:12px; color:#555; }
+  .footer-bottom span { color:var(--red); }
+
+  @media(max-width:768px) {
+    nav { display:none; }
+    .hamburger { display:flex; }
+    .page-hero { padding:40px 16px; }
+    main { padding:32px 16px; }
+    .qb-grid { grid-template-columns:1fr; }
+  }
+  @media(max-width:420px) {
+    .qb-grid { grid-template-columns:1fr; }
+  }
+</style>
+<link rel="stylesheet" href="animations.css">
+</head>
+<body>
+
+<header>
+  <a class="logo-wrap" href="index.html">
+    <img src="logo.png" alt="ExamReady" style="height:44px;">
+  </a>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="class9.html">Class 9</a>
+    <a href="class10.html">Class 10</a>
+    <a href="class11.html">Class 11</a>
+    <a href="class12.html">Class 12</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="pyq.html">PYQs</a>
+    <a href="questionbank.html" class="active">Question Banks</a>
+    <a href="quizzes.html">Quizzes</a>
+  </nav>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Question Banks</div>
+    <div class="hero-badge">📚 Chapter-wise Questions</div>
+    <h1>QUESTION <span>BANKS</span></h1>
+    <p>Curated chapter-wise question banks covering all important topics for Class 9 to 12. Practice with confidence.</p>
+    <div class="hero-stats">
+      <div><div class="stat-num">100+</div><div class="stat-label">Banks</div></div>
+      <div><div class="stat-num">4</div><div class="stat-label">Classes</div></div>
+      <div><div class="stat-num">10+</div><div class="stat-label">Subjects</div></div>
+      <div><div class="stat-num">Free</div><div class="stat-label">Always</div></div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="filter-wrap">
+    <div class="filter-bar" id="classFilters">
+      <span class="filter-label">Class:</span>
+      <button class="filter-btn active" onclick="filterClass(this,'all')">All Classes</button>
+      <button class="filter-btn" onclick="filterClass(this,'9')">Class 9</button>
+      <button class="filter-btn" onclick="filterClass(this,'10')">Class 10</button>
+      <button class="filter-btn" onclick="filterClass(this,'11')">Class 11</button>
+      <button class="filter-btn" onclick="filterClass(this,'12')">Class 12</button>
+    </div>
+    <div class="filter-bar">
+      <span class="filter-label">Year:</span>
+      <div style="display:flex;gap:10px;flex-wrap:wrap" id="yearFilters"></div>
+    </div>
+  </div>
+  <div id="qbContent"></div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div style="font-family:'Bebas Neue';font-size:28px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
+        <p>Free study resources for CBSE students in Class 9 to 12. PYQs, Question Banks, Quizzes & Solutions — all free.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Classes</h4>
+          <a href="class9.html">Class 9</a>
+          <a href="class10.html">Class 10</a>
+          <a href="class11.html">Class 11</a>
+          <a href="class12.html">Class 12</a>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="solutions.html">CBSE Solutions</a>
+          <a href="pyq.html">PYQ Papers</a>
+          <a href="questionbank.html">Question Banks</a>
+          <a href="quizzes.html">Quizzes</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 ExamReady. Made with <span>♥</span> for students.</p>
+      <p>CBSE Resources for Class 9–12</p>
+    </div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script src="animations.js"></script>
+<script src="ads.js"></script>
+<script>
+let activeClass = 'all';
+let activeYear = 'all';
+
+function filterClass(btn, cls) {
+  btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeClass = cls;
+  renderQBs();
+}
+
+function buildYearFilters() {
+  const allPdfs = getData('pdfs') || {};
+  const years = new Set();
+  getClassCatalog().forEach(cls =>
+    cls.subjects.forEach(sub => {
+      (allPdfs[`${cls.cls}-${sub.key}-qb`] || []).forEach(p => {
+        if (p.year) years.add(String(p.year));
+      });
+    })
+  );
+
+  const sorted = [...years].sort((a, b) => {
+    const diff = Number(b) - Number(a);
+    return Number.isNaN(diff) ? String(b).localeCompare(String(a)) : diff;
+  });
+  const container = document.getElementById('yearFilters');
+  if (!container) return;
+  if (activeYear !== 'all' && !sorted.includes(String(activeYear))) activeYear = 'all';
+  container.innerHTML = '';
+
+  const appendBtn = (label, value) => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (String(activeYear) === String(value) ? ' active' : '');
+    btn.textContent = label;
+    btn.onclick = function() {
+      container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      activeYear = value;
+      renderQBs();
+    };
+    container.appendChild(btn);
+  };
+
+  appendBtn('All Years', 'all');
+  sorted.forEach(year => appendBtn(year, year));
+}
+
+function renderQBs() {
+  const allPdfs = getData('pdfs') || {};
+  const container = document.getElementById('qbContent');
+  let html = '';
+  const classesData = getClassCatalog();
+  const toShow = activeClass === 'all' ? classesData : classesData.filter(c => c.cls === activeClass);
+
+  toShow.forEach(classData => {
+    const cards = classData.subjects.map(sub => {
+      const key = classData.cls + '-' + sub.key + '-qb';
+      let qbs = allPdfs[key] || [];
+      if (activeYear !== 'all') qbs = qbs.filter(q => String(q.year) === String(activeYear));
+      if (qbs.length === 0) {
+        return `
+          <div class="qb-card">
+            <div class="qb-card-top">
+              <div class="qb-icon">${sub.icon}</div>
+              <div>
+                <div class="qb-subject">${sub.label}</div>
+                <div class="qb-title">${classData.label} ${sub.label} Question Bank</div>
+              </div>
+            </div>
+            <div class="qb-coming">📭 Coming Soon</div>
+          </div>`;
+      }
+      return qbs.map(q => `
+        <div class="qb-card">
+          <div class="qb-card-top">
+            <div class="qb-icon">${sub.icon}</div>
+            <div>
+              <div class="qb-subject">${sub.label}</div>
+              <div class="qb-title">${q.name}</div>
+            </div>
+          </div>
+          <div class="qb-badge">📚 Question Bank</div>
+          <div class="qb-meta">${q.size || ''}</div>
+          <a href="${buildPdfPreviewUrl(q)}" class="btn-dl">Preview PDF</a>
+        </div>`).join('');
+    }).join('');
+
+    html += `
+      <div class="class-section" data-class="${classData.cls}">
+        <div class="class-section-header">
+          <div class="class-badge">CBSE · ${classData.cls}</div>
+          <div class="class-section-title">${classData.icon} ${classData.label} <span>Question Banks</span></div>
+        </div>
+        <div class="qb-grid">${cards}</div>
+      </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleMenu() {
+  const nav = document.getElementById('mainNav');
+  // Use dataset flag instead of style check — avoids CSS vs inline style conflicts
+  if (nav.dataset.open === '1') {
+    nav.removeAttribute('style');
+    nav.dataset.open = '0';
+  } else {
+    nav.style.display = 'flex';
+    nav.style.flexDirection = 'column';
+    nav.style.position = 'absolute';
+    nav.style.top = '64px';
+    nav.style.left = '0';
+    nav.style.right = '0';
+    nav.style.background = '#111';
+    nav.style.padding = '16px';
+    nav.style.zIndex = '999';
+    nav.dataset.open = '1';
+  }
+}
+
+buildYearFilters();
+renderQBs();
+</script>
+</body>
+</html>

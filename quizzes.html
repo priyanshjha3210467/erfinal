@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Online Quizzes - ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red:#e8211a;
+    --black:#0d0d0d;
+    --gray:#f4f4f4;
+    --gray2:#e8e8e8;
+    --text:#1a1a1a;
+    --muted:#666;
+    --radius:16px;
+    --card-shadow:0 8px 28px rgba(0,0,0,0.08);
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html, body { overflow-x:hidden; width:100%; }
+  body { font-family:'Nunito',sans-serif; background:#fff; color:var(--text); display:flex; flex-direction:column; min-height:100vh; }
+
+  header { background:var(--black); padding:0 24px; position:sticky; top:0; z-index:1000; display:flex; align-items:center; justify-content:space-between; height:64px; box-shadow:0 2px 16px rgba(0,0,0,0.3); }
+  .logo-wrap { display:flex; align-items:center; gap:10px; text-decoration:none; }
+  nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  nav a { color:#ccc; font-weight:700; font-size:14px; padding:8px 14px; border-radius:8px; text-decoration:none; transition:.2s; }
+  nav a:hover, nav a.active { color:#fff; background:rgba(255,255,255,0.1); }
+  .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:8px; }
+  .hamburger span { width:24px; height:2px; background:#fff; border-radius:2px; }
+
+  .page-hero {
+    background:linear-gradient(135deg,#0d0d0d 0%,#1a1a1a 50%,#2a0a0a 100%);
+    padding:60px 24px; position:relative; overflow:hidden;
+  }
+  .page-hero::before {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 70% 50%, rgba(232,33,26,0.15) 0%, transparent 60%);
+  }
+  .page-hero-inner { max-width:1200px; margin:0 auto; position:relative; z-index:1; }
+  .breadcrumb { color:rgba(255,255,255,0.45); font-size:13px; font-weight:700; margin-bottom:14px; }
+  .breadcrumb a { color:rgba(255,255,255,0.45); text-decoration:none; transition:.2s; }
+  .breadcrumb a:hover { color:#fff; }
+  .hero-badge { display:inline-block; background:var(--red); color:#fff; font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 14px; border-radius:20px; margin-bottom:20px; }
+  .page-hero h1 { font-family:'Bebas Neue'; font-size:clamp(48px,8vw,88px); color:#fff; letter-spacing:2px; line-height:1; margin-bottom:16px; }
+  .page-hero h1 span { color:var(--red); }
+  .page-hero p { color:#aaa; font-size:18px; max-width:580px; line-height:1.7; font-weight:600; }
+  .hero-stats { display:flex; gap:40px; margin-top:40px; flex-wrap:wrap; }
+  .stat-num { font-family:'Bebas Neue'; font-size:42px; color:var(--red); line-height:1; }
+  .stat-label { color:#888; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+
+  main { flex:1; max-width:1200px; margin:0 auto; padding:52px 24px; width:100%; }
+
+  .filter-bar {
+    display:flex; gap:10px; flex-wrap:wrap; margin-bottom:36px; align-items:center;
+    background:linear-gradient(135deg,#fff,#faf7f7); border:1px solid var(--gray2);
+    border-radius:18px; padding:16px 18px; box-shadow:var(--card-shadow);
+  }
+  .filter-label { font-weight:800; font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+  .filter-btn { padding:8px 20px; border-radius:30px; border:2px solid var(--gray2); background:#fff; font-weight:800; font-size:13px; cursor:pointer; transition:.2s; color:var(--text); }
+  .filter-btn.active, .filter-btn:hover { background:var(--red); border-color:var(--red); color:#fff; }
+
+  .class-section {
+    margin-bottom:28px; background:linear-gradient(180deg,#fff 0%,#fcfcfc 100%);
+    border:1px solid var(--gray2); border-radius:22px; padding:26px; box-shadow:var(--card-shadow);
+  }
+  .class-section-header { display:flex; align-items:center; gap:16px; margin-bottom:22px; padding-bottom:18px; border-bottom:2px solid var(--gray2); }
+  .class-badge { background:var(--black); color:#fff; font-family:'Bebas Neue'; font-size:14px; letter-spacing:2px; padding:6px 16px; border-radius:8px; }
+  .class-section-title { font-family:'Bebas Neue'; font-size:30px; letter-spacing:1px; }
+  .class-section-title span { color:var(--red); }
+
+  .quiz-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:18px; }
+  .quiz-card {
+    background:linear-gradient(180deg,#fff 0%,#fff7f7 100%);
+    border:1px solid var(--gray2); border-radius:20px; padding:22px; position:relative;
+    overflow:hidden; display:flex; flex-direction:column; min-height:280px; transition:.25s;
+  }
+  .quiz-card::before {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at top right, rgba(232,33,26,0.08), transparent 42%);
+    pointer-events:none;
+  }
+  .quiz-card::after { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,var(--red),#ff8d66); }
+  .quiz-card:hover { border-color:rgba(232,33,26,0.35); transform:translateY(-5px); box-shadow:0 16px 40px rgba(232,33,26,0.14); }
+  .quiz-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:14px; position:relative; z-index:1; }
+  .quiz-badge { background:#fff0f0; color:var(--red); font-size:11px; font-weight:800; padding:5px 10px; border-radius:20px; display:inline-block; }
+  .quiz-subject-icon {
+    width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center;
+    background:#fff; box-shadow:0 8px 24px rgba(0,0,0,0.08); font-size:26px; flex-shrink:0;
+  }
+  .quiz-title { font-size:19px; font-weight:900; margin-bottom:8px; line-height:1.35; position:relative; z-index:1; }
+  .quiz-meta { font-size:13px; color:var(--muted); font-weight:700; margin-bottom:16px; line-height:1.6; position:relative; z-index:1; }
+  .quiz-chip-row { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px; position:relative; z-index:1; }
+  .quiz-chip {
+    background:#fff; color:var(--text); border:1px solid rgba(0,0,0,0.06);
+    border-radius:999px; padding:6px 10px; font-size:11px; font-weight:800;
+  }
+  .quiz-card-footer { margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:12px; position:relative; z-index:1; }
+  .quiz-card-stat { font-size:12px; color:var(--muted); font-weight:800; }
+  .quiz-btn {
+    display:inline-flex; align-items:center; justify-content:center;
+    background:var(--red); color:#fff; border:none; padding:12px 18px; border-radius:12px;
+    font-weight:800; font-size:14px; cursor:pointer; transition:.2s; text-decoration:none;
+  }
+  .quiz-btn:hover { background:#c41a14; }
+
+  .empty-state { text-align:center; padding:40px 24px; color:var(--muted); background:var(--gray); border-radius:var(--radius); }
+  .empty-state span { font-size:40px; display:block; margin-bottom:10px; }
+  .empty-state p { font-weight:700; font-size:14px; }
+
+  footer { background:var(--black); color:#aaa; padding:40px 24px 24px; margin-top:auto; }
+  .footer-inner { max-width:1200px; margin:0 auto; }
+  .footer-top { display:flex; gap:40px; flex-wrap:wrap; margin-bottom:32px; }
+  .footer-brand { flex:1; min-width:220px; }
+  .footer-brand p { font-size:13px; line-height:1.7; color:#888; }
+  .footer-links { flex:2; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:24px; }
+  .footer-col h4 { color:#fff; font-size:14px; font-weight:800; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; }
+  .footer-col a { display:block; color:#888; text-decoration:none; font-size:13px; font-weight:600; margin-bottom:8px; transition:.2s; }
+  .footer-col a:hover { color:#fff; }
+  .footer-bottom { border-top:1px solid #222; padding-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .footer-bottom p { font-size:12px; color:#555; }
+  .footer-bottom span { color:var(--red); }
+
+  @media(max-width:768px) {
+    nav { display:none; }
+    .hamburger { display:flex; }
+    .page-hero { padding:40px 16px; }
+    main { padding:32px 16px; }
+    .class-section { padding:20px; }
+    .class-section-header { flex-direction:column; align-items:flex-start; }
+    .quiz-grid { grid-template-columns:1fr; }
+  }
+</style>
+<link rel="stylesheet" href="animations.css">
+</head>
+<body>
+
+<header>
+  <a class="logo-wrap" href="index.html">
+    <img src="logo.png" alt="ExamReady" style="height:44px;">
+  </a>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="class9.html">Class 9</a>
+    <a href="class10.html">Class 10</a>
+    <a href="class11.html">Class 11</a>
+    <a href="class12.html">Class 12</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="pyq.html">PYQs</a>
+    <a href="quizzes.html" class="active">Quizzes</a>
+  </nav>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Online Quizzes</div>
+    <div class="hero-badge">MCQ Practice</div>
+    <h1>ONLINE <span>QUIZZES</span></h1>
+    <p>Pick a quiz, open its full page, and practice with a cleaner reading flow, quick navigation, and a proper study layout.</p>
+    <div class="hero-stats">
+      <div><div class="stat-num" id="totalQuizzes">0</div><div class="stat-label">Quizzes</div></div>
+      <div><div class="stat-num" id="totalQs">0</div><div class="stat-label">Questions</div></div>
+      <div><div class="stat-num">4</div><div class="stat-label">Classes</div></div>
+      <div><div class="stat-num">Free</div><div class="stat-label">Always</div></div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="filter-bar">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-btn active" onclick="filterClass(this,'all')">All Classes</button>
+    <button class="filter-btn" onclick="filterClass(this,'9')">Class 9</button>
+    <button class="filter-btn" onclick="filterClass(this,'10')">Class 10</button>
+    <button class="filter-btn" onclick="filterClass(this,'11')">Class 11</button>
+    <button class="filter-btn" onclick="filterClass(this,'12')">Class 12</button>
+  </div>
+  <div id="quizContent"></div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div style="font-family:'Bebas Neue';font-size:28px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
+        <p>Free study resources for CBSE students in Class 9 to 12. PYQs, Question Banks, Quizzes and Solutions - all free.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Classes</h4>
+          <a href="class9.html">Class 9</a>
+          <a href="class10.html">Class 10</a>
+          <a href="class11.html">Class 11</a>
+          <a href="class12.html">Class 12</a>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="solutions.html">CBSE Solutions</a>
+          <a href="pyq.html">PYQ Papers</a>
+          <a href="questionbank.html">Question Banks</a>
+          <a href="quizzes.html">Quizzes</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ExamReady. Made with <span>&hearts;</span> for students.</p>
+      <p>CBSE Resources for Class 9-12</p>
+    </div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script src="animations.js"></script>
+<script src="ads.js"></script>
+<script>
+let activeClass = 'all';
+
+function filterClass(btn, cls) {
+  document.querySelectorAll('.filter-btn').forEach(button => button.classList.remove('active'));
+  btn.classList.add('active');
+  activeClass = cls;
+  renderQuizzes();
+}
+
+function renderQuizzes() {
+  const allQuizzes = getData('quizzes') || {};
+  const container = document.getElementById('quizContent');
+  let html = '';
+  let totalQ = 0;
+  let totalQuiz = 0;
+  const classesData = getClassCatalog();
+  const toShow = activeClass === 'all' ? classesData : classesData.filter(item => item.cls === activeClass);
+
+  toShow.forEach(classData => {
+    let cards = '';
+    let hasAny = false;
+
+    classData.subjects.forEach(subject => {
+      const key = classData.cls + '-' + subject.key;
+      const quizzes = allQuizzes[key] || [];
+      if (!quizzes.length) return;
+
+      hasAny = true;
+      totalQuiz += quizzes.length;
+      quizzes.forEach(quiz => { totalQ += (quiz.questions || []).length; });
+
+      cards += quizzes.map(quiz => `
+        <div class="quiz-card">
+          <div class="quiz-card-top">
+            <div class="quiz-badge">MCQ Quiz</div>
+            <div class="quiz-subject-icon">${subject.icon}</div>
+          </div>
+          <div class="quiz-title">${quiz.title}</div>
+          <div class="quiz-meta">Open a full quiz page for ${subject.label} in Class ${classData.cls} with progress tracking and a cleaner reading layout.</div>
+          <div class="quiz-chip-row">
+            <span class="quiz-chip">${(quiz.questions || []).length} Questions</span>
+            <span class="quiz-chip">${subject.label}</span>
+            <span class="quiz-chip">Dedicated Page</span>
+          </div>
+          <div class="quiz-card-footer">
+            <div class="quiz-card-stat">Practice set for CBSE Class ${classData.cls}</div>
+            <a class="quiz-btn" href="quiz.html?id=${encodeURIComponent(quiz.id)}">Open Quiz</a>
+          </div>
+        </div>
+      `).join('');
+    });
+
+    if (!hasAny) {
+      cards = `<div class="empty-state"><span>&#127918;</span><p>Quizzes coming soon for ${classData.label}.</p></div>`;
+    }
+
+    html += `
+      <div class="class-section">
+        <div class="class-section-header">
+          <div class="class-badge">CBSE · ${classData.cls}</div>
+          <div class="class-section-title">${classData.icon} ${classData.label} <span>Quizzes</span></div>
+        </div>
+        <div class="quiz-grid">${cards}</div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html || '<div class="empty-state"><span>&#127918;</span><p>No quizzes available yet.</p></div>';
+  document.getElementById('totalQuizzes').textContent = totalQuiz || '10+';
+  document.getElementById('totalQs').textContent = totalQ > 0 ? totalQ + '+' : '100+';
+}
+
+function toggleMenu() {
+  const nav = document.getElementById('mainNav');
+  // Use dataset flag instead of style check — avoids CSS vs inline style conflicts
+  if (nav.dataset.open === '1') {
+    nav.removeAttribute('style');
+    nav.dataset.open = '0';
+  } else {
+    nav.style.display = 'flex';
+    nav.style.flexDirection = 'column';
+    nav.style.position = 'absolute';
+    nav.style.top = '64px';
+    nav.style.left = '0';
+    nav.style.right = '0';
+    nav.style.background = '#111';
+    nav.style.padding = '16px';
+    nav.style.zIndex = '999';
+    nav.dataset.open = '1';
+  }
+}
+
+renderQuizzes();
+</script>
+</body>
+</html>

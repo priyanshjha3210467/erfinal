@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Quiz - ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red:#e8211a;
+    --black:#0d0d0d;
+    --gray:#f4f4f4;
+    --gray2:#e8e8e8;
+    --text:#1a1a1a;
+    --muted:#666;
+    --radius:16px;
+    --card-shadow:0 10px 30px rgba(0,0,0,0.08);
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html, body { overflow-x:hidden; width:100%; }
+  body { font-family:'Nunito',sans-serif; background:#fff; color:var(--text); min-height:100vh; display:flex; flex-direction:column; }
+
+  header { background:var(--black); padding:0 24px; position:sticky; top:0; z-index:1000; display:flex; align-items:center; justify-content:space-between; height:64px; box-shadow:0 2px 16px rgba(0,0,0,0.3); }
+  .logo-wrap { display:flex; align-items:center; gap:10px; text-decoration:none; }
+  nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  nav a { color:#ccc; font-weight:700; font-size:14px; padding:8px 14px; border-radius:8px; text-decoration:none; transition:.2s; }
+  nav a:hover, nav a.active { color:#fff; background:rgba(255,255,255,0.1); }
+  .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:8px; }
+  .hamburger span { width:24px; height:2px; background:#fff; border-radius:2px; }
+
+  .hero {
+    background:linear-gradient(135deg,#0d0d0d 0%,#1a1a1a 55%,#2a0a0a 100%);
+    padding:48px 24px; position:relative; overflow:hidden;
+  }
+  .hero::before {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 75% 40%, rgba(232,33,26,0.15), transparent 45%);
+  }
+  .hero-inner { max-width:1200px; margin:0 auto; position:relative; z-index:1; }
+  .breadcrumb { color:rgba(255,255,255,0.45); font-size:13px; font-weight:700; margin-bottom:14px; }
+  .breadcrumb a { color:rgba(255,255,255,0.45); text-decoration:none; }
+  .back-btn {
+    display:inline-flex; align-items:center; gap:8px; margin-bottom:18px;
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12);
+    color:#fff; text-decoration:none; padding:10px 14px; border-radius:999px; font-weight:800; font-size:13px;
+  }
+  .hero-badge { display:inline-block; background:var(--red); color:#fff; font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 14px; border-radius:20px; margin-bottom:18px; }
+  .hero h1 { font-family:'Bebas Neue'; font-size:clamp(42px,7vw,80px); color:#fff; letter-spacing:2px; line-height:1; margin-bottom:12px; }
+  .hero h1 span { color:var(--red); }
+  .hero p { color:#bbb; font-size:17px; font-weight:600; max-width:760px; line-height:1.7; }
+  .hero-meta { display:flex; gap:10px; flex-wrap:wrap; margin-top:22px; }
+  .hero-chip {
+    background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.1);
+    padding:8px 12px; border-radius:999px; font-size:12px; font-weight:800;
+  }
+
+  main { flex:1; max-width:1200px; width:100%; margin:0 auto; padding:42px 24px 56px; }
+  .layout { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(260px,.8fr); gap:18px; }
+  .quiz-card, .side-card, .not-found {
+    background:#fff; border:1px solid var(--gray2); border-radius:22px;
+    box-shadow:var(--card-shadow);
+  }
+  .quiz-card { padding:24px; background:linear-gradient(180deg,#fff 0%,#fff8f8 100%); }
+  .progress-wrap { margin-bottom:20px; }
+  .progress-top { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+  .progress-top strong { font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+  .progress-track { height:8px; border-radius:999px; background:var(--gray2); overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,var(--red),#ff8d66); transition:.25s; }
+  .summary-row { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px; }
+  .summary-pill {
+    background:#fff; border:1px solid var(--gray2); border-radius:999px;
+    padding:7px 12px; font-size:12px; font-weight:800;
+  }
+  .q-num { font-size:12px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+  .q-text { font-size:clamp(17px,3.5vw,22px); font-weight:900; line-height:1.45; margin-bottom:22px; word-break:break-word; }
+  .options { display:flex; flex-direction:column; gap:12px; }
+  .opt-btn {
+    width:100%; text-align:left; background:#fff; border:2px solid var(--gray2); border-radius:16px;
+    padding:15px 16px; font-size:15px; font-weight:700; cursor:pointer; transition:.2s;
+    position:relative; overflow:hidden;
+  }
+  .opt-btn:hover:not(:disabled) { border-color:var(--red); background:#fff0f0; }
+  .opt-btn.selected { background:#fff0f0; border-color:var(--red); color:var(--text); }
+  .opt-btn.selected-animate::after {
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg, rgba(232,33,26,0.08), rgba(232,33,26,0.18), rgba(232,33,26,0.08));
+    animation:optionFlash .45s ease;
+    pointer-events:none;
+  }
+  .quiz-note {
+    margin-top:16px; padding:12px 14px; border-radius:14px; background:#f8f8f8;
+    color:var(--muted); font-size:13px; font-weight:700;
+  }
+  .timer-pill.timer-warning { background:#fff5eb; border-color:#ffb96a; color:#a85a00; }
+  .quiz-nav { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:24px; }
+  .nav-btn {
+    border:none; background:var(--black); color:#fff; border-radius:12px;
+    padding:12px 22px; font-size:14px; font-weight:800; cursor:pointer; transition:.2s;
+  }
+  .nav-btn:hover { background:#333; }
+  .nav-btn:disabled { opacity:.35; cursor:not-allowed; }
+
+  .side-stack { display:flex; flex-direction:column; gap:18px; }
+  .side-card { padding:18px; }
+  .side-title { font-size:12px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
+  .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .mini-stat { background:#fafafa; border:1px solid var(--gray2); border-radius:14px; padding:14px; }
+  .mini-stat strong { display:block; font-size:20px; font-weight:900; }
+  .mini-stat span { display:block; margin-top:4px; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); font-weight:800; }
+  .question-palette { display:grid; grid-template-columns:repeat(auto-fill,minmax(42px,1fr)); gap:8px; }
+  .question-dot {
+    min-height:42px; border:none; border-radius:12px; background:var(--gray);
+    font-weight:900; cursor:pointer; transition:.2s;
+  }
+  .question-dot.current { background:var(--black); color:#fff; }
+  .question-dot.done { background:#fff0f0; color:var(--red); }
+
+  .result-card { text-align:center; padding:12px 0 4px; }
+  .score-big { font-family:'Bebas Neue'; font-size:96px; color:var(--red); line-height:1; }
+  .score-label { font-size:16px; font-weight:700; color:var(--muted); margin-bottom:14px; }
+  .result-msg { font-size:22px; font-weight:900; margin-bottom:22px; }
+  .result-card.good-result {
+    background:linear-gradient(180deg,#fffdf7 0%,#fff6f0 100%);
+    border-color:#ffd2b5;
+    box-shadow:0 20px 56px rgba(232,33,26,0.12);
+  }
+  .result-badge {
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:8px 14px; border-radius:999px; background:#fff0f0; color:var(--red);
+    font-size:12px; font-weight:900; letter-spacing:1px; text-transform:uppercase; margin-bottom:14px;
+  }
+  .result-overview {
+    display:grid; grid-template-columns:minmax(220px,320px) minmax(0,1fr); gap:18px; align-items:center;
+    margin:26px 0 10px;
+  }
+  .pie-wrap { display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .pie-chart {
+    width:200px; height:200px; border-radius:50%;
+    display:grid; place-items:center; position:relative;
+  }
+  .pie-chart::after {
+    content:''; width:110px; height:110px; border-radius:50%; background:#fff; box-shadow:inset 0 0 0 1px var(--gray2);
+  }
+  .pie-chart-label {
+    position:absolute; z-index:1; font-size:15px; font-weight:900; color:var(--text); text-align:center;
+  }
+  .pie-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+  .legend-item { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:800; color:var(--muted); }
+  .legend-dot { width:10px; height:10px; border-radius:50%; }
+  .result-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:22px 0; }
+  .result-stat { background:#fafafa; border:1px solid var(--gray2); border-radius:16px; padding:16px; }
+  .result-stat strong { display:block; font-size:24px; margin-bottom:4px; }
+  .result-stat span { font-size:12px; color:var(--muted); font-weight:800; text-transform:uppercase; letter-spacing:1px; }
+  .result-actions { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+  .review-list { display:flex; flex-direction:column; gap:12px; margin-top:26px; text-align:left; }
+  .review-card {
+    background:#fafafa; border:1px solid var(--gray2); border-radius:16px; padding:16px;
+  }
+  .review-head { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:8px; }
+  .review-status { font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:1px; }
+  .review-status.correct { color:#16964f; }
+  .review-status.wrong { color:#d62828; }
+  .review-status.skipped { color:#9a7b00; }
+  .review-answer, .review-solution { font-size:13px; line-height:1.7; color:var(--muted); }
+  .review-answer strong, .review-solution strong { color:var(--text); }
+  .accent-btn, .ghost-btn {
+    display:inline-flex; align-items:center; justify-content:center; text-decoration:none; cursor:pointer;
+    border:none; border-radius:12px; padding:12px 22px; font-size:14px; font-weight:800;
+  }
+  .accent-btn { background:var(--red); color:#fff; }
+  .ghost-btn { background:var(--black); color:#fff; }
+
+  .not-found { padding:26px; text-align:center; }
+  .not-found h2 { font-size:28px; font-weight:900; margin-bottom:10px; }
+  .not-found p { font-size:14px; color:var(--muted); font-weight:700; margin-bottom:18px; }
+
+  footer { background:var(--black); color:#aaa; padding:40px 24px 24px; margin-top:auto; }
+  .footer-inner { max-width:1200px; margin:0 auto; }
+  .footer-top { display:flex; gap:40px; flex-wrap:wrap; margin-bottom:32px; }
+  .footer-brand { flex:1; min-width:220px; }
+  .footer-brand p { font-size:13px; line-height:1.7; color:#888; }
+  .footer-links { flex:2; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:24px; }
+  .footer-col h4 { color:#fff; font-size:14px; font-weight:800; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; }
+  .footer-col a { display:block; color:#888; text-decoration:none; font-size:13px; font-weight:600; margin-bottom:8px; transition:.2s; }
+  .footer-col a:hover { color:#fff; }
+  .footer-bottom { border-top:1px solid #222; padding-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .footer-bottom p { font-size:12px; color:#555; }
+  .footer-bottom span { color:var(--red); }
+
+  @media(max-width:860px) {
+    nav { display:none; }
+    .hamburger { display:flex; }
+    .layout { grid-template-columns:1fr; }
+    .result-grid { grid-template-columns:1fr; }
+    .result-overview { grid-template-columns:1fr; }
+  }
+
+  @media(max-width:768px) {
+    .hero { padding:38px 16px; }
+    main { padding:28px 16px 48px; }
+    .quiz-card, .side-card, .not-found { border-radius:18px; }
+    .q-text { font-size:19px; }
+  }
+
+  .opt-btn.correct-opt { background:#e6ffed !important; border-color:#2f9e44 !important; color:#1a4731 !important; cursor:default; }
+  .opt-btn.wrong-opt   { background:#fff0f0 !important; border-color:#e8211a !important; color:#7a0c0c !important; cursor:default; }
+  .opt-btn.neutral-opt { opacity:.55; cursor:default; }
+  .opt-btn:disabled    { cursor:default; }
+
+  .answer-reveal {
+    margin-top:16px; border-radius:16px; overflow:hidden;
+    border:1.5px solid var(--gray2);
+  }
+  .reveal-status {
+    display:flex; align-items:center; gap:10px;
+    padding:12px 16px; font-size:14px; font-weight:900;
+  }
+  .reveal-status.correct { background:#e6ffed; color:#1a4731; border-bottom:1px solid #b2f2cb; }
+  .reveal-status.wrong   { background:#fff0f0; color:#7a0c0c; border-bottom:1px solid #ffd0ce; }
+  .reveal-solution {
+    padding:14px 16px; background:#fafafa;
+    font-size:14px; line-height:1.7; font-weight:600; color:var(--text);
+  }
+  .reveal-solution strong { font-weight:900; }
+
+  .quiz-settings-bar {
+    display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px; padding:12px 16px;
+    background:#fafafa; border:1px solid var(--gray2); border-radius:14px;
+    font-size:12px; font-weight:800;
+  }
+  .settings-chip {
+    background:#fff; border:1px solid var(--gray2); border-radius:999px;
+    padding:5px 11px; color:var(--muted);
+  }
+  .settings-chip.active { background:#fff0f0; color:var(--red); border-color:#f0b2ad; }
+
+  @keyframes optionFlash {
+    0% { opacity:0; transform:translateX(-30%); }
+    40% { opacity:1; }
+    100% { opacity:0; transform:translateX(30%); }
+  }
+</style>
+<link rel="stylesheet" href="animations.css">
+</head>
+<body>
+
+<header>
+  <a class="logo-wrap" href="index.html">
+    <img src="logo.png" alt="ExamReady" style="height:44px;">
+  </a>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="class9.html">Class 9</a>
+    <a href="class10.html">Class 10</a>
+    <a href="class11.html">Class 11</a>
+    <a href="class12.html">Class 12</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="pyq.html">PYQs</a>
+    <a href="quizzes.html" class="active">Quizzes</a>
+  </nav>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> / <a href="quizzes.html">Quizzes</a> / Quiz Page</div>
+    <a class="back-btn" href="quizzes.html">&larr; Back To Quizzes</a>
+    <div class="hero-badge">Dedicated Quiz Page</div>
+    <h1 id="quizTitleHero">QUIZ <span>PLAYER</span></h1>
+    <p id="quizSubtitle">Load a quiz and practice with a full page layout, a clear back path, and better study focus.</p>
+    <div class="hero-meta" id="quizHeroMeta"></div>
+  </div>
+</section>
+
+<main>
+  <div id="quizMount"></div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div style="font-family:'Bebas Neue';font-size:28px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
+        <p>Free study resources for CBSE students in Class 9 to 12. PYQs, Question Banks, Quizzes and Solutions - all free.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Classes</h4>
+          <a href="class9.html">Class 9</a>
+          <a href="class10.html">Class 10</a>
+          <a href="class11.html">Class 11</a>
+          <a href="class12.html">Class 12</a>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="solutions.html">CBSE Solutions</a>
+          <a href="pyq.html">PYQ Papers</a>
+          <a href="questionbank.html">Question Banks</a>
+          <a href="quizzes.html">Quizzes</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ExamReady. Made with <span>&hearts;</span> for students.</p>
+      <p>CBSE Resources for Class 9&ndash;12</p>
+    </div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script src="animations.js"></script>
+<script src="ads.js"></script>
+<script>
+let quiz = null;
+let currentQ = 0;
+let answers = [];
+let questionTimes = [];
+let currentQuestionStartedAt = 0;
+let timerRemaining = 0;
+let timerInterval = null;
+
+function getQueryQuizId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id');
+}
+
+function getAnsweredCount() {
+  return answers.filter(answer => answer !== null).length;
+}
+
+function renderNotFound() {
+  document.getElementById('quizMount').innerHTML = `
+    <div class="not-found">
+      <h2>Quiz not found</h2>
+      <p>This quiz could not be loaded. It may have been removed or the link may be incomplete.</p>
+      <a class="accent-btn" href="quizzes.html">Go Back To Quiz List</a>
+    </div>
+  `;
+}
+
+function normalizeQuizData(rawQuiz) {
+  if (!rawQuiz) return null;
+  // showSolutions: 'after_each' | 'after_quiz' | 'never' (also handles old boolean)
+  let showSolutions = rawQuiz.showSolutions;
+  if (typeof showSolutions === 'boolean') showSolutions = showSolutions ? 'after_quiz' : 'never';
+  if (!showSolutions) showSolutions = 'after_quiz';
+  return {
+    ...rawQuiz,
+    // classNum: prefer explicit classNum, fall back to the legacy 'class' field.
+    // getAllQuizEntries() in shared.js already injects classNum from the storage key,
+    // but quizzes saved directly to localStorage may only have 'class'.
+    classNum: String(rawQuiz.classNum || rawQuiz.class || '').trim() || '?',
+    subjectLabel: rawQuiz.subjectLabel || rawQuiz.subject || 'Subject',
+    description: rawQuiz.description || rawQuiz.instructions || 'Practice this quiz with a full-page layout and focused results at the end.',
+    passPercentage: Number(rawQuiz.passPercentage || 40) || 40,
+    timerEnabled: !!(rawQuiz.timerEnabled || rawQuiz.timer),
+    durationMinutes: Number(rawQuiz.durationMinutes || rawQuiz.duration || 0) || 0,
+    showSolutions,
+    questions: (rawQuiz.questions || []).map(question => ({
+      ...question,
+      solution: question.solution || question.explanation || ''
+    }))
+  };
+}
+
+function formatSeconds(totalSeconds) {
+  const safe = Math.max(0, Math.floor(totalSeconds || 0));
+  const mins = Math.floor(safe / 60);
+  const secs = safe % 60;
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+function recordCurrentQuestionTime() {
+  if (!quiz || !quiz.questions[currentQ] || !currentQuestionStartedAt) return;
+  const spent = Math.max(0, Math.round((Date.now() - currentQuestionStartedAt) / 1000));
+  questionTimes[currentQ] = (questionTimes[currentQ] || 0) + spent;
+}
+
+function startTrackingQuestion() {
+  currentQuestionStartedAt = Date.now();
+}
+
+function renderHero() {
+  document.getElementById('quizTitleHero').innerHTML = `${quiz.title} <span>QUIZ</span>`;
+  document.getElementById('quizSubtitle').textContent = quiz.description || `Practice ${quiz.subjectLabel} for Class ${quiz.classNum} with a full-page quiz experience and quick navigation between questions.`;
+  document.getElementById('quizHeroMeta').innerHTML = `
+    <div class="hero-chip">Class ${quiz.classNum || '?'}</div>
+    <div class="hero-chip">${quiz.subjectLabel}</div>
+    <div class="hero-chip">${quiz.questions.length} Questions</div>
+    <div class="hero-chip">${quiz.timerEnabled ? `${quiz.durationMinutes} Min Timer` : 'No Timer'}</div>
+    <div class="hero-chip">Result At End</div>
+  `;
+}
+
+function renderQuestion() {
+  const question = quiz.questions[currentQ];
+  const total = quiz.questions.length;
+  const answeredCount = getAnsweredCount();
+  const isAnswered = answers[currentQ] !== null;
+  const progress = (answeredCount / total) * 100;
+
+  // In after_each mode, once answered the question is "revealed" — lock options and show feedback
+  const afterEach = quiz.showSolutions === 'after_each';
+  const isRevealed = afterEach && isAnswered;
+
+  const timerMarkup = quiz.timerEnabled
+    ? `<span class="summary-pill timer-pill${timerRemaining <= 60 ? ' timer-warning' : ''}" id="quizTimerPill">${formatSeconds(timerRemaining)} left</span>`
+    : '';
+
+  const noteText = isRevealed
+    ? 'Answer locked. Check the feedback below, then move on.'
+    : isAnswered
+      ? 'Answer saved. You can move through the quiz and see your full result at the end.'
+      : 'Choose one option and continue.';
+
+  const optionsHtml = question.opts.map((option, index) => {
+    let cls = 'opt-btn';
+    let extra = '';
+    if (isRevealed) {
+      if (index === question.ans)               cls += ' correct-opt';
+      else if (index === answers[currentQ])     cls += ' wrong-opt';
+      else                                      cls += ' neutral-opt';
+      extra = 'disabled';
+    } else {
+      if (index === answers[currentQ]) cls += ' selected';
+    }
+    return `<button class="${cls}" ${extra} onclick="${isRevealed ? '' : `selectAnswer(${index})`}">${String.fromCharCode(65 + index)}. ${option}</button>`;
+  }).join('');
+
+  const revealHtml = isRevealed ? `
+    <div class="answer-reveal">
+      <div class="reveal-status ${answers[currentQ] === question.ans ? 'correct' : 'wrong'}">
+        ${answers[currentQ] === question.ans
+          ? '✅ Correct!'
+          : `❌ Wrong — correct answer: <strong style="margin-left:6px">${question.opts[question.ans]}</strong>`}
+      </div>
+      ${question.solution ? `<div class="reveal-solution"><strong>Explanation:</strong> ${question.solution}</div>` : ''}
+    </div>` : '';
+
+  document.getElementById('quizMount').innerHTML = `
+    <div class="layout">
+      <div class="quiz-card">
+        <div class="progress-wrap">
+          <div class="progress-top">
+            <strong>Quiz Progress</strong>
+            <strong>${answeredCount}/${total} answered</strong>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${progress}%"></div></div>
+        </div>
+        <div class="summary-row">
+          <span class="summary-pill">Question ${currentQ + 1} of ${total}</span>
+          <span class="summary-pill">${answeredCount} Answered</span>
+          <span class="summary-pill">${quiz.subjectLabel}</span>
+          ${timerMarkup}
+        </div>
+        <div class="q-num">Current Prompt</div>
+        <div class="q-text">${question.q}</div>
+        <div class="options">${optionsHtml}</div>
+        ${revealHtml}
+        <div class="quiz-note">${noteText}</div>
+        <div class="quiz-nav">
+          <button class="nav-btn" onclick="prevQ()" ${currentQ === 0 ? 'disabled' : ''}>Prev</button>
+          <strong>${currentQ + 1}/${total}</strong>
+          ${currentQ < total - 1
+            ? `<button class="nav-btn" onclick="nextQ()" ${afterEach && !isAnswered ? 'disabled style="opacity:.35;cursor:not-allowed"' : ''}>Next</button>`
+            : `<button class="nav-btn" style="background:var(--red)" onclick="showResult()" ${afterEach && !isAnswered ? 'disabled style="opacity:.35;cursor:not-allowed;background:var(--red)"' : ''}>Finish Quiz</button>`}
+        </div>
+      </div>
+      <div class="side-stack">
+        <div class="side-card">
+          <div class="side-title">Live Stats</div>
+          <div class="stat-grid">
+            <div class="mini-stat"><strong>${answeredCount}</strong><span>Answered</span></div>
+            <div class="mini-stat"><strong>${Math.round(progress)}%</strong><span>Completed</span></div>
+            <div class="mini-stat"><strong>${total - answeredCount}</strong><span>Remaining</span></div>
+            <div class="mini-stat"><strong id="currentQuestionStat">${quiz.timerEnabled ? formatSeconds(questionTimes[currentQ] || 0) : currentQ + 1}</strong><span>${quiz.timerEnabled ? 'On This Q' : 'Current'}</span></div>
+          </div>
+        </div>
+        <div class="side-card">
+          <div class="side-title">Quiz Settings</div>
+          <div class="quiz-settings-bar" style="flex-direction:column;gap:6px;padding:0;background:none;border:none">
+            <div class="settings-chip ${quiz.timerEnabled ? 'active' : ''}">⏱ ${quiz.timerEnabled ? `${quiz.durationMinutes} min timer` : 'No timer'}</div>
+            <div class="settings-chip active">💡 Solutions: ${quiz.showSolutions === 'after_each' ? 'After each Q' : quiz.showSolutions === 'never' ? 'Hidden' : 'After quiz'}</div>
+          </div>
+        </div>
+        <div class="side-card">
+          <div class="side-title">Question Map</div>
+          <div class="question-palette">
+            ${quiz.questions.map((_, index) => {
+              let cls = 'question-dot';
+              if (index === currentQ) cls += ' current';
+              else if (answers[index] !== null) cls += ' done';
+              return `<button class="${cls}" onclick="jumpToQuestion(${index})">${index + 1}</button>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  updateLiveTimerUI();
+  startTrackingQuestion();
+}
+
+function updateLiveTimerUI() {
+  if (!quiz || !quiz.timerEnabled) return;
+  const timerPill = document.getElementById('quizTimerPill');
+  const currentQuestionStat = document.getElementById('currentQuestionStat');
+  if (timerPill) {
+    timerPill.textContent = `${formatSeconds(timerRemaining)} left`;
+    timerPill.classList.toggle('timer-warning', timerRemaining <= 60);
+  }
+  if (currentQuestionStat) {
+    const liveSpent = currentQuestionStartedAt
+      ? (questionTimes[currentQ] || 0) + Math.max(0, Math.round((Date.now() - currentQuestionStartedAt) / 1000))
+      : (questionTimes[currentQ] || 0);
+    currentQuestionStat.textContent = formatSeconds(liveSpent);
+  }
+}
+
+function renderQuizPage() {
+  const quizId = getQueryQuizId();
+  quiz = normalizeQuizData(findQuizById(quizId));
+  if (!quiz || !quiz.questions || !quiz.questions.length) {
+    renderNotFound();
+    return;
+  }
+  answers = new Array(quiz.questions.length).fill(null);
+  questionTimes = new Array(quiz.questions.length).fill(0);
+  currentQ = 0;
+  currentQuestionStartedAt = 0;
+  if (timerInterval) clearInterval(timerInterval);
+  if (quiz.timerEnabled) {
+    timerRemaining = quiz.durationMinutes * 60;
+    startTimer();
+  }
+  renderHero();
+  renderQuestion();
+}
+
+function selectAnswer(index) {
+  answers[currentQ] = index;
+  const optionButtons = document.querySelectorAll('.opt-btn');
+  if (optionButtons[index]) optionButtons[index].classList.add('selected-animate');
+  setTimeout(() => renderQuestion(), 100);
+}
+
+function nextQ() {
+  if (currentQ < quiz.questions.length - 1) {
+    recordCurrentQuestionTime();
+    currentQ++;
+    renderQuestion();
+  }
+}
+
+function prevQ() {
+  if (currentQ > 0) {
+    recordCurrentQuestionTime();
+    currentQ--;
+    renderQuestion();
+  }
+}
+
+function jumpToQuestion(index) {
+  if (index >= 0 && index < quiz.questions.length) {
+    recordCurrentQuestionTime();
+    currentQ = index;
+    renderQuestion();
+  }
+}
+
+function buildPieChart(correct, incorrect, skipped, total) {
+  const safeTotal = Math.max(total, 1);
+  const correctDeg = (correct / safeTotal) * 360;
+  const incorrectDeg = (incorrect / safeTotal) * 360;
+  return `
+    <div class="pie-wrap">
+      <div class="pie-chart" style="background:conic-gradient(#16964f 0deg ${correctDeg}deg, #d62828 ${correctDeg}deg ${correctDeg + incorrectDeg}deg, #dcdcdc ${correctDeg + incorrectDeg}deg 360deg);">
+        <div class="pie-chart-label">${Math.round((correct / safeTotal) * 100)}%<br><span style="font-size:12px;color:var(--muted)">Score</span></div>
+      </div>
+      <div class="pie-legend">
+        <div class="legend-item"><span class="legend-dot" style="background:#16964f"></span>Correct</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#d62828"></span>Wrong</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#dcdcdc"></span>Skipped</div>
+      </div>
+    </div>
+  `;
+}
+
+function showResult(timerEnded = false) {
+  recordCurrentQuestionTime();
+  if (timerInterval) clearInterval(timerInterval);
+  const correct = answers.filter((answer, index) => answer === quiz.questions[index].ans).length;
+  const total = quiz.questions.length;
+  const answeredCount = getAnsweredCount();
+  const incorrect = answeredCount - correct;
+  const skipped = total - answeredCount;
+  const pct = Math.round((correct / total) * 100);
+  const avgTime = answeredCount ? Math.round(questionTimes.reduce((sum, value) => sum + value, 0) / answeredCount) : 0;
+  const passed = pct >= quiz.passPercentage;
+  const goodResult = pct >= 75;
+  const showMode = quiz.showSolutions; // 'after_each' | 'after_quiz' | 'never'
+  const canShowReview = showMode === 'after_quiz' || showMode === 'after_each';
+  const reviewMarkup = canShowReview ? quiz.questions.map((question, index) => {
+    const picked = answers[index];
+    const correctAnswer = question.opts[question.ans];
+    const pickedAnswer = picked === null ? 'Not answered' : question.opts[picked];
+    const statusClass = picked === null ? 'skipped' : picked === question.ans ? 'correct' : 'wrong';
+    const statusLabel = picked === null ? 'Skipped' : picked === question.ans ? 'Correct' : 'Wrong';
+    return `
+      <div class="review-card">
+        <div class="review-head">
+          <strong>Q${index + 1}. ${question.q}</strong>
+          <span class="review-status ${statusClass}">${statusLabel}</span>
+        </div>
+        <div class="review-answer"><strong>Your answer:</strong> ${pickedAnswer}</div>
+        <div class="review-answer"><strong>Correct answer:</strong> ${correctAnswer}</div>
+        ${question.solution ? `<div class="review-solution"><strong>Explanation:</strong> ${question.solution}</div>` : ''}
+      </div>
+    `;
+  }).join('') : '';
+
+  document.getElementById('quizMount').innerHTML = `
+    <div class="quiz-card result-card${goodResult ? ' good-result' : ''}">
+      ${goodResult ? '<div class="result-badge">Great Performance</div>' : ''}
+      <div class="score-big">${pct}%</div>
+      <div class="score-label">${correct} out of ${total} correct</div>
+      <div class="result-msg">${timerEnded ? 'Time is up. Here is your final result.' : passed ? 'You finished strong.' : 'Keep revising. You are improving.'}</div>
+      <div class="result-overview">
+        ${buildPieChart(correct, incorrect, skipped, total)}
+        <div class="result-grid">
+          <div class="result-stat"><strong>${correct}</strong><span>Correct</span></div>
+          <div class="result-stat"><strong>${incorrect}</strong><span>Wrong</span></div>
+          <div class="result-stat"><strong>${skipped}</strong><span>Skipped</span></div>
+          <div class="result-stat"><strong>${formatSeconds(avgTime)}</strong><span>Avg / Question</span></div>
+          <div class="result-stat"><strong>${quiz.passPercentage}%</strong><span>Passing Mark</span></div>
+          <div class="result-stat"><strong>${passed ? 'Pass' : 'Retry'}</strong><span>Outcome</span></div>
+        </div>
+      </div>
+      ${getManagedAdSlotHtml('results')}
+      <div class="result-actions">
+        <button class="accent-btn" onclick="restartQuiz()">Try Again</button>
+        <a class="ghost-btn" href="quizzes.html">Back To Quizzes</a>
+      </div>
+      ${canShowReview ? `<div class="review-list">${reviewMarkup}</div>` : (showMode === 'never' ? '' : '')}
+    </div>
+  `;
+}
+
+function restartQuiz() {
+  if (timerInterval) clearInterval(timerInterval);
+  answers = new Array(quiz.questions.length).fill(null);
+  questionTimes = new Array(quiz.questions.length).fill(0);
+  currentQ = 0;
+  currentQuestionStartedAt = 0;
+  if (quiz.timerEnabled) {
+    timerRemaining = quiz.durationMinutes * 60;
+    startTimer();
+  }
+  renderQuestion();
+}
+
+function startTimer() {
+  if (!quiz.timerEnabled) return;
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timerRemaining -= 1;
+    updateLiveTimerUI();
+    if (timerRemaining <= 0) {
+      timerRemaining = 0;
+      clearInterval(timerInterval);
+      showResult(true);
+    }
+  }, 1000);
+}
+
+document.addEventListener('keydown', event => {
+  if (!quiz) return;
+  if (event.key === 'ArrowRight') nextQ();
+  if (event.key === 'ArrowLeft') prevQ();
+});
+
+renderQuizPage();
+</script>
+</body>
+</html>

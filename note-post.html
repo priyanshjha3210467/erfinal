@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Note – ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="animations.css">
+<style>
+:root{
+  --red:#e8211a;
+  --accent:#e8211a;--accent-soft:rgba(232,33,26,.08);
+  --accent-mid:rgba(232,33,26,.18);--accent-deep:#8f1812;
+  --accent-glow:#ffd1cd;--green:#2f9e44;--orange:#c97a00;
+  --black:#0d0d0d;--surface:#f4f5f7;
+  --card:#ffffff;--border:#e4e4e7;--border-soft:#eeeeef;
+  --text:#1a1a1a;--text-2:#4a4a4a;--muted:#888;--muted-light:#bbb;
+  --radius:18px;--shadow:0 8px 32px rgba(0,0,0,.065);
+  --ease:.28s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+html,body{overflow-x:hidden;width:100%;}
+body{min-height:100vh;display:flex;flex-direction:column;font-family:'Nunito',sans-serif;background:var(--surface);color:var(--text);-webkit-font-smoothing:antialiased;}
+
+/* ── Reading progress ── */
+#rpbar{position:fixed;top:64px;left:0;right:0;height:3px;z-index:1200;pointer-events:none;}
+#rpfill{height:100%;width:0%;border-radius:0 3px 3px 0;background:linear-gradient(90deg,var(--accent),#ff6a4d,#ffb06f);transition:width .08s linear;box-shadow:0 0 14px rgba(232,33,26,.45);}
+
+/* ── Header ── */
+header{background:var(--black);padding:0 28px;position:sticky;top:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;height:64px;box-shadow:0 2px 24px rgba(0,0,0,.38);}
+.logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none;}
+nav{display:flex;align-items:center;gap:2px;flex-wrap:wrap;}
+nav a{color:#9a9a9a;font-weight:700;font-size:13.5px;padding:8px 13px;border-radius:8px;text-decoration:none;transition:color var(--ease),background var(--ease);}
+nav a:hover,nav a.active{color:#fff;background:rgba(255,255,255,.09);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;}
+.hamburger span{width:24px;height:2px;background:#fff;border-radius:2px;}
+
+/* ── Hero ── */
+.hero{
+  background:
+    radial-gradient(ellipse 58% 85% at 84% 14%,rgba(232,33,26,.28) 0%,transparent 52%),
+    radial-gradient(ellipse 38% 50% at 6% 88%,rgba(143,24,18,.18) 0%,transparent 50%),
+    linear-gradient(162deg,#060606 0%,#0d0d0d 42%,#1b0808 100%);
+  padding:50px 28px 42px;color:#fff;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(ellipse 85% 85% at 50% 50%,#000 28%,transparent 72%);
+}
+.hero-inner{max-width:1280px;margin:0 auto;position:relative;z-index:1;}
+.crumbs{display:flex;align-items:center;gap:5px;flex-wrap:wrap;color:rgba(255,255,255,.35);font-size:12px;font-weight:700;margin-bottom:18px;}
+.crumbs a{color:inherit;text-decoration:none;transition:color var(--ease);}
+.crumbs a:hover{color:rgba(255,255,255,.7);}
+.crumbs-sep{opacity:.3;}
+.back-btn{display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,.82);text-decoration:none;border:1px solid rgba(255,255,255,.13);border-radius:999px;padding:9px 18px;font-size:13px;font-weight:800;background:rgba(255,255,255,.05);backdrop-filter:blur(8px);margin-bottom:22px;transition:background var(--ease),border-color var(--ease),transform var(--ease);}
+.back-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.28);transform:translateX(-3px);}
+
+.hero-tags-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.hero-tag{border-radius:999px;padding:6px 14px;font-size:10.5px;font-weight:900;text-transform:uppercase;letter-spacing:1.2px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);color:rgba(255,255,255,.75);}
+.hero-tag.accent{background:var(--accent-mid);border-color:rgba(232,33,26,.35);color:var(--accent-glow);}
+
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,4.5vw,56px);line-height:1.05;font-weight:800;max-width:960px;margin-bottom:14px;letter-spacing:-.7px;background:linear-gradient(165deg,#fff 35%,rgba(255,255,255,.65));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-summary{color:rgba(255,255,255,.52);font-size:clamp(14px,1.7vw,17px);line-height:1.82;max-width:720px;font-weight:600;margin-bottom:26px;font-family:'Space Grotesk',sans-serif;}
+
+.hero-byline{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);}
+.byline-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#ff6a4d);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;flex-shrink:0;}
+.byline-name{font-size:13.5px;font-weight:800;color:#fff;}
+.byline-date{font-size:11px;color:rgba(255,255,255,.38);font-weight:700;margin-top:2px;}
+.byline-chips{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto;}
+.byline-chip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:7px 13px;text-align:center;}
+.byline-chip strong{display:block;font-family:'Bebas Neue';font-size:20px;color:var(--red);line-height:1;}
+.byline-chip span{display:block;font-size:9px;font-weight:800;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+/* ── 3-col layout ── */
+.page-body{max-width:1280px;margin:0 auto;padding:28px 28px 72px;display:grid;grid-template-columns:200px minmax(0,1fr) 280px;gap:24px;align-items:start;}
+
+/* ── Left sidebar ── */
+.left-sidebar{display:flex;flex-direction:column;gap:16px;position:sticky;top:82px;}
+.toc-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-heading{font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.toc-heading::before{content:'';width:3px;height:12px;background:var(--accent);border-radius:2px;flex-shrink:0;}
+.toc-link{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--muted);text-decoration:none;padding:7px 10px;border-radius:10px;transition:.2s;}
+.toc-link::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--border);flex-shrink:0;transition:.2s;}
+.toc-link:hover,.toc-link.active{background:#fff3f1;color:var(--accent);padding-left:14px;}
+.toc-link:hover::before,.toc-link.active::before{background:var(--accent);}
+
+.tag-chips-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.tag-chips-head{font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:10px;}
+.tag-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.tag-chip{padding:5px 11px;border-radius:999px;font-size:11px;font-weight:800;cursor:pointer;text-decoration:none;transition:.2s;}
+.tag-chip.important{background:#fff0f0;color:#e8211a;}
+.tag-chip.exam-tips,.tag-chip.exam{background:#fff8f0;color:#c97a00;}
+.tag-chip.formula,.tag-chip.formulas{background:#f0fff4;color:#2f9e44;}
+.tag-chip.concept,.tag-chip.concepts{background:#fff3f3;color:var(--accent-deep);}
+.tag-chip.default{background:#f4f4f6;color:var(--muted);}
+
+/* ── Main content area ── */
+.main-content{display:flex;flex-direction:column;gap:20px;}
+
+/* ── Summary card ── */
+.summary-card{
+  background:linear-gradient(140deg,#fff8f7,#fff1ef);
+  border:1.5px solid #ffd0cb;border-radius:24px;
+  padding:22px 26px;display:flex;gap:16px;align-items:flex-start;
+  box-shadow:0 4px 20px rgba(232,33,26,.08);
+  position:relative;overflow:hidden;
+}
+.summary-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#ff6a4d,#ffb06f);}
+.summary-icon{font-size:30px;flex-shrink:0;margin-top:2px;}
+.summary-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:7px;}
+.summary-text{font-size:15px;line-height:1.82;color:#6a1e18;font-weight:700;font-family:'Space Grotesk',sans-serif;}
+
+/* ── Article card ── */
+.article-card{background:var(--card);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;}
+.article-topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 30px;border-bottom:1px solid var(--border-soft);background:linear-gradient(135deg,#fefefe,#f9f9fa);flex-wrap:wrap;gap:10px;}
+.article-kicker{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:var(--accent);display:flex;align-items:center;gap:8px;}
+.article-kicker::before{content:'';width:20px;height:2px;background:var(--accent);border-radius:2px;flex-shrink:0;}
+.article-actions{display:flex;gap:7px;}
+.a-btn{display:inline-flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:11.5px;font-weight:800;color:var(--text-2);text-decoration:none;transition:background var(--ease),border-color var(--ease),color var(--ease);}
+.a-btn:hover{background:#fff;border-color:var(--accent);color:var(--accent);}
+
+.article-body-wrap{padding:32px 36px 36px;}
+.article-body{font-size:17px;line-height:2.08;color:#1e1e22;font-family:'Space Grotesk',sans-serif;font-weight:400;}
+.article-body p{margin-bottom:24px;}
+.article-body p:last-child{margin-bottom:0;}
+.article-body ul,.article-body ol{margin:0 0 24px 28px;}
+.article-body li{margin-bottom:13px;line-height:1.82;}
+.article-body strong{font-weight:700;color:var(--text);}
+
+/* ── Callout boxes ── */
+.note-callout{border-radius:0 14px 14px 0;padding:14px 18px;margin-bottom:20px;}
+.note-callout.tip{background:#f0fff4;border-left:4px solid #2f9e44;}
+.note-callout.warning{background:#fff8f0;border-left:4px solid #c97a00;}
+.note-callout.important{background:#fff0f0;border-left:4px solid #e8211a;}
+.note-callout p{margin-bottom:0 !important;font-size:14px;line-height:1.75;}
+
+.article-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:14px 30px;border-top:1px solid var(--border-soft);background:linear-gradient(135deg,#fefefe,#f9f9fa);}
+.article-foot-meta{font-size:12px;font-weight:700;color:var(--muted);}
+.share-row{display:flex;gap:7px;}
+.share-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.share-btn:hover{border-color:var(--accent);background:#fff3f1;transform:translateY(-2px);}
+
+/* ── More notes section ── */
+.more-section{background:var(--card);border:1px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:var(--shadow);}
+.more-head{padding:20px 26px;background:linear-gradient(135deg,#fefefe,#f9f9fb);border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.more-head-title{font-size:18px;font-weight:900;color:var(--text);}
+.more-head-sub{font-size:12.5px;color:var(--muted);font-weight:700;}
+.more-head-link{font-size:12.5px;font-weight:900;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px;transition:gap var(--ease);}
+.more-head-link:hover{gap:8px;}
+.more-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1px;background:var(--border-soft);}
+.more-card{background:var(--card);padding:20px 22px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:10px;transition:.2s;position:relative;overflow:hidden;}
+.more-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:var(--accent);transition:.25s;}
+.more-card:hover{background:#fff7f5;}
+.more-card:hover::before{height:100%;}
+.more-badge{background:#fff1ef;color:var(--accent);font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:1px;padding:4px 10px;border-radius:20px;}
+.more-time{font-size:11px;font-weight:800;color:var(--muted-light);}
+.more-card-title{font-size:13.5px;font-weight:800;line-height:1.45;color:var(--text);}
+.more-empty{padding:38px 24px;text-align:center;color:var(--muted);font-size:14px;font-weight:700;}
+
+/* ── Right sidebar ── */
+.right-sidebar{display:flex;flex-direction:column;gap:18px;position:sticky;top:82px;max-height:calc(100vh - 100px);overflow-y:auto;scrollbar-width:none;}
+.right-sidebar::-webkit-scrollbar{display:none;}
+.sidebar-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.sidebar-head{padding:14px 17px;border-bottom:1px solid var(--border-soft);background:linear-gradient(135deg,#fafafa,#f4f4f6);}
+.sidebar-heading{font-size:12px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:7px;}
+.sidebar-heading::before{content:'';width:3px;height:13px;background:var(--accent);border-radius:2px;flex-shrink:0;}
+.sidebar-body{padding:14px 16px;}
+.info-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-soft);font-size:12.5px;}
+.info-row:last-child{border-bottom:none;}
+.info-row span:first-child{color:var(--muted);font-weight:700;}
+.info-row span:last-child{font-weight:900;}
+.sidebar-more-list{display:flex;flex-direction:column;}
+.sidebar-more-item{display:flex;flex-direction:column;gap:4px;padding:12px 17px;border-bottom:1px solid var(--border-soft);text-decoration:none;color:inherit;transition:.2s;}
+.sidebar-more-item:last-child{border-bottom:none;}
+.sidebar-more-item:hover{background:#fff7f5;padding-left:22px;}
+.sidebar-more-item strong{font-size:12.5px;font-weight:800;line-height:1.42;}
+.sidebar-more-item span{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}
+
+/* ── Footer ── */
+footer{background:var(--black);color:#aaa;padding:40px 24px 24px;margin-top:auto;}
+.footer-inner{max-width:1280px;margin:0 auto;}
+.footer-top{display:flex;gap:40px;flex-wrap:wrap;margin-bottom:32px;}
+.footer-brand{flex:1;min-width:220px;}
+.footer-brand p{font-size:13px;line-height:1.7;color:#666;}
+.footer-links{flex:2;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:24px;}
+.footer-col h4{color:#fff;font-size:12.5px;font-weight:800;margin-bottom:14px;text-transform:uppercase;letter-spacing:1.2px;}
+.footer-col a{display:block;color:#555;text-decoration:none;font-size:13px;font-weight:600;margin-bottom:9px;transition:color var(--ease);}
+.footer-col a:hover{color:#fff;}
+.footer-bottom{border-top:1px solid #1a1a1a;padding-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:11.5px;color:#3a3a3a;}
+.footer-bottom span{color:var(--red);}
+
+@media(max-width:1060px){.page-body{grid-template-columns:minmax(0,1fr) 270px;}.left-sidebar{display:none;}}
+@media(max-width:860px){.page-body{grid-template-columns:1fr;}.right-sidebar{display:none;}.article-body-wrap{padding:22px 20px;}}
+@media(max-width:480px){nav{display:none;}.hamburger{display:flex;}.hero{padding:36px 18px;}}
+</style>
+</head>
+<body>
+
+<div id="rpbar"><div id="rpfill"></div></div>
+
+<header>
+  <a class="logo-wrap" href="index.html"><img src="logo.png" alt="ExamReady" style="height:44px;"></a>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="class9.html">Class 9</a>
+    <a href="class10.html">Class 10</a>
+    <a href="class11.html">Class 11</a>
+    <a href="class12.html">Class 12</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="notes.html" class="active">Notes</a>
+    <a href="quizzes.html">Quizzes</a>
+  </nav>
+  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner" id="heroMount"></div>
+</section>
+
+<div class="page-body" id="pageBody"></div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div style="font-family:'Bebas Neue';font-size:26px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
+        <p>Concise, exam-ready short notes for CBSE Class 9–12. Formulas, key concepts, callouts, and exam tips.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col"><h4>Classes</h4><a href="class9.html">Class 9</a><a href="class10.html">Class 10</a><a href="class11.html">Class 11</a><a href="class12.html">Class 12</a></div>
+        <div class="footer-col"><h4>Resources</h4><a href="notes.html">Short Notes</a><a href="solutions.html">Solutions</a><a href="pyq.html">PYQ Papers</a><a href="quizzes.html">Quizzes</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2026 ExamReady. Made with <span>♥</span> for students.</p></div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script src="notes-module-for-shared.js"></script>
+<script src="animations.js"></script>
+<script src="ads.js"></script>
+<script src="content-ads.js"></script>
+<script>
+function toggleMenu() {
+  const nav = document.getElementById('mainNav');
+  if (nav.dataset.open === '1') { nav.removeAttribute('style'); nav.dataset.open = '0'; }
+  else { Object.assign(nav.style,{display:'flex',flexDirection:'column',position:'absolute',top:'64px',left:'0',right:'0',background:'#111',padding:'16px',zIndex:'999'}); nav.dataset.open = '1'; }
+}
+
+function initRP() {
+  const fill = document.getElementById('rpfill');
+  if (!fill) return;
+  window.addEventListener('scroll', () => {
+    const body = document.querySelector('.article-body-wrap');
+    if (!body) return;
+    const rect = body.getBoundingClientRect();
+    const pct = Math.min(100, Math.max(0, (-rect.top / Math.max(1, body.offsetHeight - window.innerHeight * 0.4)) * 100));
+    fill.style.width = pct + '%';
+  }, { passive:true });
+}
+
+/* ── Tag chip CSS class ── */
+function tagChipCls(tag) {
+  const map = {
+    'important':'important','exam-tips':'exam-tips','exam':'exam',
+    'formula':'formula','formulas':'formula','concept':'concept','concepts':'concept'
+  };
+  return map[tag] || 'default';
+}
+
+function renderNotFound() {
+  document.getElementById('heroMount').innerHTML = `
+    <div class="crumbs"><a href="index.html">Home</a><span class="crumbs-sep">›</span><a href="notes.html">Notes</a></div>
+    <a class="back-btn" href="notes.html">← Back to Notes</a>
+    <h1>Note Not Found</h1>
+    <p class="hero-summary">This link may be broken or the note was removed.</p>`;
+  document.getElementById('pageBody').innerHTML = '';
+}
+
+function renderPost(note) {
+  const subLabel = getSubjectLabel(note.classNum, note.subjectKey);
+  const backUrl  = `notes.html?class=${encodeURIComponent(note.classNum)}`;
+  const words    = (note.content || '').split(/\s+/).filter(Boolean).length;
+  const mins     = Math.max(1, Math.round(words / 200));
+  const tags     = note.tags || [];
+
+  document.title = `${note.title} – ExamReady Notes`;
+  document.querySelector('meta[name="description"]')?.setAttribute('content',
+    note.summary || `CBSE ${subLabel} notes for Class ${note.classNum} — ${note.title}`);
+
+  const allNotes = getAllNotes();
+  const sameSubj = allNotes.filter(n => n.classNum===note.classNum && n.subjectKey===note.subjectKey && n.id!==note.id);
+  const sameCls  = allNotes.filter(n => n.classNum===note.classNum && n.subjectKey!==note.subjectKey && n.id!==note.id);
+  const others   = allNotes.filter(n => n.classNum!==note.classNum && n.id!==note.id);
+  const more8    = [...sameSubj,...sameCls,...others].slice(0,8);
+  const side5    = [...sameSubj,...sameCls,...others].slice(0,5);
+
+  /* ── Hero ── */
+  document.getElementById('heroMount').innerHTML = `
+    <div class="crumbs">
+      <a href="index.html">Home</a><span class="crumbs-sep">›</span>
+      <a href="notes.html">Notes</a><span class="crumbs-sep">›</span>
+      <a href="${backUrl}">Class ${escapeHtml(note.classNum)}</a><span class="crumbs-sep">›</span>
+      <span>${escapeHtml(subLabel)}</span>
+    </div>
+    <a class="back-btn" href="${backUrl}">← Class ${escapeHtml(note.classNum)} Notes</a>
+    <div class="hero-tags-row">
+      <div class="hero-tag accent">📝 ${escapeHtml(subLabel)}</div>
+      <div class="hero-tag">Class ${escapeHtml(note.classNum)}</div>
+      <div class="hero-tag">${mins} min read</div>
+      <div class="hero-tag">${words} words</div>
+      ${tags.slice(0,3).map(t=>`<div class="hero-tag">${escapeHtml(t)}</div>`).join('')}
+    </div>
+    <h1>${escapeHtml(note.title)}</h1>
+    <p class="hero-summary">${escapeHtml(note.summary || getNoteExcerpt(note, 200))}</p>
+    <div class="hero-byline">
+      <div class="byline-avatar">N</div>
+      <div>
+        <div class="byline-name">${escapeHtml(note.author || 'ExamReady Team')}</div>
+        <div class="byline-date">Updated ${escapeHtml(formatHumanDate(note.updatedAt))}</div>
+      </div>
+      <div class="byline-chips">
+        <div class="byline-chip"><strong>${mins}</strong><span>Min</span></div>
+        <div class="byline-chip"><strong>${words}</strong><span>Words</span></div>
+        <div class="byline-chip"><strong>${tags.length}</strong><span>Tags</span></div>
+      </div>
+    </div>`;
+
+  /* ── Left sidebar ── */
+  const tagChipsHtml = tags.length ? `
+    <div class="tag-chips-card">
+      <div class="tag-chips-head">Tags</div>
+      <div class="tag-chips">
+        ${tags.map(t=>`<a href="notes.html" class="tag-chip ${tagChipCls(t)}">${escapeHtml(t)}</a>`).join('')}
+      </div>
+    </div>` : '';
+
+  const lSide = `<aside class="left-sidebar">
+    <div class="toc-card">
+      <div class="toc-heading">On This Page</div>
+      <a class="toc-link" href="#summary" onclick="document.getElementById('summary').scrollIntoView({behavior:'smooth'});return false;">💡 Summary</a>
+      <a class="toc-link" href="#note-body" onclick="document.getElementById('note-body').scrollIntoView({behavior:'smooth'});return false;">📝 Full Notes</a>
+      <a class="toc-link" href="#more-notes" onclick="document.getElementById('more-notes').scrollIntoView({behavior:'smooth'});return false;">🔗 More Notes</a>
+    </div>
+    ${tagChipsHtml}
+  </aside>`;
+
+  /* ── Note body rendering ── */
+  const bodyHtml = formatNoteContent(note.content);
+
+  /* ── More notes grid ── */
+  const moreCards = more8.length ? more8.map(n => {
+    const s = getSubjectLabel(n.classNum, n.subjectKey);
+    const w = (n.content||'').split(/\s+/).filter(Boolean).length;
+    const m = Math.max(1, Math.round(w/200));
+    return `<a class="more-card" href="${getNoteUrl(n)}">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <span class="more-badge">${escapeHtml(s)}</span>
+        <span class="more-time">${m} min</span>
+      </div>
+      <div class="more-card-title">${escapeHtml(n.title)}</div>
+      <div style="font-size:11px;font-weight:700;color:var(--muted)">Class ${escapeHtml(n.classNum)} · ${escapeHtml(formatHumanDate(n.updatedAt))}</div>
+    </a>`;
+  }).join('') : `<div class="more-empty">No other notes yet — add them from the admin panel.</div>`;
+
+  /* ── Main content ── */
+  const main = `<div class="main-content">
+
+    <div class="summary-card" id="summary">
+      <div class="summary-icon">💡</div>
+      <div>
+        <div class="summary-label">Quick Summary</div>
+        <div class="summary-text">${escapeHtml(note.summary || 'Key concepts and revision points for quick exam preparation.')}</div>
+      </div>
+    </div>
+
+    <article class="article-card" id="note-body">
+      <div class="article-topbar">
+        <div class="article-kicker">Short Notes · ${escapeHtml(subLabel)} · Class ${escapeHtml(note.classNum)}</div>
+        <div class="article-actions">
+          <a class="a-btn" href="${backUrl}">← All Notes</a>
+          <a class="a-btn" href="quizzes.html">🎯 Practice Quiz</a>
+          <a class="a-btn" href="solutions.html">📖 Solutions</a>
+        </div>
+      </div>
+      <div class="article-body-wrap">
+        <div class="article-body">${bodyHtml}</div>
+      </div>
+      <div class="article-foot">
+        <span class="article-foot-meta">Updated ${escapeHtml(formatHumanDate(note.updatedAt))} · ${escapeHtml(note.author || 'ExamReady Team')}</span>
+        <div class="share-row">
+          <button class="share-btn" title="Bookmark">🔖</button>
+          <button class="share-btn" title="Print" onclick="window.print()">🖨</button>
+        </div>
+      </div>
+    </article>
+
+    ${getManagedAdSlotHtml('inline')}
+
+    ${getManagedAdSlotHtml('results')}
+
+    <section class="more-section" id="more-notes">
+      <div class="more-head">
+        <div>
+          <div class="more-head-title">More Notes</div>
+          <div class="more-head-sub">Keep revising — pick your next topic</div>
+        </div>
+        <a class="more-head-link" href="notes.html">View all <span>→</span></a>
+      </div>
+      <div class="more-grid">${moreCards}</div>
+    </section>
+
+  </div>`;
+
+  /* ── Right sidebar ── */
+  const sideItems = side5.length ? side5.map(n => `
+    <a class="sidebar-more-item" href="${getNoteUrl(n)}">
+      <strong>${escapeHtml(n.title)}</strong>
+      <span>${escapeHtml(getSubjectLabel(n.classNum,n.subjectKey))}</span>
+    </a>`).join('') : `<div style="padding:14px 17px;font-size:12.5px;color:var(--muted);font-weight:700">No other notes yet.</div>`;
+
+  const rSide = `<aside class="right-sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-head"><div class="sidebar-heading">Note Info</div></div>
+      <div class="sidebar-body">
+        <div class="info-row"><span>Class</span><span>Class ${escapeHtml(note.classNum)}</span></div>
+        <div class="info-row"><span>Subject</span><span>${escapeHtml(subLabel)}</span></div>
+        <div class="info-row"><span>Read Time</span><span>${mins} min</span></div>
+        <div class="info-row"><span>Words</span><span>${words}</span></div>
+        <div class="info-row"><span>Updated</span><span>${escapeHtml(formatHumanDate(note.updatedAt))}</span></div>
+      </div>
+    </div>
+    ${tags.length ? `<div class="sidebar-card">
+      <div class="sidebar-head"><div class="sidebar-heading">Tags</div></div>
+      <div class="sidebar-body" style="padding:10px 12px">
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${tags.map(t=>`<a href="notes.html" class="tag-chip ${tagChipCls(t)}">${escapeHtml(t)}</a>`).join('')}
+        </div>
+      </div>
+    </div>` : ''}
+    <div class="sidebar-card">
+      <div class="sidebar-head"><div class="sidebar-heading">More Notes</div></div>
+      <div class="sidebar-more-list">${sideItems}</div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sidebar-head"><div class="sidebar-heading">Quick Links</div></div>
+      <div class="sidebar-body" style="display:flex;flex-direction:column;gap:7px;">
+        <a href="solutions.html?class=${escapeHtml(note.classNum)}" style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:inherit;font-size:12.5px;font-weight:800;transition:.2s;" onmouseenter="this.style.borderColor='#e8211a'" onmouseleave="this.style.borderColor='var(--border)'">📖 Solutions</a>
+        <a href="quizzes.html" style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:inherit;font-size:12.5px;font-weight:800;transition:.2s;" onmouseenter="this.style.borderColor='#e8211a'" onmouseleave="this.style.borderColor='var(--border)'">🎯 Practice Quiz</a>
+        <a href="pyq.html" style="display:flex;align-items:center;gap:7px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:inherit;font-size:12.5px;font-weight:800;transition:.2s;" onmouseenter="this.style.borderColor='#e8211a'" onmouseleave="this.style.borderColor='var(--border)'">📄 PYQ Papers</a>
+      </div>
+    </div>
+  </aside>`;
+
+  document.getElementById('pageBody').innerHTML = lSide + main + rSide;
+  initRP();
+}
+
+const params = new URLSearchParams(window.location.search);
+const note = findNoteById(params.get('id'));
+if (!note) renderNotFound();
+else renderPost(note);
+</script>
+</body>
+</html>

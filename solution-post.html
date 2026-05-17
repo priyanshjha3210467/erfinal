@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Solution Article – ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────
+   ROOT & RESET
+───────────────────────────────────────── */
+:root {
+  --red:#e8211a;
+  --red-soft:rgba(232,33,26,0.07);
+  --black:#0d0d0d;
+  --surface:#f4f4f6;
+  --card:#ffffff;
+  --border:#e4e4e7;
+  --border-soft:#eeeeef;
+  --text:#1a1a1a;
+  --text-2:#4a4a4a;
+  --muted:#888;
+  --muted-light:#bbb;
+  --radius-sm:12px;
+  --radius:18px;
+  --radius-lg:24px;
+  --shadow-xs:0 2px 8px rgba(0,0,0,0.045);
+  --shadow:0 8px 32px rgba(0,0,0,0.065);
+  --shadow-lg:0 20px 56px rgba(0,0,0,0.09);
+  --ease:.28s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+html,body{overflow-x:hidden;width:100%;}
+body{
+  min-height:100vh;display:flex;flex-direction:column;
+  font-family:'Nunito',sans-serif;background:var(--surface);
+  color:var(--text);-webkit-font-smoothing:antialiased;
+}
+
+/* ─── Reading progress bar ─── */
+#rpbar{position:fixed;top:64px;left:0;right:0;height:3px;z-index:1200;pointer-events:none;}
+#rpfill{
+  height:100%;width:0%;border-radius:0 3px 3px 0;
+  background:linear-gradient(90deg,var(--red) 0%,#ff7a50 55%,#ffb347 100%);
+  transition:width .08s linear;
+  box-shadow:0 0 14px rgba(232,33,26,0.38);
+}
+
+/* ─── Header ─── */
+header{
+  background:var(--black);padding:0 28px;
+  position:sticky;top:0;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;height:64px;
+  box-shadow:0 2px 24px rgba(0,0,0,0.38);
+}
+.logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none;}
+nav{display:flex;align-items:center;gap:2px;flex-wrap:wrap;}
+nav a{
+  color:#9a9a9a;font-weight:700;font-size:13.5px;padding:8px 13px;
+  border-radius:8px;text-decoration:none;
+  transition:color var(--ease),background var(--ease);
+}
+nav a:hover,nav a.active{color:#fff;background:rgba(255,255,255,0.09);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;}
+.hamburger span{width:24px;height:2px;background:#fff;border-radius:2px;transition:var(--ease);}
+
+/* ─── Hero ─── */
+.hero{
+  background:
+    radial-gradient(ellipse 65% 90% at 88% 18%,rgba(232,33,26,0.24) 0%,transparent 55%),
+    radial-gradient(ellipse 45% 55% at 8%  82%,rgba(232,33,26,0.09) 0%,transparent 52%),
+    linear-gradient(162deg,#080808 0%,#101010 38%,#1f0b0b 100%);
+  padding:54px 44px 46px;
+  color:#fff;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.022) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse 85% 85% at 50% 50%,#000 30%,transparent 75%);
+}
+.hero-inner{max-width:1500px;margin:0 auto;position:relative;z-index:1;}
+
+.crumbs{
+  display:flex;align-items:center;gap:5px;flex-wrap:wrap;
+  color:rgba(255,255,255,0.35);font-size:12px;font-weight:700;
+  margin-bottom:20px;
+}
+.crumbs a{color:inherit;text-decoration:none;transition:color var(--ease);}
+.crumbs a:hover{color:rgba(255,255,255,0.7);}
+.crumbs-sep{opacity:.3;font-size:10px;}
+
+.back-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  color:rgba(255,255,255,0.82);text-decoration:none;
+  border:1px solid rgba(255,255,255,0.13);border-radius:999px;
+  padding:9px 18px;font-size:13px;font-weight:800;
+  background:rgba(255,255,255,0.05);backdrop-filter:blur(8px);
+  margin-bottom:24px;
+  transition:background var(--ease),border-color var(--ease),transform var(--ease);
+}
+.back-btn:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.28);transform:translateX(-3px);}
+
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;}
+.hero-tag{
+  border-radius:999px;padding:6px 14px;
+  font-size:10.5px;font-weight:900;text-transform:uppercase;letter-spacing:1.2px;
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.11);
+  color:rgba(255,255,255,0.75);
+  transition:background var(--ease);
+}
+.hero-tag:hover{background:rgba(255,255,255,0.12);}
+.hero-tag.accent{background:rgba(232,33,26,0.2);border-color:rgba(232,33,26,0.35);color:#ffb3ae;}
+
+.hero h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(26px,3.8vw,54px);
+  line-height:1.07;font-weight:800;
+  max-width:980px;margin-bottom:18px;letter-spacing:-0.8px;
+  background:linear-gradient(165deg,#fff 35%,rgba(255,255,255,0.68));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-summary{
+  color:rgba(255,255,255,0.6);
+  font-size:clamp(14px,1.7vw,17px);
+  line-height:1.82;max-width:740px;font-weight:600;
+  margin-bottom:28px;font-family:'Space Grotesk',sans-serif;
+}
+.hero-byline{
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+  padding-top:22px;border-top:1px solid rgba(255,255,255,0.08);
+}
+.byline-avatar{
+  width:42px;height:42px;border-radius:50%;
+  background:linear-gradient(135deg,var(--red),#ff7a50);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:900;color:#fff;flex-shrink:0;
+  box-shadow:0 4px 16px rgba(232,33,26,0.4);
+}
+.byline-name{font-size:13.5px;font-weight:800;color:#fff;}
+.byline-date{font-size:11px;color:rgba(255,255,255,0.38);font-weight:700;margin-top:2px;}
+.byline-chips{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto;}
+.byline-chip{
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);
+  border-radius:10px;padding:7px 13px;text-align:center;
+}
+.byline-chip strong{display:block;font-family:'Bebas Neue';font-size:20px;color:var(--red);line-height:1;}
+.byline-chip span{display:block;font-size:9px;font-weight:800;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+/* ─── Page layout ─── */
+.page-body{
+  max-width:1500px;margin:0 auto;
+  padding:36px 44px 72px;
+  display:grid;
+  grid-template-columns:200px minmax(0,1fr) 288px;
+  gap:26px;
+  align-items:start;
+}
+
+/* ─── Left sidebar ─── */
+.left-sidebar{
+  display:flex;flex-direction:column;gap:16px;
+  position:sticky;top:82px;
+}
+.toc-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px;
+  box-shadow:var(--shadow-xs);
+}
+.toc-heading{
+  font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:var(--muted);
+  margin-bottom:12px;display:flex;align-items:center;gap:6px;
+}
+.toc-heading::before{content:'';width:3px;height:12px;background:var(--red);border-radius:2px;flex-shrink:0;}
+.toc-list{display:flex;flex-direction:column;gap:1px;}
+.toc-link{
+  display:flex;align-items:center;gap:8px;
+  font-size:12.5px;font-weight:700;color:var(--muted);
+  text-decoration:none;padding:7px 10px;border-radius:10px;
+  transition:background var(--ease),color var(--ease),padding-left var(--ease);
+}
+.toc-link::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--border);flex-shrink:0;
+  transition:background var(--ease),transform var(--ease);
+}
+.toc-link:hover,.toc-link.active{background:var(--red-soft);color:var(--red);padding-left:14px;}
+.toc-link:hover::before,.toc-link.active::before{background:var(--red);transform:scale(1.4);}
+
+/* Left ad slots */
+.ad-left-slot{
+  background:linear-gradient(160deg,#fbfbfc,#f3f3f5);
+  border:1.5px dashed #d8d8db;border-radius:var(--radius);
+  padding:16px 14px;text-align:center;
+  transition:border-color var(--ease),box-shadow var(--ease);
+}
+.ad-left-slot:hover{border-color:#e0b0ad;box-shadow:0 4px 18px rgba(232,33,26,0.06);}
+.ad-slot-label{
+  font-size:8.5px;font-weight:900;text-transform:uppercase;letter-spacing:2px;
+  color:var(--red);opacity:.6;margin-bottom:10px;display:block;
+}
+.ad-left-inner{
+  width:100%;min-height:280px;
+  background:linear-gradient(135deg,#ebebed,#e2e2e5);
+  border-radius:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+}
+.ad-left-inner span{font-size:9.5px;font-weight:900;color:var(--muted-light);text-transform:uppercase;letter-spacing:1px;}
+
+/* ─── Main content ─── */
+.main-content{display:flex;flex-direction:column;gap:20px;min-width:0;}
+
+/* Summary card */
+.summary-card{
+  background:linear-gradient(140deg,#fffcfc 0%,#fff5f3 100%);
+  border:1.5px solid #ffd2cc;border-radius:var(--radius-lg);
+  padding:24px 28px;
+  display:flex;gap:18px;align-items:flex-start;
+  box-shadow:0 4px 22px rgba(232,33,26,0.07);
+  position:relative;overflow:hidden;
+}
+.summary-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--red),#ff8d66,#ffbb50);
+}
+.summary-icon{font-size:32px;flex-shrink:0;margin-top:2px;filter:drop-shadow(0 2px 6px rgba(232,33,26,0.18));}
+.summary-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:var(--red);margin-bottom:8px;}
+.summary-text{font-size:15px;line-height:1.8;color:#3d1a17;font-weight:700;font-family:'Space Grotesk',sans-serif;}
+
+/* Article card */
+.article-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden;
+}
+.article-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 32px;
+  border-bottom:1px solid var(--border-soft);
+  background:linear-gradient(135deg,#fefefe,#f9f9fa);
+  flex-wrap:wrap;gap:10px;
+}
+.article-kicker{
+  font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:var(--red);
+  display:flex;align-items:center;gap:8px;
+}
+.article-kicker::before{content:'';width:20px;height:2px;background:var(--red);border-radius:2px;flex-shrink:0;}
+.article-actions{display:flex;gap:7px;}
+.a-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:7px 12px;
+  font-size:11.5px;font-weight:800;color:var(--text-2);
+  text-decoration:none;
+  transition:background var(--ease),border-color var(--ease),color var(--ease);
+}
+.a-btn:hover{background:#fff;border-color:var(--red);color:var(--red);}
+
+.article-body-wrap{padding:34px 38px 38px;}
+.article-body{
+  font-size:17.5px;line-height:2.05;
+  color:#1e1e22;
+  font-family:'Space Grotesk',sans-serif;font-weight:400;
+}
+.article-body p{margin-bottom:26px;}
+.article-body p:last-child{margin-bottom:0;}
+.article-body ul,.article-body ol{margin:0 0 26px 30px;}
+.article-body li{margin-bottom:15px;line-height:1.85;}
+.article-body strong{font-weight:700;color:var(--text);}
+
+.article-foot{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  padding:16px 32px;
+  border-top:1px solid var(--border-soft);
+  background:linear-gradient(135deg,#fefefe,#f9f9fa);
+}
+.article-foot-meta{font-size:12px;font-weight:700;color:var(--muted);}
+.share-row{display:flex;gap:7px;}
+.share-btn{
+  width:34px;height:34px;border-radius:9px;
+  border:1px solid var(--border);background:#fff;
+  font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:border-color var(--ease),background var(--ease),transform var(--ease);
+}
+.share-btn:hover{border-color:var(--red);background:var(--red-soft);transform:translateY(-2px);}
+
+/* ─── Inline ad ─── */
+.ad-inline{
+  background:linear-gradient(140deg,#fffcfb,#fff6f4);
+  border:1.5px solid #f0d0cc;border-radius:var(--radius-lg);
+  padding:20px 24px;
+  display:flex;align-items:center;gap:18px;
+  position:relative;overflow:hidden;
+  transition:box-shadow var(--ease),border-color var(--ease),transform var(--ease);
+}
+.ad-inline:hover{box-shadow:0 10px 32px rgba(232,33,26,0.1);border-color:#e0b0aa;transform:translateY(-2px);}
+.ad-inline::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--red),#ff8d66);
+}
+.ad-inline-spon{
+  position:absolute;top:9px;right:13px;
+  font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;
+  color:rgba(232,33,26,0.4);
+}
+.ad-inline-icon{
+  width:54px;height:54px;border-radius:14px;flex-shrink:0;
+  background:linear-gradient(135deg,#fff0ec,#ffd5ce);
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  box-shadow:0 4px 16px rgba(232,33,26,0.14);
+}
+.ad-inline-body{flex:1;min-width:0;}
+.ad-inline-title{font-size:15.5px;font-weight:900;color:var(--text);margin-bottom:5px;line-height:1.35;}
+.ad-inline-desc{font-size:12.5px;color:var(--muted);font-weight:700;line-height:1.55;}
+.ad-inline-cta{
+  flex-shrink:0;background:var(--red);color:#fff;
+  padding:11px 18px;border-radius:11px;
+  font-size:13px;font-weight:900;text-decoration:none;white-space:nowrap;
+  transition:background var(--ease),transform var(--ease),box-shadow var(--ease);
+}
+.ad-inline-cta:hover{background:#c41a14;transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,33,26,0.35);}
+
+/* ─── Banner ad ─── */
+.ad-banner{
+  border-radius:var(--radius-lg);
+  background:linear-gradient(140deg,#080808 0%,#140808 55%,#1c0d0d 100%);
+  padding:30px 34px;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-lg);
+  transition:box-shadow var(--ease);
+}
+.ad-banner:hover{box-shadow:0 28px 72px rgba(0,0,0,0.15);}
+.ad-banner::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--red),#ff8d66,#ffbb50);
+}
+.ad-banner::after{
+  content:'';position:absolute;right:-70px;top:-70px;
+  width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(232,33,26,0.14),transparent 68%);
+  pointer-events:none;
+}
+.ad-banner-label{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:rgba(232,33,26,0.55);margin-bottom:8px;}
+.ad-banner-title{font-size:22px;font-weight:900;color:#fff;margin-bottom:8px;line-height:1.2;font-family:'Space Grotesk',sans-serif;}
+.ad-banner-desc{font-size:13px;color:rgba(255,255,255,0.5);font-weight:600;line-height:1.72;max-width:580px;}
+.ad-banner-cta{
+  flex-shrink:0;background:var(--red);color:#fff;
+  padding:14px 28px;border-radius:12px;
+  font-size:14px;font-weight:900;text-decoration:none;
+  position:relative;z-index:1;white-space:nowrap;
+  box-shadow:0 6px 24px rgba(232,33,26,0.38);
+  transition:background var(--ease),transform var(--ease),box-shadow var(--ease);
+}
+.ad-banner-cta:hover{background:#c41a14;transform:translateY(-3px);box-shadow:0 14px 40px rgba(232,33,26,0.48);}
+
+/* ─── More articles ─── */
+.more-section{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);
+}
+.more-head{
+  padding:22px 28px;
+  background:linear-gradient(135deg,#fefefe,#f9f9fb);
+  border-bottom:1px solid var(--border-soft);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.more-head-left{}
+.more-head-title{font-size:18px;font-weight:900;color:var(--text);margin-bottom:3px;}
+.more-head-sub{font-size:12.5px;color:var(--muted);font-weight:700;}
+.more-head-link{
+  font-size:12.5px;font-weight:900;color:var(--red);text-decoration:none;
+  display:flex;align-items:center;gap:4px;
+  transition:gap var(--ease);
+}
+.more-head-link:hover{gap:8px;}
+.more-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:1px;background:var(--border-soft);
+}
+.more-card{
+  background:var(--card);padding:20px 22px;
+  text-decoration:none;color:inherit;
+  display:flex;flex-direction:column;gap:10px;
+  transition:background var(--ease);position:relative;overflow:hidden;
+}
+.more-card::before{
+  content:'';position:absolute;top:0;left:0;width:3px;height:0;
+  background:var(--red);border-radius:0 2px 2px 0;
+  transition:height var(--ease);
+}
+.more-card:hover{background:#fffbfb;}
+.more-card:hover::before{height:100%;}
+.more-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.more-badge{
+  background:var(--red-soft);color:var(--red);
+  font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:1px;
+  padding:4px 10px;border-radius:20px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;
+}
+.more-time{font-size:11px;font-weight:800;color:var(--muted-light);flex-shrink:0;}
+.more-card-title{font-size:13.5px;font-weight:800;line-height:1.46;color:var(--text);}
+.more-card-meta{
+  font-size:11px;font-weight:700;color:var(--muted);
+  display:flex;align-items:center;gap:6px;
+}
+.more-card-meta::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--muted-light);flex-shrink:0;}
+.more-empty{padding:40px 24px;text-align:center;color:var(--muted);}
+.more-empty strong{display:block;font-size:16px;color:var(--text);margin-bottom:6px;}
+
+/* ─── Right sidebar ─── */
+.right-sidebar{
+  display:flex;flex-direction:column;gap:18px;
+  position:sticky;top:82px;
+  max-height:calc(100vh - 100px);overflow-y:auto;scrollbar-width:none;
+}
+.right-sidebar::-webkit-scrollbar{display:none;}
+
+/* Sidebar ad */
+.ad-sidebar{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);overflow:hidden;
+  box-shadow:var(--shadow-xs);
+  transition:box-shadow var(--ease),transform var(--ease);
+}
+.ad-sidebar:hover{box-shadow:var(--shadow);transform:translateY(-2px);}
+.ad-sidebar-cover{
+  height:76px;display:flex;align-items:center;justify-content:center;
+  font-size:30px;position:relative;overflow:hidden;
+}
+.ad-sidebar-cover::after{
+  content:'Sponsored';
+  position:absolute;top:8px;right:10px;
+  font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;
+  color:rgba(255,255,255,0.4);
+}
+.ad-sidebar-body{padding:15px 17px 19px;}
+.ad-s-label{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:var(--red);margin-bottom:7px;}
+.ad-s-title{font-size:14px;font-weight:900;line-height:1.42;color:var(--text);margin-bottom:6px;}
+.ad-s-desc{font-size:12px;color:var(--muted);font-weight:700;line-height:1.65;margin-bottom:13px;}
+.ad-s-btn{
+  display:block;width:100%;
+  background:var(--red);color:#fff;text-align:center;
+  padding:10px;border-radius:10px;
+  font-size:12.5px;font-weight:900;text-decoration:none;
+  transition:background var(--ease),transform var(--ease);
+}
+.ad-s-btn:hover{background:#c41a14;transform:translateY(-1px);}
+.ad-s-tag{display:block;text-align:center;font-size:9px;font-weight:700;color:var(--muted-light);margin-top:8px;}
+
+/* Sidebar more posts */
+.sidebar-more{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);overflow:hidden;
+  box-shadow:var(--shadow-xs);
+}
+.sidebar-more-head{
+  padding:15px 17px;border-bottom:1px solid var(--border-soft);
+  background:linear-gradient(135deg,#fafafa,#f4f4f6);
+}
+.sidebar-more-heading{
+  font-size:12px;font-weight:900;color:var(--text);
+  display:flex;align-items:center;gap:7px;
+}
+.sidebar-more-heading::before{content:'';width:3px;height:13px;background:var(--red);border-radius:2px;flex-shrink:0;}
+.sidebar-more-list{display:flex;flex-direction:column;}
+.sidebar-more-item{
+  display:flex;flex-direction:column;gap:4px;
+  padding:12px 17px;border-bottom:1px solid var(--border-soft);
+  text-decoration:none;color:inherit;
+  transition:background var(--ease),padding-left var(--ease);
+  position:relative;
+}
+.sidebar-more-item::after{
+  content:'›';position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  font-size:15px;font-weight:900;color:var(--muted-light);
+  transition:right var(--ease),color var(--ease);
+}
+.sidebar-more-item:last-child{border-bottom:none;}
+.sidebar-more-item:hover{background:#fffbfb;padding-left:22px;}
+.sidebar-more-item:hover::after{right:9px;color:var(--red);}
+.sidebar-more-item strong{font-size:12.5px;font-weight:800;line-height:1.42;color:var(--text);}
+.sidebar-more-item span{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}
+
+/* ─── Footer ─── */
+footer{background:var(--black);color:#aaa;padding:44px 28px 26px;margin-top:auto;}
+.footer-inner{max-width:1500px;margin:0 auto;}
+.footer-top{display:flex;gap:40px;flex-wrap:wrap;margin-bottom:32px;}
+.footer-brand{flex:1;min-width:220px;}
+.footer-brand p{font-size:13px;line-height:1.75;color:#666;}
+.footer-links{flex:2;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:24px;}
+.footer-col h4{color:#fff;font-size:12.5px;font-weight:800;margin-bottom:14px;text-transform:uppercase;letter-spacing:1.2px;}
+.footer-col a{display:block;color:#555;text-decoration:none;font-size:13px;font-weight:600;margin-bottom:9px;transition:color var(--ease);}
+.footer-col a:hover{color:#fff;}
+.footer-bottom{border-top:1px solid #1a1a1a;padding-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:11.5px;color:#3a3a3a;}
+.footer-bottom span{color:var(--red);}
+
+/* ─── Responsive ─── */
+@media(max-width:1280px){
+  .page-body{grid-template-columns:190px minmax(0,1fr) 270px;padding:30px 30px 60px;}
+}
+@media(max-width:1060px){
+  .page-body{grid-template-columns:minmax(0,1fr) 260px;padding:24px 24px 56px;}
+  .left-sidebar{display:none;}
+}
+@media(max-width:860px){
+  .page-body{grid-template-columns:1fr;padding:20px 20px 52px;}
+  .right-sidebar{display:none;}
+  .article-body-wrap{padding:24px 22px;}
+  .article-topbar,.article-foot{padding:16px 22px;}
+  .more-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));}
+  .ad-inline{flex-wrap:wrap;}
+  .ad-inline-cta{width:100%;text-align:center;}
+  .ad-banner{flex-direction:column;text-align:center;}
+}
+@media(max-width:600px){
+  .hero{padding:38px 20px 36px;}
+  .hero h1{font-size:clamp(22px,7vw,34px);}
+  .byline-chips{display:none;}
+  .more-grid{grid-template-columns:1fr 1fr;}
+  .summary-card{flex-direction:column;gap:12px;}
+}
+@media(max-width:480px){
+  nav{display:none;}
+  .hamburger{display:flex;}
+  .more-grid{grid-template-columns:1fr;}
+}
+</style>
+<link rel="stylesheet" href="animations.css">
+</head>
+<body>
+
+<div id="rpbar"><div id="rpfill"></div></div>
+
+<header>
+  <a class="logo-wrap" href="index.html">
+    <img src="logo.png" alt="ExamReady" style="height:44px;">
+  </a>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="class9.html">Class 9</a>
+    <a href="class10.html">Class 10</a>
+    <a href="class11.html">Class 11</a>
+    <a href="class12.html">Class 12</a>
+    <a href="solutions.html" class="active">Solutions</a>
+    <a href="quizzes.html">Quizzes</a>
+  </nav>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner" id="heroMount"></div>
+</section>
+
+<div class="page-body" id="pageBody"></div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div style="font-family:'Bebas Neue';font-size:26px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
+        <p>Clean, readable CBSE solution articles, quizzes, PYQ papers, and question banks — all free for Class 9 to 12.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Classes</h4>
+          <a href="class9.html">Class 9</a>
+          <a href="class10.html">Class 10</a>
+          <a href="class11.html">Class 11</a>
+          <a href="class12.html">Class 12</a>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="solutions.html">Solutions</a>
+          <a href="pyq.html">PYQ Papers</a>
+          <a href="questionbank.html">Question Banks</a>
+          <a href="quizzes.html">Quizzes</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ExamReady. Made with <span>♥</span> for students.</p>
+      <p>Clean reading for every subject.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script src="animations.js"></script>
+<script src="ads.js"></script>
+<script src="content-ads.js"></script>
+<script>
+/* nav toggle */
+function toggleMenu() {
+  const nav = document.getElementById('mainNav');
+  if (nav.dataset.open === '1') { nav.removeAttribute('style'); nav.dataset.open = '0'; }
+  else {
+    Object.assign(nav.style,{display:'flex',flexDirection:'column',position:'absolute',top:'64px',left:'0',right:'0',background:'#111',padding:'16px',zIndex:'999'});
+    nav.dataset.open = '1';
+  }
+}
+
+/* reading progress */
+function initRP() {
+  const fill = document.getElementById('rpfill');
+  if (!fill) return;
+  window.addEventListener('scroll', () => {
+    const body = document.querySelector('.article-body-wrap');
+    if (!body) return;
+    const rect = body.getBoundingClientRect();
+    const pct  = Math.min(100, Math.max(0, (-rect.top / Math.max(1, body.offsetHeight - window.innerHeight * 0.4)) * 100));
+    fill.style.width = pct + '%';
+  }, { passive:true });
+}
+
+/* active toc */
+function initTOC() {
+  const anchors = ['summary','solution','more-articles'];
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY + 130;
+    let cur = '';
+    anchors.forEach(id => { const el = document.getElementById(id); if (el && el.offsetTop <= y) cur = id; });
+    document.querySelectorAll('.toc-link').forEach(l => l.classList.toggle('active', l.dataset.target === cur));
+  }, { passive:true });
+}
+
+/* ad builders */
+function sideAd(cover, icon, label, title, desc, cta) {
+  return `<div class="ad-sidebar">
+    <div class="ad-sidebar-cover" style="background:${cover}">${icon}</div>
+    <div class="ad-sidebar-body">
+      <div class="ad-s-label">${label}</div>
+      <div class="ad-s-title">${escapeHtml(title)}</div>
+      <div class="ad-s-desc">${escapeHtml(desc)}</div>
+      <a class="ad-s-btn" href="#">${escapeHtml(cta)}</a>
+      <span class="ad-s-tag">Advertisement</span>
+    </div>
+  </div>`;
+}
+
+function inlineAd(icon, title, desc, cta) {
+  return `<div class="ad-inline">
+    <div class="ad-inline-spon">Sponsored</div>
+    <div class="ad-inline-icon">${icon}</div>
+    <div class="ad-inline-body">
+      <div class="ad-inline-title">${escapeHtml(title)}</div>
+      <div class="ad-inline-desc">${escapeHtml(desc)}</div>
+    </div>
+    <a class="ad-inline-cta" href="#">${escapeHtml(cta)}</a>
+  </div>`;
+}
+
+function bannerAd() {
+  return `<div class="ad-banner">
+    <div>
+      <div class="ad-banner-label">Sponsored — Premium Placement</div>
+      <div class="ad-banner-title">Reserve this spot for your brand</div>
+      <div class="ad-banner-desc">End-of-article placement with the highest purchase intent on the page. Students just finished reading — perfect moment for mock tests, books, and coaching.</div>
+    </div>
+    <a class="ad-banner-cta" href="#">Get In Touch →</a>
+  </div>`;
+}
+
+function leftAdSlot() {
+  return `<div class="ad-left-slot">
+    <span class="ad-slot-label">Ad Placement</span>
+    <div class="ad-left-inner">
+      <span>Ad Space</span>
+      <span style="font-size:9px;opacity:.65">160 × 600</span>
+    </div>
+  </div>`;
+}
+
+/* not found */
+function renderNotFound() {
+  document.getElementById('heroMount').innerHTML = `
+    <div class="crumbs"><a href="index.html">Home</a><span class="crumbs-sep">›</span><a href="solutions.html">Solutions</a></div>
+    <a class="back-btn" href="solutions.html">← Back to Solutions</a>
+    <h1>Article not found</h1>
+    <p class="hero-summary">This link may be broken or the article was removed.</p>`;
+  document.getElementById('pageBody').innerHTML = `<div></div>
+    <div class="empty-state" style="margin-top:0"><strong>No article here</strong><p>Return to solutions and pick another topic.</p></div>
+    <div></div>`;
+}
+
+/* main render */
+function renderPost(post) {
+  const subLbl   = getSubjectLabel(post.classNum, post.subjectKey);
+  const backUrl  = `solutions.html?class=${encodeURIComponent(post.classNum)}`;
+  const words    = (post.content || '').split(/\s+/).filter(Boolean).length;
+  const mins     = Math.max(1, Math.round(words / 180));
+  const secs     = (post.content || '').split(/\n\s*\n/).filter(b => b.trim()).length;
+
+  document.title = `${post.title} – ExamReady`;
+
+  /* gather posts */
+  const all      = getAllSolutionPosts();
+  const sameSubj = all.filter(p => p.classNum === post.classNum && p.subjectKey === post.subjectKey && p.id !== post.id);
+  const sameCls  = all.filter(p => p.classNum === post.classNum && p.subjectKey !== post.subjectKey && p.id !== post.id);
+  const others   = all.filter(p => p.classNum !== post.classNum && p.id !== post.id);
+  const more8    = [...sameSubj, ...sameCls, ...others].slice(0, 8);
+  const side5    = [...sameSubj, ...sameCls, ...others].slice(0, 5);
+
+  /* hero */
+  document.getElementById('heroMount').innerHTML = `
+    <div class="crumbs">
+      <a href="index.html">Home</a><span class="crumbs-sep">›</span>
+      <a href="solutions.html">Solutions</a><span class="crumbs-sep">›</span>
+      <a href="${backUrl}">Class ${escapeHtml(post.classNum)}</a><span class="crumbs-sep">›</span>
+      <span>${escapeHtml(subLbl)}</span>
+    </div>
+    <a class="back-btn" href="${backUrl}">← Class ${escapeHtml(post.classNum)} Solutions</a>
+    <div class="hero-tags">
+      <div class="hero-tag accent">${escapeHtml(subLbl)}</div>
+      <div class="hero-tag">Class ${escapeHtml(post.classNum)}</div>
+      <div class="hero-tag">${mins} min read</div>
+      <div class="hero-tag">${words} words</div>
+      <div class="hero-tag">Board Prep</div>
+    </div>
+    <h1>${escapeHtml(post.title)}</h1>
+    <p class="hero-summary">${escapeHtml(post.summary || getSolutionExcerpt(post, 200))}</p>
+    <div class="hero-byline">
+      <div class="byline-avatar">E</div>
+      <div>
+        <div class="byline-name">${escapeHtml(post.author || 'ExamReady Team')}</div>
+        <div class="byline-date">Updated ${escapeHtml(formatHumanDate(post.updatedAt))}</div>
+      </div>
+      <div class="byline-chips">
+        <div class="byline-chip"><strong>${mins}</strong><span>Min</span></div>
+        <div class="byline-chip"><strong>${secs}</strong><span>Parts</span></div>
+        <div class="byline-chip"><strong>${words}</strong><span>Words</span></div>
+      </div>
+    </div>`;
+
+  /* left sidebar */
+  const lSide = `<aside class="left-sidebar">
+    <div class="toc-card">
+      <div class="toc-heading">On This Page</div>
+      <div class="toc-list">
+        <a class="toc-link" href="#summary"      data-target="summary"       onclick="document.getElementById('summary').scrollIntoView({behavior:'smooth'});return false;">💡 Quick Summary</a>
+        <a class="toc-link" href="#solution"     data-target="solution"      onclick="document.getElementById('solution').scrollIntoView({behavior:'smooth'});return false;">📖 Full Solution</a>
+        <a class="toc-link" href="#more-articles" data-target="more-articles" onclick="document.getElementById('more-articles').scrollIntoView({behavior:'smooth'});return false;">🔗 More Articles</a>
+      </div>
+    </div>
+    ${leftAdSlot()}
+    ${leftAdSlot()}
+  </aside>`;
+
+  /* main */
+  const bodyHtml = formatSolutionContent(post.content);
+
+  const moreCards = more8.length
+    ? more8.map(p => {
+        const s   = getSubjectLabel(p.classNum, p.subjectKey);
+        const w   = (p.content||'').split(/\s+/).filter(Boolean).length;
+        const m   = Math.max(1,Math.round(w/180));
+        return `<a class="more-card" href="${getSolutionPostUrl(p)}">
+          <div class="more-card-top"><span class="more-badge">${escapeHtml(s)}</span><span class="more-time">${m} min</span></div>
+          <div class="more-card-title">${escapeHtml(p.title)}</div>
+          <div class="more-card-meta">Class ${escapeHtml(p.classNum)} · ${escapeHtml(formatHumanDate(p.updatedAt))}</div>
+        </a>`;
+      }).join('')
+    : `<div class="more-empty"><strong>No articles yet</strong><p>Add from the admin panel.</p></div>`;
+
+  const main = `<div class="main-content">
+
+    <div class="summary-card" id="summary">
+      <div class="summary-icon">💡</div>
+      <div>
+        <div class="summary-label">Quick Summary</div>
+        <div class="summary-text">${escapeHtml(post.summary || 'Board-style explanations and readable steps for revision.')}</div>
+      </div>
+    </div>
+
+    <article class="article-card" id="solution">
+      <div class="article-topbar">
+        <div class="article-kicker">Solution Article &nbsp;·&nbsp; ${escapeHtml(subLbl)} &nbsp;·&nbsp; Class ${escapeHtml(post.classNum)}</div>
+        <div class="article-actions">
+          <a class="a-btn" href="${backUrl}">← All Solutions</a>
+          <a class="a-btn" href="quizzes.html">🎯 Practice Quiz</a>
+        </div>
+      </div>
+      <div class="article-body-wrap">
+        <div class="article-body">${bodyHtml}</div>
+      </div>
+      <div class="article-foot">
+        <span class="article-foot-meta">Updated ${escapeHtml(formatHumanDate(post.updatedAt))} · ${escapeHtml(post.author || 'ExamReady Team')}</span>
+        <div class="share-row">
+          <button class="share-btn" title="Bookmark">🔖</button>
+          <button class="share-btn" title="Share">🔗</button>
+          <button class="share-btn" title="Print" onclick="window.print()">🖨</button>
+        </div>
+      </div>
+    </article>
+
+    ${getManagedAdSlotHtml('inline')}
+
+    ${getManagedAdSlotHtml('results')}
+
+    <section class="more-section" id="more-articles">
+      <div class="more-head">
+        <div class="more-head-left">
+          <div class="more-head-title">More Solution Articles</div>
+          <div class="more-head-sub">Keep revising — pick your next topic</div>
+        </div>
+        <a class="more-head-link" href="solutions.html">View all <span>→</span></a>
+      </div>
+      <div class="more-grid">${moreCards}</div>
+    </section>
+
+  </div>`;
+
+  /* right sidebar */
+  const sideItems = side5.length
+    ? side5.map(p => `<a class="sidebar-more-item" href="${getSolutionPostUrl(p)}">
+        <strong>${escapeHtml(p.title)}</strong>
+        <span>${escapeHtml(getSubjectLabel(p.classNum,p.subjectKey))}</span>
+      </a>`).join('')
+    : `<div style="padding:14px 17px;font-size:12.5px;color:var(--muted);font-weight:700">Add articles from admin panel.</div>`;
+
+  const rSide = `<aside class="right-sidebar">
+    ${sideAd(
+      'linear-gradient(140deg,#0a0a0a,#1c0808)',
+      '🎯','Partner Offer',
+      'Premium CBSE mock tests & study packs',
+      'Structured practice that helped thousands of students score higher on their boards.',
+      'Explore Now →'
+    )}
+    <div class="sidebar-more">
+      <div class="sidebar-more-head">
+        <div class="sidebar-more-heading">More from Class ${escapeHtml(post.classNum)}</div>
+      </div>
+      <div class="sidebar-more-list">${sideItems}</div>
+    </div>
+    ${sideAd(
+      'linear-gradient(140deg,#060b10,#0e1e30)',
+      '📄','Free Download',
+      'PYQ papers for Class ' + escapeHtml(post.classNum) + ' — all subjects',
+      'Solved previous year questions, free PDF access, no sign-up.',
+      'Download Free PDFs →'
+    )}
+    ${sideAd(
+      'linear-gradient(140deg,#080e06,#0f2010)',
+      '🧪','Quick Practice',
+      'Chapter-wise MCQ quizzes for every subject',
+      'Test what you just read. Instant results, no login needed.',
+      'Try a Quiz →'
+    )}
+  </aside>`;
+
+  document.getElementById('pageBody').innerHTML = lSide + main + rSide;
+  initRP();
+  initTOC();
+}
+
+const params = new URLSearchParams(window.location.search);
+const post   = findSolutionPostById(params.get('id'));
+if (!post) renderNotFound();
+else renderPost(post);
+</script>
+</body>
+</html>

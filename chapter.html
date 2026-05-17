@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Chapter – ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#e8211a; --red-soft:rgba(232,33,26,0.07);
+  --black:#0d0d0d; --surface:#f4f4f6;
+  --card:#ffffff; --border:#e4e4e7; --border-soft:#eeeeef;
+  --text:#1a1a1a; --text-2:#4a4a4a; --muted:#888; --muted-light:#bbb;
+  --radius:18px; --shadow:0 8px 32px rgba(0,0,0,0.07);
+  --ease:.28s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{overflow-x:hidden;width:100%;}
+body{min-height:100vh;display:flex;flex-direction:column;font-family:'Nunito',sans-serif;background:var(--surface);color:var(--text);}
+
+/* ── Reading progress ── */
+#rpbar{position:fixed;top:64px;left:0;right:0;height:3px;z-index:1200;pointer-events:none;}
+#rpfill{height:100%;width:0%;border-radius:0 3px 3px 0;background:linear-gradient(90deg,var(--red),#ff7a50,#ffb347);transition:width .08s linear;box-shadow:0 0 12px rgba(232,33,26,0.4);}
+
+/* ── Header ── */
+header{background:var(--black);padding:0 24px;position:sticky;top:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;height:64px;box-shadow:0 2px 24px rgba(0,0,0,0.4);}
+.logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none;}
+nav{display:flex;align-items:center;gap:2px;flex-wrap:wrap;}
+nav a{color:#9a9a9a;font-weight:700;font-size:13.5px;padding:8px 13px;border-radius:8px;text-decoration:none;transition:color var(--ease),background var(--ease);}
+nav a:hover,nav a.active{color:#fff;background:rgba(255,255,255,0.09);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;}
+.hamburger span{width:24px;height:2px;background:#fff;border-radius:2px;}
+
+/* ── Subject-style Hero (matches subject.html exactly) ── */
+.subject-hero {
+  background: var(--black);
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 82px;
+}
+.subject-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 80% 50%, rgba(232,33,26,0.12), transparent 55%);
+  pointer-events: none;
+}
+.subject-hero-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  position: relative;
+  z-index: 1;
+  padding: 20px 0;
+}
+.subject-hero-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 1px;
+  color: var(--red);
+  flex-shrink: 0;
+}
+.subject-hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+.subject-hero-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(28px, 5vw, 52px);
+  color: #fff;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+.subject-hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.hero-crumb {
+  color: rgba(255,255,255,0.35);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color var(--ease);
+}
+.hero-crumb:hover { color: rgba(255,255,255,0.7); }
+.hero-crumb-sep { color: rgba(255,255,255,0.18); font-size: 10px; }
+.hero-stat-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.hero-stat-pill {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 8px 14px;
+  text-align: center;
+}
+.hero-stat-pill strong {
+  display: block;
+  font-family: 'Bebas Neue';
+  font-size: 20px;
+  color: var(--red);
+  line-height: 1;
+}
+.hero-stat-pill span {
+  display: block;
+  font-size: 9px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+/* ── Chapter nav bar (prev / dots / next) ── */
+.ch-nav-bar {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  position: sticky;
+  top: 64px;
+  z-index: 900;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  display: none;
+}
+.ch-nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 50px;
+}
+.ch-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-2);
+  text-decoration: none;
+  transition: background var(--ease), border-color var(--ease), color var(--ease);
+  white-space: nowrap;
+}
+.ch-nav-btn:hover { background: #fff0f0; border-color: var(--red); color: var(--red); }
+.ch-nav-btn.disabled { opacity: .4; pointer-events: none; }
+.ch-dots {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 4px;
+  flex: 1;
+  justify-content: center;
+}
+.ch-dots::-webkit-scrollbar { display: none; }
+.ch-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background var(--ease), transform var(--ease);
+}
+.ch-dot.active { background: var(--red); transform: scale(1.4); }
+.ch-dot:hover { background: var(--red); opacity: .65; }
+
+/* ── Page layout ── */
+.page-body {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 28px 28px 72px;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 292px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ── Main content ── */
+.main-content { display: flex; flex-direction: column; gap: 20px; }
+
+/* ── Resource card ── */
+.resources-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.resources-card-head {
+  padding: 20px 24px 0;
+  background: linear-gradient(135deg,#fefefe,#f9f9fb);
+  border-bottom: 1px solid var(--border-soft);
+}
+.resources-card-kicker {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.resources-card-kicker::before {
+  content: '';
+  width: 3px;
+  height: 12px;
+  background: var(--red);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ── Tabs ── */
+.res-tabs {
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.res-tabs::-webkit-scrollbar { display: none; }
+.res-tab {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  transition: color var(--ease), border-color var(--ease);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.res-tab:hover { color: var(--text); }
+.res-tab.active { color: var(--red); border-bottom-color: var(--red); }
+.res-tab .tab-count {
+  background: var(--red-soft);
+  color: var(--red);
+  font-size: 10px;
+  font-weight: 900;
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+.res-tab.active .tab-count { background: var(--red); color: #fff; }
+
+.year-filter-wrap { display: none; flex-direction: column; gap: 10px; padding: 16px 0 0; }
+.year-filter-wrap.visible { display: flex; }
+.year-filter-label { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.8px; color: var(--muted); }
+.year-filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.year-filter-btn {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  transition: background var(--ease), border-color var(--ease), color var(--ease);
+}
+.year-filter-btn:hover,.year-filter-btn.active { background: var(--red); border-color: var(--red); color: #fff; }
+
+/* ── Panels ── */
+.res-panels { padding: 22px 24px; }
+.res-panel { display: none; }
+.res-panel.active { display: flex; flex-direction: column; gap: 12px; }
+
+/* ── Resource item ── */
+.res-item {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: border-color var(--ease), box-shadow var(--ease), transform var(--ease);
+}
+.res-item:hover { border-color: #f0b2ad; box-shadow: 0 6px 22px rgba(232,33,26,0.09); transform: translateY(-2px); }
+.res-item-left { display: flex; align-items: flex-start; gap: 14px; min-width: 0; flex: 1; }
+.res-type-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 900;
+  flex-shrink: 0;
+  letter-spacing: .5px;
+}
+.res-type-icon.pyq  { background: #fff0f0; color: var(--red); }
+.res-type-icon.qb   { background: #f0fff4; color: #2f9e44; }
+.res-type-icon.spq  { background: #f3f0ff; color: #6741d9; }
+.res-type-icon.ip   { background: #fff8f0; color: #e67700; }
+.res-type-icon.notes{ background: #f0f4ff; color: #3b5bdb; }
+.res-type-icon.sol  { background: #fff0f0; color: var(--red); }
+.res-type-icon.quiz { background: #fffbf0; color: #c97a00; }
+.res-item-body { min-width: 0; flex: 1; }
+.res-item-badge { font-size: 9.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); margin-bottom: 4px; }
+.res-item-title { font-size: 15px; font-weight: 900; line-height: 1.35; color: var(--text); margin-bottom: 4px; }
+.res-item-meta { font-size: 12px; color: var(--muted); font-weight: 700; line-height: 1.55; }
+.res-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--red);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 11px;
+  padding: 9px 16px;
+  font-size: 12.5px;
+  font-weight: 900;
+  flex-shrink: 0;
+  transition: background var(--ease), transform var(--ease), box-shadow var(--ease);
+}
+.res-action:hover { background: #c41a14; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(232,33,26,0.3); }
+.res-action.quiz-btn { background: #c97a00; }
+.res-action.quiz-btn:hover { background: #a06200; }
+.res-action.sol-btn { background: var(--black); }
+.res-action.sol-btn:hover { background: #222; }
+
+/* Section label inside "All" panel */
+.res-section-label {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 2px;
+}
+.res-section-label::before { content: ''; width: 3px; height: 12px; background: var(--red); border-radius: 2px; flex-shrink: 0; }
+.res-section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ── Empty state ── */
+.empty-res {
+  background: var(--surface);
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+.empty-res .e-icon { font-size: 36px; margin-bottom: 10px; }
+.empty-res strong { display: block; font-size: 15px; color: var(--text); margin-bottom: 6px; font-weight: 900; }
+.empty-res p { font-size: 13px; font-weight: 600; line-height: 1.7; }
+
+/* ── Prev/Next nav cards ── */
+.chapter-nav-cards { display: flex; gap: 14px; flex-wrap: wrap; }
+.ch-nav-card {
+  flex: 1;
+  min-width: 180px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 18px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--ease), box-shadow var(--ease), transform var(--ease);
+}
+.ch-nav-card:hover { border-color: var(--red); box-shadow: 0 6px 22px rgba(232,33,26,0.1); transform: translateY(-2px); }
+.ch-nav-card-label { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; }
+.ch-nav-card-title { font-size: 14px; font-weight: 900; color: var(--text); line-height: 1.35; }
+.ch-nav-card.disabled { background: var(--surface); border-style: dashed; pointer-events: none; }
+.ch-nav-card.disabled .ch-nav-card-title { color: var(--muted); font-size: 13px; font-weight: 700; }
+
+/* ── Sidebar ── */
+.sidebar { display: flex; flex-direction: column; gap: 18px; position: sticky; top: 128px; }
+.sidebar-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.sidebar-card-head {
+  padding: 14px 17px;
+  border-bottom: 1px solid var(--border-soft);
+  background: linear-gradient(135deg,#fafafa,#f4f4f6);
+}
+.sidebar-heading {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.sidebar-heading::before { content: ''; width: 3px; height: 13px; background: var(--red); border-radius: 2px; flex-shrink: 0; }
+.sidebar-body { padding: 14px 16px; }
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 12.5px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-row span:first-child { color: var(--muted); font-weight: 700; }
+.info-row span:last-child { font-weight: 900; }
+
+/* Chapter list in sidebar */
+.ch-sidebar-list { display: flex; flex-direction: column; gap: 2px; }
+.ch-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--ease), padding-left var(--ease);
+}
+.ch-sidebar-item:hover { background: #fffbfb; padding-left: 14px; }
+.ch-sidebar-item.active-ch { background: var(--red-soft); color: var(--red); }
+.ch-sidebar-num { font-family: 'Bebas Neue'; font-size: 14px; letter-spacing: 1px; color: var(--red); flex-shrink: 0; }
+.ch-sidebar-name { font-size: 12.5px; font-weight: 800; line-height: 1.35; flex: 1; }
+.ch-sidebar-count { font-size: 10px; color: var(--muted); font-weight: 700; }
+
+/* Quick links in sidebar */
+.quick-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  font-size: 12.5px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  transition: border-color var(--ease), color var(--ease);
+}
+.quick-link:last-child { margin-bottom: 0; }
+.quick-link:hover { border-color: var(--red); color: var(--red); }
+
+/* ── Footer ── */
+footer { background: var(--black); color: #aaa; padding: 40px 24px 24px; margin-top: auto; }
+.footer-inner { max-width: 1280px; margin: 0 auto; }
+.footer-top { display: flex; gap: 40px; flex-wrap: wrap; margin-bottom: 32px; }
+.footer-brand { flex: 1; min-width: 220px; }
+.footer-brand p { font-size: 13px; line-height: 1.7; color: #666; }
+.footer-links { flex: 2; display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 24px; }
+.footer-col h4 { color: #fff; font-size: 12.5px; font-weight: 800; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1.2px; }
+.footer-col a { display: block; color: #555; text-decoration: none; font-size: 13px; font-weight: 600; margin-bottom: 9px; transition: color var(--ease); }
+.footer-col a:hover { color: #fff; }
+.footer-bottom { border-top: 1px solid #1a1a1a; padding-top: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.footer-bottom p { font-size: 11.5px; color: #3a3a3a; }
+.footer-bottom span { color: var(--red); }
+
+/* ── Responsive ── */
+@media(max-width:1060px) { .page-body { grid-template-columns: 1fr; } .sidebar { position: static; } }
+@media(max-width:768px) {
+  nav { display: none; }
+  .hamburger { display: flex; }
+  .subject-hero { padding: 0 16px; }
+  .ch-nav-bar { padding: 0 16px; }
+  .page-body { padding: 20px 16px 52px; }
+  .hero-stat-pills { display: none; }
+  .res-item { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .res-action { width: 100%; text-align: center; justify-content: center; }
+  .chapter-nav-cards { flex-direction: column; }
+}
+</style>
+<link rel="stylesheet" href="animations.css">
+</head>
+<body>
+
+<div id="rpbar"><div id="rpfill"></div></div>
+
+<header>
+  <a class="logo-wrap" href="index.html"><img src="logo.png" alt="ExamReady" style="height:44px;"></a>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="class9.html">Class 9</a>
+    <a href="class10.html">Class 10</a>
+    <a href="class11.html">Class 11</a>
+    <a href="class12.html">Class 12</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="pyq.html">PYQs</a>
+    <a href="quizzes.html">Quizzes</a>
+  </nav>
+  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</header>
+
+<!-- Chapter hero — same style as subject.html -->
+<div class="subject-hero" id="subjectHero">
+  <div class="subject-hero-inner" id="heroMount">
+    <div class="subject-hero-icon" id="heroIcon">—</div>
+    <div class="subject-hero-info">
+      <div class="subject-hero-name" id="heroName">Loading…</div>
+      <div class="subject-hero-meta" id="heroMeta"></div>
+    </div>
+    <div class="hero-stat-pills" id="heroStats"></div>
+  </div>
+</div>
+
+<!-- Chapter nav bar (prev / dots / next) -->
+<div class="ch-nav-bar" id="chNavBar">
+  <div class="ch-nav-inner">
+    <a class="ch-nav-btn disabled" id="prevChBtn" href="#">← Prev</a>
+    <div class="ch-dots" id="chDots"></div>
+    <a class="ch-nav-btn disabled" id="nextChBtn" href="#">Next →</a>
+  </div>
+</div>
+
+<div class="page-body" id="pageBody">
+  <div style="grid-column:1/-1;padding:60px 0;text-align:center;color:var(--muted);font-weight:700">Loading chapter…</div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div style="font-family:'Bebas Neue';font-size:26px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
+        <p>Chapter-organised CBSE resources. Every PYQ, quiz, solution, and note — right where you need it.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col"><h4>Classes</h4><a href="class9.html">Class 9</a><a href="class10.html">Class 10</a><a href="class11.html">Class 11</a><a href="class12.html">Class 12</a></div>
+        <div class="footer-col"><h4>Resources</h4><a href="solutions.html">Solutions</a><a href="pyq.html">PYQ Papers</a><a href="questionbank.html">Question Banks</a><a href="quizzes.html">Quizzes</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2026 ExamReady. Made with <span>♥</span> for students.</p></div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script src="notes-module-for-shared.js"></script>
+<script src="animations.js"></script>
+<script src="ads.js"></script>
+<script>
+/* ── helpers ── */
+function toggleMenu() {
+  const nav = document.getElementById('mainNav');
+  if (nav.dataset.open === '1') { nav.removeAttribute('style'); nav.dataset.open = '0'; }
+  else { Object.assign(nav.style,{display:'flex',flexDirection:'column',position:'absolute',top:'64px',left:'0',right:'0',background:'#111',padding:'16px',zIndex:'999'}); nav.dataset.open = '1'; }
+}
+function buildChUrl(cls, subjectKey, chId) {
+  return `chapter.html?class=${encodeURIComponent(cls)}&subject=${encodeURIComponent(subjectKey)}&chapter=${encodeURIComponent(chId)}`;
+}
+
+/* ── Reading progress ── */
+function initRP() {
+  const fill = document.getElementById('rpfill');
+  if (!fill) return;
+  window.addEventListener('scroll', () => {
+    const d = document.documentElement.scrollHeight - window.innerHeight;
+    fill.style.width = (d > 0 ? (window.scrollY/d)*100 : 0) + '%';
+  }, { passive:true });
+}
+
+/* ── Resource type definitions ── */
+const PDF_TYPES = [
+  { key:'pyq',  label:'PYQ Papers',          iconTxt:'PYQ',  cls:'pyq'  },
+  { key:'qb',   label:'Question Banks',       iconTxt:'QB',   cls:'qb'   },
+  { key:'spq',  label:'SPQ Papers',           iconTxt:'SPQ',  cls:'spq'  },
+  { key:'ip',   label:'Institutional Papers', iconTxt:'INST', cls:'ip'   },
+];
+
+let activeResourceTab = 'all';
+let activeYear = 'all';
+
+function isPdfTab(key) { return PDF_TYPES.some(t => t.key === key); }
+
+function sortYearsDesc(values) {
+  return [...new Set(values.map(v => String(v)))].sort((a,b) => {
+    const d = Number(b) - Number(a);
+    return Number.isNaN(d) ? String(b).localeCompare(String(a)) : d;
+  });
+}
+
+function getAvailableYears(pdfMap) {
+  const years = [];
+  PDF_TYPES.forEach(t => (pdfMap[t.key]||[]).forEach(item => { if (item.year) years.push(item.year); }));
+  return sortYearsDesc(years);
+}
+
+function buildNoteMeta(note) {
+  const excerpt = typeof getNoteExcerpt === 'function' ? getNoteExcerpt(note, 90) : '';
+  const parts = [];
+  if (excerpt) parts.push(excerpt);
+  if (note && note.updatedAt) parts.push(`Updated: ${note.updatedAt}`);
+  return parts.join(' | ') || 'Quick revision note';
+}
+
+function updateYearFilterVisibility() {
+  const wrap = document.getElementById('yearFilterWrap');
+  if (!wrap) return;
+  wrap.classList.toggle('visible', isPdfTab(activeResourceTab));
+}
+
+/* ── Build resource item HTML ── */
+function resItemHtml(iconTxt, iconCls, badge, title, meta, href, actionLabel, actionCls) {
+  return `<div class="res-item">
+    <div class="res-item-left">
+      <div class="res-type-icon ${escapeHtml(iconCls)}">${escapeHtml(iconTxt)}</div>
+      <div class="res-item-body">
+        <div class="res-item-badge">${escapeHtml(badge)}</div>
+        <div class="res-item-title">${escapeHtml(title)}</div>
+        <div class="res-item-meta">${escapeHtml(meta)}</div>
+      </div>
+    </div>
+    <a class="res-action ${escapeHtml(actionCls||'')}" href="${href}">${escapeHtml(actionLabel)}</a>
+  </div>`;
+}
+
+function buildPanel(itemsHtml, emptyLabel) {
+  if (!itemsHtml) return `<div class="empty-res"><div class="e-icon">📭</div><strong>Nothing here yet</strong><p>${escapeHtml(emptyLabel)}</p></div>`;
+  return itemsHtml;
+}
+
+function buildYearFilters(years) {
+  const container = document.getElementById('yearFilters');
+  if (!container) return;
+  if (activeYear !== 'all' && !years.includes(String(activeYear))) activeYear = 'all';
+  container.innerHTML = '';
+  const append = (label, value) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'year-filter-btn' + (String(activeYear) === String(value) ? ' active' : '');
+    btn.textContent = label;
+    btn.onclick = () => { activeYear = value; renderPage(); };
+    container.appendChild(btn);
+  };
+  append('All Years', 'all');
+  years.forEach(y => append(y, y));
+}
+
+function countChRes(allPdfs, sols, quizzes, notes, cls, subjectKey, chId) {
+  return PDF_TYPES.reduce((a,t) => a + (allPdfs[`${cls}-${subjectKey}-${t.key}`]||[]).filter(p=>(p.chapterId||'')=== chId).length, 0)
+    + sols.filter(s=>(s.chapterId||'')=== chId).length
+    + notes.filter(n=>(n.chapterId||'')=== chId).length
+    + quizzes.filter(q=>(q.chapterId||'')=== chId).length;
+}
+
+/* ── Not found ── */
+function renderNotFound(msg) {
+  document.getElementById('heroIcon').textContent = '❌';
+  document.getElementById('heroName').textContent = 'NOT FOUND';
+  document.getElementById('pageBody').innerHTML = `<div class="empty-res" style="grid-column:1/-1"><div class="e-icon">🔍</div><strong>Chapter not found</strong><p>${escapeHtml(msg||'Go back to the subject page.')}</p></div>`;
+}
+
+/* ── Main render ── */
+function renderPage() {
+  const p = new URLSearchParams(window.location.search);
+  const cls = p.get('class'), subjectKey = p.get('subject'), chapterId = p.get('chapter');
+  if (!cls || !subjectKey || !chapterId) { renderNotFound('Missing URL parameters.'); return; }
+
+  const chapters  = getChapters(cls, subjectKey);
+  const chapter   = chapters.find(c => c.id === chapterId);
+  if (!chapter) { renderNotFound('Chapter not found — it may have been deleted.'); return; }
+
+  const classMeta  = getClassMeta(cls);
+  const subject    = getSubjectMeta(cls, subjectKey);
+  if (!classMeta || !subject) { renderNotFound('Subject not found.'); return; }
+
+  const subjectUrl = buildSubjectPageUrl(cls, subjectKey);
+  const allPdfs    = getData('pdfs') || {};
+  const allQuizzes = (getData('quizzes')||{})[`${cls}-${subjectKey}`] || [];
+  const allSols    = getSolutionPostsByClassAndSubject(cls, subjectKey);
+  const subjectNotes = typeof getNotesByClassAndSubject === 'function' ? getNotesByClassAndSubject(cls, subjectKey) : [];
+
+  /* Filter to this chapter */
+  const pdfMap = {};
+  PDF_TYPES.forEach(t => {
+    pdfMap[t.key] = (allPdfs[`${cls}-${subjectKey}-${t.key}`]||[]).filter(p => (p.chapterId||'') === chapterId);
+  });
+  const sols    = allSols.filter(s => (s.chapterId||'') === chapterId);
+  const allNotes = subjectNotes.filter(n => (n.chapterId||'') === chapterId);
+  const quizzes = allQuizzes.filter(q => (q.chapterId||'') === chapterId);
+  const availableYears = getAvailableYears(pdfMap);
+  if (activeYear !== 'all' && !availableYears.includes(String(activeYear))) activeYear = 'all';
+
+  const totalPdfs = PDF_TYPES.reduce((a,t) => a + pdfMap[t.key].length, 0);
+  const totalAll  = totalPdfs + allNotes.length + sols.length + quizzes.length;
+
+  const chIdx = chapters.findIndex(c => c.id === chapterId);
+  const prevCh = chapters[chIdx - 1] || null;
+  const nextCh = chapters[chIdx + 1] || null;
+
+  document.title = `Ch ${chapter.number}: ${chapter.name} – ${subject.label} – ExamReady`;
+
+  /* ── Hero (subject-style) ── */
+  document.getElementById('heroIcon').textContent = `Ch\u00A0${chapter.number}`;
+  document.getElementById('heroName').textContent = chapter.name;
+  document.getElementById('heroMeta').innerHTML = `
+    <a class="hero-crumb" href="class${escapeHtml(cls)}.html">${escapeHtml(classMeta.label)}</a>
+    <span class="hero-crumb-sep">›</span>
+    <a class="hero-crumb" href="${subjectUrl}">${escapeHtml(subject.label)}</a>
+    <span class="hero-crumb-sep">›</span>
+    <span class="hero-crumb">Chapter ${chapter.number} of ${chapters.length}</span>`;
+  document.getElementById('heroStats').innerHTML = `
+    <div class="hero-stat-pill"><strong>${totalPdfs}</strong><span>PDFs</span></div>
+    <div class="hero-stat-pill"><strong>${sols.length}</strong><span>Solutions</span></div>
+    <div class="hero-stat-pill"><strong>${quizzes.length}</strong><span>Quizzes</span></div>
+    <div class="hero-stat-pill"><strong>${totalAll}</strong><span>Total</span></div>`;
+
+  /* ── Chapter nav bar ── */
+  const navBar = document.getElementById('chNavBar');
+  navBar.style.display = 'block';
+  const prevBtn = document.getElementById('prevChBtn');
+  const nextBtn = document.getElementById('nextChBtn');
+  if (prevCh) {
+    prevBtn.href = buildChUrl(cls,subjectKey,prevCh.id);
+    prevBtn.innerHTML = `← Ch ${prevCh.number}: ${prevCh.name.slice(0,20)}${prevCh.name.length>20?'…':''}`;
+    prevBtn.classList.remove('disabled');
+  }
+  if (nextCh) {
+    nextBtn.href = buildChUrl(cls,subjectKey,nextCh.id);
+    nextBtn.innerHTML = `Ch ${nextCh.number}: ${nextCh.name.slice(0,20)}${nextCh.name.length>20?'…':''} →`;
+    nextBtn.classList.remove('disabled');
+  }
+  document.getElementById('chDots').innerHTML = chapters.map(ch =>
+    `<div class="ch-dot${ch.id===chapterId?' active':''}" title="Ch ${ch.number}: ${ch.name}" onclick="location.href='${buildChUrl(cls,subjectKey,ch.id)}'"></div>`
+  ).join('');
+
+  /* ── Build panel content ── */
+  function buildAllPanel() {
+    const parts = [];
+    PDF_TYPES.forEach(t => {
+      if (!pdfMap[t.key].length) return;
+      parts.push(`<div class="res-section-label">${t.label} (${pdfMap[t.key].length})</div>`);
+      pdfMap[t.key].forEach(item => parts.push(resItemHtml(t.iconTxt, t.cls, t.label,
+        item.name, [item.year?`Year: ${item.year}`:'', item.size||''].filter(Boolean).join(' · '),
+        buildPdfPreviewUrl(item), 'Preview PDF', ''
+      )));
+    });
+    if (allNotes.length) {
+      parts.push(`<div class="res-section-label">Notes (${allNotes.length})</div>`);
+      allNotes.forEach(note => parts.push(resItemHtml('NOTE','notes','Short Note',
+        note.title, buildNoteMeta(note),
+        typeof getNoteUrl==='function'?getNoteUrl(note):'#', 'Read Note', ''
+      )));
+    }
+    if (sols.length) {
+      parts.push(`<div class="res-section-label">Solution Articles (${sols.length})</div>`);
+      sols.forEach(s => parts.push(resItemHtml('SOL','sol','Solution Article', s.title, getSolutionExcerpt(s,90), getSolutionPostUrl(s),'Read Solution','sol-btn')));
+    }
+    if (quizzes.length) {
+      parts.push(`<div class="res-section-label">Quizzes (${quizzes.length})</div>`);
+      quizzes.forEach(q => parts.push(resItemHtml('QUIZ','quiz','MCQ Quiz', q.title, `${(q.questions||[]).length} questions`, `quiz.html?id=${encodeURIComponent(q.id)}`,'Open Quiz','quiz-btn')));
+    }
+    return parts.length ? parts.join('') : null;
+  }
+
+  /* ── Tabs (only non-empty) ── */
+  const visibleTabs = [
+    { key:'all',  label:'All Resources', count:totalAll },
+    ...PDF_TYPES.map(t => ({ key:t.key, label:t.label, count:pdfMap[t.key].length })).filter(t=>t.count>0),
+    ...(allNotes.length ? [{ key:'notes', label:'Notes',     count:allNotes.length }] : []),
+    ...(sols.length     ? [{ key:'sol',   label:'Solutions', count:sols.length     }] : []),
+    ...(quizzes.length  ? [{ key:'quiz',  label:'Quizzes',   count:quizzes.length  }] : []),
+  ];
+  if (!visibleTabs.some(t=>t.key===activeResourceTab)) activeResourceTab='all';
+
+  const tabsHtml = visibleTabs.map(t => `
+    <button class="res-tab${t.key===activeResourceTab?' active':''}" data-tab="${t.key}" onclick="switchTab('${t.key}')">
+      ${t.label}<span class="tab-count">${t.count}</span>
+    </button>`).join('');
+
+  function getPanelContent(key) {
+    if (key==='all')   return buildPanel(buildAllPanel(), `No resources assigned to Chapter ${chapter.number} yet.`);
+    if (key==='notes') return buildPanel(allNotes.map(n=>resItemHtml('NOTE','notes','Short Note',n.title,buildNoteMeta(n),typeof getNoteUrl==='function'?getNoteUrl(n):'#','Read Note','')).join('')||null,'No notes for this chapter.');
+    if (key==='sol')   return buildPanel(sols.map(s=>resItemHtml('SOL','sol','Solution Article',s.title,getSolutionExcerpt(s,90),getSolutionPostUrl(s),'Read Solution','sol-btn')).join('')||null,'No solutions for this chapter.');
+    if (key==='quiz')  return buildPanel(quizzes.map(q=>resItemHtml('QUIZ','quiz','MCQ Quiz',q.title,`${(q.questions||[]).length} questions`,`quiz.html?id=${encodeURIComponent(q.id)}`,'Open Quiz','quiz-btn')).join('')||null,'No quizzes for this chapter.');
+    const t = PDF_TYPES.find(x=>x.key===key);
+    return buildPanel(pdfMap[key].filter(item=>activeYear==='all'||String(item.year)===String(activeYear)).map(item=>resItemHtml(t.iconTxt,t.cls,t.label,item.name,[item.year?`Year: ${item.year}`:'',item.size||''].filter(Boolean).join(' · '),buildPdfPreviewUrl(item),'Preview PDF','')).join('')||null,`No ${t.label} for this chapter.`);
+  }
+
+  const panelsHtml = visibleTabs.map(t =>
+    `<div class="res-panel${t.key===activeResourceTab?' active':''}" data-panel="${t.key}">${getPanelContent(t.key)}</div>`
+  ).join('');
+
+  /* ── Prev / Next cards ── */
+  function navCard(ch, dir) {
+    if (!ch) return `<div class="ch-nav-card disabled"><div class="ch-nav-card-label">${dir==='prev'?'← Previous':'Next →'}</div><div class="ch-nav-card-title">No ${dir==='prev'?'previous':'next'} chapter</div></div>`;
+    return `<a class="ch-nav-card" href="${buildChUrl(cls,subjectKey,ch.id)}">
+      <div class="ch-nav-card-label">${dir==='prev'?'← Previous Chapter':'Next Chapter →'}</div>
+      <div class="ch-nav-card-title">Ch ${ch.number}: ${escapeHtml(ch.name)}</div>
+    </a>`;
+  }
+
+  /* ── Sidebar chapter list ── */
+  const chSidebarHtml = chapters.map(ch => {
+    const res = countChRes(allPdfs, allSols, allQuizzes, subjectNotes, cls, subjectKey, ch.id);
+    return `<a class="ch-sidebar-item${ch.id===chapterId?' active-ch':''}" href="${buildChUrl(cls,subjectKey,ch.id)}">
+      <span class="ch-sidebar-num">Ch ${ch.number}</span>
+      <div style="flex:1;min-width:0">
+        <div class="ch-sidebar-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(ch.name)}</div>
+        <div class="ch-sidebar-count">${res} resource${res!==1?'s':''}</div>
+      </div>
+    </a>`;
+  }).join('');
+
+  /* ── Assemble ── */
+  document.getElementById('pageBody').innerHTML = `
+    <div class="main-content">
+      <div class="resources-card">
+        <div class="resources-card-head">
+          <div class="resources-card-kicker">Resources for Chapter ${chapter.number}: ${escapeHtml(chapter.name)}</div>
+          <div class="res-tabs">${tabsHtml}</div>
+          <div class="year-filter-wrap" id="yearFilterWrap">
+            <div class="year-filter-label">Filter PDFs by Year</div>
+            <div class="year-filter-pills" id="yearFilters"></div>
+          </div>
+        </div>
+        <div class="res-panels">${panelsHtml}</div>
+      </div>
+
+      <div class="chapter-nav-cards">
+        ${navCard(prevCh,'prev')}
+        ${navCard(nextCh,'next')}
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-card-head"><div class="sidebar-heading">Chapter Info</div></div>
+        <div class="sidebar-body">
+          <div class="info-row"><span>Class</span><span>${escapeHtml(classMeta.label)}</span></div>
+          <div class="info-row"><span>Subject</span><span>${escapeHtml(subject.label)}</span></div>
+          <div class="info-row"><span>Chapter</span><span>${chapter.number} of ${chapters.length}</span></div>
+          <div class="info-row"><span>PDFs</span><span>${totalPdfs}</span></div>
+          <div class="info-row"><span>Notes</span><span>${allNotes.length}</span></div>
+          <div class="info-row"><span>Solutions</span><span>${sols.length}</span></div>
+          <div class="info-row"><span>Quizzes</span><span>${quizzes.length}</span></div>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-card-head"><div class="sidebar-heading">All Chapters</div></div>
+        <div class="sidebar-body" style="padding:8px;">
+          <div class="ch-sidebar-list">${chSidebarHtml}</div>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-card-head"><div class="sidebar-heading">Quick Links</div></div>
+        <div class="sidebar-body">
+          <a class="quick-link" href="${subjectUrl}">📚 All ${escapeHtml(subject.label)} Resources</a>
+          <a class="quick-link" href="quizzes.html">🎯 All Quizzes</a>
+          <a class="quick-link" href="solutions.html">📖 All Solutions</a>
+          <a class="quick-link" href="pyq.html">📄 All PYQ Papers</a>
+        </div>
+      </div>
+    </aside>`;
+
+  buildYearFilters(availableYears);
+  updateYearFilterVisibility();
+  initRP();
+}
+
+function switchTab(key) {
+  activeResourceTab = key;
+  document.querySelectorAll('.res-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === key));
+  document.querySelectorAll('.res-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === key));
+  updateYearFilterVisibility();
+}
+
+renderPage();
+</script>
+</body>
+</html>

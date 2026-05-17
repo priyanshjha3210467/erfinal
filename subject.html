@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Subject Hub - ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#e8211a; --red-soft:rgba(232,33,26,0.07);
+  --black:#0d0d0d; --surface:#f4f4f6;
+  --card:#ffffff; --border:#e4e4e7; --border-soft:#eeeeef;
+  --text:#1a1a1a; --text-2:#4a4a4a; --muted:#888; --muted-light:#bbb;
+  --radius:18px; --shadow:0 8px 32px rgba(0,0,0,0.07);
+  --ease:.28s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{overflow-x:hidden;width:100%;}
+body{min-height:100vh;display:flex;flex-direction:column;font-family:'Nunito',sans-serif;background:var(--surface);color:var(--text);}
+
+/* ── Header ── */
+header{background:var(--black);padding:0 24px;position:sticky;top:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;height:64px;box-shadow:0 2px 24px rgba(0,0,0,0.4);}
+.logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none;}
+nav{display:flex;align-items:center;gap:2px;flex-wrap:wrap;}
+nav a{color:#9a9a9a;font-weight:700;font-size:13.5px;padding:8px 13px;border-radius:8px;text-decoration:none;transition:color var(--ease),background var(--ease);}
+nav a:hover,nav a.active{color:#fff;background:rgba(255,255,255,0.09);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;}
+.hamburger span{width:24px;height:2px;background:#fff;border-radius:2px;}
+
+/* ── Subject Hero — Simple ── */
+.subject-hero {
+  background: var(--black);
+  padding: 36px 28px 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.subject-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 80% 50%, rgba(232,33,26,0.12), transparent 55%);
+  pointer-events: none;
+}
+.subject-hero-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  position: relative;
+  z-index: 1;
+}
+.subject-hero-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  flex-shrink: 0;
+}
+.subject-hero-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px, 6vw, 64px);
+  color: #fff;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+/* ── Page layout ── */
+.page-body{max-width:1280px;margin:0 auto;padding:28px 28px 72px;display:grid;grid-template-columns:minmax(0,1fr) 292px;gap:24px;align-items:start;}
+
+/* ── Main content ── */
+.main-content{display:flex;flex-direction:column;gap:20px;}
+
+/* ── Resource card (big tabs section) ── */
+.resources-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.resources-card-head{padding:20px 24px 0;background:linear-gradient(135deg,#fefefe,#f9f9fb);border-bottom:1px solid var(--border-soft);}
+.resources-card-kicker{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.resources-card-kicker::before{content:'';width:3px;height:12px;background:var(--red);border-radius:2px;flex-shrink:0;}
+
+/* ── Tabs ── */
+.res-tabs{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:0;overflow-x:auto;scrollbar-width:none;}
+.res-tabs::-webkit-scrollbar{display:none;}
+.res-tab{border:none;background:transparent;color:var(--muted);border-bottom:2px solid transparent;padding:10px 14px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;transition:color var(--ease),border-color var(--ease);white-space:nowrap;display:flex;align-items:center;gap:6px;border-radius:0;}
+.res-tab:hover{color:var(--text);}
+.res-tab.active{color:var(--red);border-bottom-color:var(--red);}
+.res-tab .tab-count{background:var(--red-soft);color:var(--red);font-size:10px;font-weight:900;padding:2px 7px;border-radius:20px;}
+.res-tab.active .tab-count{background:var(--red);color:#fff;}
+.year-filter-wrap{display:none;flex-direction:column;gap:10px;padding:16px 0 0;}
+.year-filter-wrap.visible{display:flex;}
+.year-filter-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1.8px;color:var(--muted);}
+.year-filter-pills{display:flex;gap:8px;flex-wrap:wrap;}
+.year-filter-btn{padding:7px 14px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--text);font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;transition:background var(--ease),border-color var(--ease),color var(--ease);}
+.year-filter-btn:hover,.year-filter-btn.active{background:var(--red);border-color:var(--red);color:#fff;}
+
+/* ── Panels ── */
+.res-panels{padding:22px 24px;}
+.res-panel{display:none;}
+.res-panel.active{display:flex;flex-direction:column;gap:12px;}
+
+/* ── Resource item ── */
+.res-item{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:border-color var(--ease),box-shadow var(--ease),transform var(--ease);}
+.res-item:hover{border-color:#f0b2ad;box-shadow:0 6px 22px rgba(232,33,26,0.09);transform:translateY(-2px);}
+.res-item-left{display:flex;align-items:flex-start;gap:14px;min-width:0;flex:1;}
+.res-type-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;letter-spacing:.5px;}
+.res-type-icon.pyq{background:#fff0f0;color:var(--red);}
+.res-type-icon.qb{background:#f0fff4;color:#2f9e44;}
+.res-type-icon.spq{background:#f3f0ff;color:#6741d9;}
+.res-type-icon.ip{background:#fff8f0;color:#e67700;}
+.res-type-icon.notes{background:#f0f4ff;color:#3b5bdb;}
+.res-type-icon.sol{background:#fff0f0;color:var(--red);}
+.res-type-icon.quiz{background:#fffbf0;color:#c97a00;}
+.res-item-body{min-width:0;flex:1;}
+.res-item-badge{font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:4px;}
+.res-item-title{font-size:15px;font-weight:900;line-height:1.35;color:var(--text);margin-bottom:4px;}
+.res-item-meta{font-size:12px;color:var(--muted);font-weight:700;line-height:1.55;}
+.res-item-chapter{display:inline-flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:800;color:var(--muted);margin-top:4px;}
+.res-action{display:inline-flex;align-items:center;justify-content:center;background:var(--red);color:#fff;text-decoration:none;border-radius:11px;padding:9px 16px;font-size:12.5px;font-weight:900;flex-shrink:0;transition:background var(--ease),transform var(--ease),box-shadow var(--ease);}
+.res-action:hover{background:#c41a14;transform:translateY(-1px);box-shadow:0 6px 18px rgba(232,33,26,0.3);}
+.res-action.quiz-btn{background:#c97a00;}
+.res-action.quiz-btn:hover{background:#a06200;}
+.res-action.sol-btn{background:var(--black);}
+.res-action.sol-btn:hover{background:#222;}
+
+/* ── Section divider inside "All" panel ── */
+.res-section-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:var(--muted);display:flex;align-items:center;gap:8px;margin:8px 0 4px;}
+.res-section-label::before{content:'';width:3px;height:12px;background:var(--red);border-radius:2px;flex-shrink:0;}
+.res-section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── Empty state ── */
+.empty-res{background:var(--surface);border:1.5px dashed var(--border);border-radius:var(--radius);padding:32px 20px;text-align:center;color:var(--muted);}
+.empty-res .e-icon{font-size:36px;margin-bottom:10px;}
+.empty-res strong{display:block;font-size:15px;color:var(--text);margin-bottom:6px;font-weight:900;}
+.empty-res p{font-size:13px;font-weight:600;line-height:1.7;}
+
+/* ── Chapter view ── */
+.chapter-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+.chapter-card-link{display:flex;flex-direction:column;gap:8px;background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:16px 18px 14px;text-decoration:none;color:inherit;transition:.25s;position:relative;overflow:hidden;}
+.chapter-card-link::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);border-radius:3px 3px 0 0;transform:scaleX(0);transform-origin:left;transition:.25s;}
+.chapter-card-link:hover{border-color:var(--red);box-shadow:0 8px 28px rgba(232,33,26,0.12);transform:translateY(-3px);}
+.chapter-card-link:hover::before{transform:scaleX(1);}
+.ch-card-num{font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;color:var(--red);}
+.ch-card-name{font-size:14px;font-weight:900;line-height:1.35;}
+.ch-card-desc{font-size:12px;color:var(--muted);font-weight:600;line-height:1.5;}
+.ch-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px;border-top:1px solid var(--border);}
+.ch-card-count{font-size:11px;font-weight:800;color:var(--muted);}
+.ch-card-cta{font-size:11px;font-weight:900;color:var(--red);}
+
+/* ── Sidebar ── */
+.sidebar{display:flex;flex-direction:column;gap:18px;position:sticky;top:82px;}
+.sidebar-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+.sidebar-card-head{padding:14px 17px;border-bottom:1px solid var(--border-soft);background:linear-gradient(135deg,#fafafa,#f4f4f6);}
+.sidebar-heading{font-size:12px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:7px;}
+.sidebar-heading::before{content:'';width:3px;height:13px;background:var(--red);border-radius:2px;flex-shrink:0;}
+.sidebar-body{padding:14px 16px;}
+.info-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-soft);font-size:12.5px;}
+.info-row:last-child{border-bottom:none;}
+.info-row span:first-child{color:var(--muted);font-weight:700;}
+.info-row span:last-child{font-weight:900;}
+.chapter-jump-list{display:flex;flex-direction:column;gap:4px;}
+.ch-jump-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:inherit;transition:.2s;font-size:12.5px;}
+.ch-jump-item:hover{border-color:var(--red);background:#fffbfb;}
+.ch-num-badge{font-family:'Bebas Neue';font-size:14px;letter-spacing:1px;color:var(--red);flex-shrink:0;}
+.ch-jump-name{flex:1;font-weight:800;line-height:1.3;}
+.ch-jump-count{font-size:10px;color:var(--muted);font-weight:700;}
+.related-list{display:flex;flex-direction:column;gap:6px;}
+.related-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:inherit;transition:.2s;}
+.related-item:hover{border-color:var(--red);background:#fffbfb;padding-left:14px;}
+.related-icon{font-size:20px;flex-shrink:0;}
+.related-name{font-size:12.5px;font-weight:800;}
+.related-count{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:1px;}
+
+/* ── Footer ── */
+footer{background:var(--black);color:#aaa;padding:40px 24px 24px;margin-top:auto;}
+.footer-inner{max-width:1280px;margin:0 auto;}
+.footer-top{display:flex;gap:40px;flex-wrap:wrap;margin-bottom:32px;}
+.footer-brand{flex:1;min-width:220px;}
+.footer-brand p{font-size:13px;line-height:1.7;color:#666;}
+.footer-links{flex:2;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:24px;}
+.footer-col h4{color:#fff;font-size:12.5px;font-weight:800;margin-bottom:14px;text-transform:uppercase;letter-spacing:1.2px;}
+.footer-col a{display:block;color:#555;text-decoration:none;font-size:13px;font-weight:600;margin-bottom:9px;transition:color var(--ease);}
+.footer-col a:hover{color:#fff;}
+.footer-bottom{border-top:1px solid #1a1a1a;padding-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:11.5px;color:#3a3a3a;}
+.footer-bottom span{color:var(--red);}
+
+@media(max-width:1060px){.page-body{grid-template-columns:1fr;}.sidebar{position:static;}}
+@media(max-width:768px){
+  nav{display:none;}.hamburger{display:flex;}
+  .subject-hero{padding:24px 16px 20px;}
+  .subject-hero-icon{width:54px;height:54px;font-size:26px;}
+  .page-body{padding:20px 16px 52px;}
+}
+</style>
+<link rel="stylesheet" href="animations.css">
+</head>
+<body>
+<header>
+  <a class="logo-wrap" href="index.html"><img src="logo.png" alt="ExamReady" style="height:44px;"></a>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="class9.html">Class 9</a>
+    <a href="class10.html">Class 10</a>
+    <a href="class11.html">Class 11</a>
+    <a href="class12.html">Class 12</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="pyq.html">PYQs</a>
+    <a href="quizzes.html">Quizzes</a>
+  </nav>
+  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</header>
+
+<!-- Simple subject header: icon + name only -->
+<div class="subject-hero" id="subjectHero">
+  <div class="subject-hero-inner" id="heroMount">
+    <div class="subject-hero-icon" id="heroIcon">📚</div>
+    <div class="subject-hero-name" id="heroName">Loading…</div>
+  </div>
+</div>
+
+<div class="page-body" id="pageBody">
+  <div style="grid-column:1/-1;padding:60px 0;text-align:center;color:var(--muted);font-weight:700">Loading…</div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div style="font-family:'Bebas Neue';font-size:26px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
+        <p>Subject-wise CBSE hubs — every PYQ, quiz, solution, and note for every chapter.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col"><h4>Classes</h4><a href="class9.html">Class 9</a><a href="class10.html">Class 10</a><a href="class11.html">Class 11</a><a href="class12.html">Class 12</a></div>
+        <div class="footer-col"><h4>Resources</h4><a href="solutions.html">Solutions</a><a href="pyq.html">PYQ Papers</a><a href="questionbank.html">Question Banks</a><a href="quizzes.html">Quizzes</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2026 ExamReady. Made with <span>♥</span> for students.</p></div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script src="notes-module-for-shared.js"></script>
+<script src="animations.js"></script>
+<script src="ads.js"></script>
+<script>
+/* ── helpers ── */
+function toggleMenu() {
+  const nav = document.getElementById('mainNav');
+  if (nav.dataset.open === '1') { nav.removeAttribute('style'); nav.dataset.open = '0'; }
+  else { Object.assign(nav.style,{display:'flex',flexDirection:'column',position:'absolute',top:'64px',left:'0',right:'0',background:'#111',padding:'16px',zIndex:'999'}); nav.dataset.open = '1'; }
+}
+
+function buildChapterUrl(cls, subjectKey, chapterId) {
+  return `chapter.html?class=${encodeURIComponent(cls)}&subject=${encodeURIComponent(subjectKey)}&chapter=${encodeURIComponent(chapterId)}`;
+}
+
+/* ── Resource type meta ── */
+const PDF_TYPES = [
+  { key:'pyq',   label:'PYQ Papers',          iconTxt:'PYQ',  cls:'pyq',   actionLabel:'Preview PDF',     actionCls:'' },
+  { key:'qb',    label:'Question Banks',       iconTxt:'QB',   cls:'qb',    actionLabel:'Preview PDF',     actionCls:'' },
+  { key:'spq',   label:'SPQ Papers',           iconTxt:'SPQ',  cls:'spq',   actionLabel:'Preview PDF',     actionCls:'' },
+  { key:'ip',    label:'Institutional Papers', iconTxt:'INST', cls:'ip',    actionLabel:'Preview PDF',     actionCls:'' },
+];
+
+let activeResourceTab = 'all';
+let activeYear = 'all';
+let currentSubjectContext = { cls:'', subjectKey:'' };
+
+function isPdfTab(key) {
+  return PDF_TYPES.some(t => t.key === key);
+}
+
+function sortYearsDesc(values) {
+  return [...new Set(values.map(value => String(value)))].sort((a, b) => {
+    const diff = Number(b) - Number(a);
+    return Number.isNaN(diff) ? String(b).localeCompare(String(a)) : diff;
+  });
+}
+
+function getAvailableYears(pdfMap) {
+  const years = [];
+  PDF_TYPES.forEach(t => {
+    (pdfMap[t.key] || []).forEach(item => {
+      if (item.year) years.push(item.year);
+    });
+  });
+  return sortYearsDesc(years);
+}
+
+function buildNoteMeta(note) {
+  const parts = [];
+  const excerpt = typeof getNoteExcerpt === 'function' ? getNoteExcerpt(note, 90) : '';
+  if (excerpt) parts.push(excerpt);
+  if (note && note.updatedAt) parts.push(`Updated: ${note.updatedAt}`);
+  return parts.join(' | ') || 'Quick revision note';
+}
+
+function updateYearFilterVisibility() {
+  const wrap = document.getElementById('yearFilterWrap');
+  if (!wrap) return;
+  wrap.classList.toggle('visible', isPdfTab(activeResourceTab));
+}
+
+function buildYearFilters(years) {
+  const container = document.getElementById('yearFilters');
+  if (!container) return;
+  if (activeYear !== 'all' && !years.includes(String(activeYear))) activeYear = 'all';
+  container.innerHTML = '';
+
+  const appendBtn = (label, value) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'year-filter-btn' + (String(activeYear) === String(value) ? ' active' : '');
+    btn.textContent = label;
+    btn.onclick = function() {
+      activeYear = value;
+      renderSubjectPage(currentSubjectContext.cls, currentSubjectContext.subjectKey);
+    };
+    container.appendChild(btn);
+  };
+
+  appendBtn('All Years', 'all');
+  years.forEach(year => appendBtn(year, year));
+}
+
+/* ── Build a single resource item HTML ── */
+function resItemHtml(iconTxt, iconCls, badge, title, meta, href, actionLabel, actionCls, chapterLabel) {
+  const chBadge = chapterLabel ? `<span class="res-item-chapter">📖 ${escapeHtml(chapterLabel)}</span>` : '';
+  return `<div class="res-item">
+    <div class="res-item-left">
+      <div class="res-type-icon ${escapeHtml(iconCls)}">${escapeHtml(iconTxt)}</div>
+      <div class="res-item-body">
+        <div class="res-item-badge">${escapeHtml(badge)}</div>
+        <div class="res-item-title">${escapeHtml(title)}</div>
+        <div class="res-item-meta">${escapeHtml(meta)}</div>
+        ${chBadge}
+      </div>
+    </div>
+    <a class="res-action ${escapeHtml(actionCls)}" href="${href}">${escapeHtml(actionLabel)}</a>
+  </div>`;
+}
+
+/* ── Build one panel of items (or empty state) ── */
+function buildPanel(items, emptyLabel) {
+  if (!items.length) return `<div class="empty-res"><div class="e-icon">📭</div><strong>Nothing here yet</strong><p>${escapeHtml(emptyLabel)}</p></div>`;
+  return items.join('');
+}
+
+/* ── Get chapter label for an item ── */
+function getChLabel(cls, subjectKey, chapterId) {
+  if (!chapterId) return '';
+  return getChapterLabel ? getChapterLabel(cls, subjectKey, chapterId) : '';
+}
+
+/* ── Render not found ── */
+function renderNotFound() {
+  document.getElementById('heroIcon').textContent = '❌';
+  document.getElementById('heroName').textContent = 'NOT FOUND';
+  document.getElementById('pageBody').innerHTML = `<div class="empty-res" style="grid-column:1/-1"><div class="e-icon">🔍</div><strong>No subject here</strong><p>Return to the class page.</p></div>`;
+}
+
+/* ── Main render ── */
+function renderSubjectPage(cls, subjectKey) {
+  currentSubjectContext = { cls, subjectKey };
+  const classMeta   = getClassMeta(cls);
+  const subject     = getSubjectMeta(cls, subjectKey);
+  if (!classMeta || !subject) { renderNotFound(); return; }
+  const allPdfs     = getData('pdfs') || {};
+  const allQuizData = getData('quizzes') || {};
+  const chapters    = getChapters(cls, subjectKey);
+  const solutions   = getSolutionPostsByClassAndSubject(cls, subjectKey);
+  const notes       = typeof getNotesByClassAndSubject === 'function' ? getNotesByClassAndSubject(cls, subjectKey) : [];
+  const quizzes     = (allQuizData[`${cls}-${subjectKey}`] || []);
+  const sameClass   = (getSubjectsMap()[cls] || []).filter(s => s.key !== subjectKey);
+
+  /* collect PDF items per type */
+  const pdfMap = {};
+  PDF_TYPES.forEach(t => { pdfMap[t.key] = allPdfs[`${cls}-${subjectKey}-${t.key}`] || []; });
+  const availableYears = getAvailableYears(pdfMap);
+  if (activeYear !== 'all' && !availableYears.includes(String(activeYear))) activeYear = 'all';
+
+  /* counts */
+  const totalPdfs  = PDF_TYPES.reduce((a,t) => a + pdfMap[t.key].length, 0);
+  const totalAll   = totalPdfs + notes.length + solutions.length + quizzes.length;
+
+  /* ── Page title ── */
+  document.title = `${classMeta.label} ${subject.label} – ExamReady`;
+
+  /* ── Simple Hero: icon + name only ── */
+  document.getElementById('heroIcon').textContent = subject.icon || '📚';
+  document.getElementById('heroName').textContent = subject.label;
+
+  /* ── Build HTML for each resource category ── */
+
+  // "All Resources" combined view with section labels
+  function buildAllPanel() {
+    const parts = [];
+    PDF_TYPES.forEach(t => {
+      const items = pdfMap[t.key];
+      if (!items.length) return;
+      parts.push(`<div class="res-section-label">${t.label} (${items.length})</div>`);
+      items.forEach(p => parts.push(resItemHtml(
+        t.iconTxt, t.cls, t.label,
+        p.name, [p.year ? `Year: ${p.year}` : '', p.size || ''].filter(Boolean).join(' · '),
+        buildPdfPreviewUrl(p), 'Preview PDF', '',
+        getChLabel(cls, subjectKey, p.chapterId)
+      )));
+    });
+    if (notes.length) {
+      parts.push(`<div class="res-section-label">Notes (${notes.length})</div>`);
+      notes.forEach(note => parts.push(resItemHtml(
+        'NOTE', 'notes', 'Short Note',
+        note.title, buildNoteMeta(note),
+        typeof getNoteUrl === 'function' ? getNoteUrl(note) : '#', 'Read Note', '',
+        getChLabel(cls, subjectKey, note.chapterId)
+      )));
+    }
+    if (solutions.length) {
+      parts.push(`<div class="res-section-label">Solution Articles (${solutions.length})</div>`);
+      solutions.forEach(s => parts.push(resItemHtml(
+        'SOL', 'sol', 'Solution Article',
+        s.title, getSolutionExcerpt(s, 90),
+        getSolutionPostUrl(s), 'Read Solution', 'sol-btn',
+        getChLabel(cls, subjectKey, s.chapterId)
+      )));
+    }
+    if (quizzes.length) {
+      parts.push(`<div class="res-section-label">Quizzes (${quizzes.length})</div>`);
+      quizzes.forEach(q => parts.push(resItemHtml(
+        'QUIZ', 'quiz', 'MCQ Quiz',
+        q.title, `${(q.questions||[]).length} question${(q.questions||[]).length !== 1 ? 's' : ''}`,
+        `quiz.html?id=${encodeURIComponent(q.id)}`, 'Open Quiz', 'quiz-btn',
+        getChLabel(cls, subjectKey, q.chapterId)
+      )));
+    }
+    if (!parts.length) return `<div class="empty-res"><div class="e-icon">📭</div><strong>No resources yet</strong><p>The admin hasn't added any materials for ${escapeHtml(subject.label)} yet.</p></div>`;
+    return parts.join('');
+  }
+
+  // Chapter cards grid
+  function buildChaptersPanel() {
+    if (!chapters.length) return `<div class="empty-res"><div class="e-icon">📖</div><strong>No chapters created yet</strong><p>Chapters will appear here once added from the admin panel.</p></div>`;
+    const cards = chapters.map(ch => {
+      const chRes = PDF_TYPES.reduce((a,t) => a + (pdfMap[t.key]||[]).filter(p => (p.chapterId||'') === ch.id).length, 0)
+        + notes.filter(n => (n.chapterId||'') === ch.id).length
+        + solutions.filter(s => (s.chapterId||'') === ch.id).length
+        + quizzes.filter(q => (q.chapterId||'') === ch.id).length;
+      return `<a class="chapter-card-link" href="${buildChapterUrl(cls, subjectKey, ch.id)}">
+        <div class="ch-card-num">Chapter ${ch.number}</div>
+        <div class="ch-card-name">${escapeHtml(ch.name)}</div>
+        ${ch.description ? `<div class="ch-card-desc">${escapeHtml(ch.description.slice(0,72))}${ch.description.length > 72 ? '…' : ''}</div>` : ''}
+        <div class="ch-card-footer">
+          <span class="ch-card-count">${chRes} resource${chRes !== 1 ? 's' : ''}</span>
+          <span class="ch-card-cta">Open →</span>
+        </div>
+      </a>`;
+    }).join('');
+    return `<div class="chapter-cards-grid">${cards}</div>`;
+  }
+
+  /* ── Tab definitions ── */
+  const tabs = [
+    { key:'all',     label:'All Resources', count: totalAll },
+    { key:'pyq',     label:'PYQ Papers',    count: pdfMap.pyq.length },
+    { key:'qb',      label:'Question Banks',count: pdfMap.qb.length },
+    { key:'spq',     label:'SPQ Papers',    count: pdfMap.spq.length },
+    { key:'ip',      label:'Inst. Papers',  count: pdfMap.ip.length },
+    { key:'notes',   label:'Notes',         count: notes.length },
+    { key:'sol',     label:'Solutions',     count: solutions.length },
+    { key:'quiz',    label:'Quizzes',       count: quizzes.length },
+    { key:'chapters',label:'By Chapter',    count: chapters.length },
+  ];
+
+  if (!tabs.some(t => t.key === activeResourceTab)) activeResourceTab = 'all';
+
+  const tabsHtml = tabs.map(t => `
+    <button class="res-tab${t.key===activeResourceTab?' active':''}" data-tab="${t.key}" onclick="switchTab('${t.key}')">
+      ${t.label}<span class="tab-count">${t.count}</span>
+    </button>`).join('');
+
+  /* ── Panel content builders ── */
+  function buildTypePanel(typeKey) {
+    const t = PDF_TYPES.find(x => x.key === typeKey);
+    const items = (pdfMap[typeKey] || [])
+      .filter(p => activeYear === 'all' || String(p.year) === String(activeYear))
+      .map(p => resItemHtml(
+      t.iconTxt, t.cls, t.label,
+      p.name, [p.year ? `Year: ${p.year}` : '', p.size || ''].filter(Boolean).join(' · '),
+      buildPdfPreviewUrl(p), 'Preview PDF', '',
+      getChLabel(cls, subjectKey, p.chapterId)
+    ));
+    return buildPanel(items, `No ${t.label} added yet. Ask your admin to upload some.`);
+  }
+
+  const panelMap = {
+    all:      buildAllPanel(),
+    pyq:      buildTypePanel('pyq'),
+    qb:       buildTypePanel('qb'),
+    spq:      buildTypePanel('spq'),
+    ip:       buildTypePanel('ip'),
+    notes:    buildPanel(notes.map(note => resItemHtml(
+      'NOTE', 'notes', 'Short Note', note.title, buildNoteMeta(note),
+      typeof getNoteUrl === 'function' ? getNoteUrl(note) : '#', 'Read Note', '',
+      getChLabel(cls, subjectKey, note.chapterId)
+    )), 'No notes added yet.'),
+    sol:      buildPanel(solutions.map(s => resItemHtml('SOL','sol','Solution Article', s.title, getSolutionExcerpt(s,90), getSolutionPostUrl(s),'Read Solution','sol-btn', getChLabel(cls,subjectKey,s.chapterId))), 'No solution articles yet.'),
+    quiz:     buildPanel(quizzes.map(q  => resItemHtml('QUIZ','quiz','MCQ Quiz', q.title, `${(q.questions||[]).length} questions`, `quiz.html?id=${encodeURIComponent(q.id)}`,'Open Quiz','quiz-btn', getChLabel(cls,subjectKey,q.chapterId))), 'No quizzes added yet.'),
+    chapters: buildChaptersPanel(),
+  };
+
+  const panelsHtml = tabs.map(t =>
+    `<div class="res-panel${t.key===activeResourceTab?' active':''}" data-panel="${t.key}">${panelMap[t.key]||''}</div>`
+  ).join('');
+
+  /* ── Sidebar chapter jump list ── */
+  const chJumpHtml = chapters.slice(0, 10).map(ch => {
+    const chRes = PDF_TYPES.reduce((a,t) => a + (pdfMap[t.key]||[]).filter(p=>(p.chapterId||'')=== ch.id).length, 0)
+      + notes.filter(n => (n.chapterId||'') === ch.id).length
+      + solutions.filter(s=>(s.chapterId||'')=== ch.id).length
+      + quizzes.filter(q=>(q.chapterId||'')=== ch.id).length;
+    return `<a class="ch-jump-item" href="${buildChapterUrl(cls, subjectKey, ch.id)}">
+      <span class="ch-num-badge">Ch ${ch.number}</span>
+      <div style="flex:1;min-width:0">
+        <div class="ch-jump-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(ch.name)}</div>
+        <div class="ch-jump-count">${chRes} resource${chRes!==1?'s':''}</div>
+      </div>
+      <span style="font-size:10px;color:var(--red);font-weight:900">→</span>
+    </a>`;
+  }).join('');
+
+  /* ── Related subjects ── */
+  const relatedHtml = sameClass.slice(0, 8).map(s => {
+    const relNotes = typeof getNotesByClassAndSubject === 'function' ? getNotesByClassAndSubject(cls, s.key).length : 0;
+    const relTotal = PDF_TYPES.reduce((a,t) => a + ((allPdfs[`${cls}-${s.key}-${t.key}`]||[]).length), 0)
+      + relNotes
+      + getSolutionPostsByClassAndSubject(cls, s.key).length
+      + ((allQuizData[`${cls}-${s.key}`]||[]).length);
+    return `<a class="related-item" href="${buildSubjectPageUrl(cls, s.key)}">
+      <span class="related-icon">${s.icon||'📚'}</span>
+      <div>
+        <div class="related-name">${escapeHtml(s.label)}</div>
+        <div class="related-count">${relTotal} resource${relTotal!==1?'s':''}</div>
+      </div>
+    </a>`;
+  }).join('');
+
+  /* ── Assemble page ── */
+  document.getElementById('pageBody').innerHTML = `
+    <div class="main-content">
+      <div class="resources-card">
+        <div class="resources-card-head">
+          <div class="resources-card-kicker">All Resources for ${escapeHtml(subject.label)}</div>
+          <div class="res-tabs">${tabsHtml}</div>
+          <div class="year-filter-wrap" id="yearFilterWrap">
+            <div class="year-filter-label">Filter PDFs by Year</div>
+            <div class="year-filter-pills" id="yearFilters"></div>
+          </div>
+        </div>
+        <div class="res-panels">${panelsHtml}</div>
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-card-head"><div class="sidebar-heading">Subject Info</div></div>
+        <div class="sidebar-body">
+          <div class="info-row"><span>Class</span><span>${escapeHtml(classMeta.label)}</span></div>
+          <div class="info-row"><span>Subject</span><span>${escapeHtml(subject.label)}</span></div>
+          <div class="info-row"><span>Stream</span><span>${escapeHtml(subject.stream||'General')}</span></div>
+          <div class="info-row"><span>Chapters</span><span>${chapters.length}</span></div>
+          <div class="info-row"><span>PDF Files</span><span>${totalPdfs}</span></div>
+          <div class="info-row"><span>Notes</span><span>${notes.length}</span></div>
+          <div class="info-row"><span>Solutions</span><span>${solutions.length}</span></div>
+          <div class="info-row"><span>Quizzes</span><span>${quizzes.length}</span></div>
+        </div>
+      </div>
+
+      ${chapters.length ? `
+      <div class="sidebar-card">
+        <div class="sidebar-card-head"><div class="sidebar-heading">Jump to Chapter</div></div>
+        <div class="sidebar-body">
+          <div class="chapter-jump-list">${chJumpHtml}</div>
+          ${chapters.length > 10 ? `<a href="#" onclick="switchTab('chapters');return false;" style="display:block;text-align:center;margin-top:10px;font-size:12px;font-weight:800;color:var(--red);text-decoration:none;">View all ${chapters.length} chapters →</a>` : ''}
+        </div>
+      </div>` : ''}
+
+      ${sameClass.length ? `
+      <div class="sidebar-card">
+        <div class="sidebar-card-head"><div class="sidebar-heading">More in ${escapeHtml(classMeta.label)}</div></div>
+        <div class="sidebar-body">
+          <div class="related-list">${relatedHtml}</div>
+        </div>
+      </div>` : ''}
+    </aside>`;
+
+  buildYearFilters(availableYears);
+  updateYearFilterVisibility();
+}
+
+function switchTab(key) {
+  activeResourceTab = key;
+  document.querySelectorAll('.res-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === key));
+  document.querySelectorAll('.res-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === key));
+  updateYearFilterVisibility();
+}
+
+/* ── Boot ── */
+const params = new URLSearchParams(window.location.search);
+const cls = params.get('class');
+const subjectKey = params.get('subject');
+if (!cls || !subjectKey) renderNotFound();
+else renderSubjectPage(cls, subjectKey);
+</script>
+</body>
+</html>

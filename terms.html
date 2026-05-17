@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Terms & Conditions - ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --red:#e8211a; --black:#0d0d0d; --gray:#f4f4f4; --gray2:#e8e8e8; --text:#1a1a1a; --muted:#666; --radius:18px; }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html, body { overflow-x:hidden; width:100%; }
+  body { font-family:'Nunito',sans-serif; background:#fff; color:var(--text); min-height:100vh; display:flex; flex-direction:column; }
+  header { background:var(--black); padding:0 24px; position:sticky; top:0; z-index:1000; display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .logo-wrap { display:flex; align-items:center; text-decoration:none; }
+  nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  nav a { color:#ccc; font-weight:700; font-size:14px; padding:8px 14px; border-radius:8px; text-decoration:none; }
+  nav a:hover, nav a.active { color:#fff; background:rgba(255,255,255,0.1); }
+  .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:8px; }
+  .hamburger span { width:24px; height:2px; background:#fff; border-radius:2px; }
+  .hero { background:linear-gradient(135deg,#0d0d0d 0%,#1a1a1a 55%,#2a0a0a 100%); padding:42px 24px; position:relative; overflow:hidden; }
+  .hero::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 75% 40%,rgba(232,33,26,0.12),transparent 50%); }
+  .hero-inner { max-width:1100px; margin:0 auto; position:relative; z-index:1; }
+  .hero-badge { display:inline-block; background:var(--red); color:#fff; font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 14px; border-radius:20px; margin-bottom:18px; }
+  .breadcrumb { color:rgba(255,255,255,0.45); font-size:13px; font-weight:700; margin-bottom:14px; }
+  .breadcrumb a { color:rgba(255,255,255,0.45); text-decoration:none; }
+  .hero h1 { font-family:'Bebas Neue'; font-size:clamp(38px,6vw,72px); color:#fff; letter-spacing:2px; line-height:1; margin-bottom:10px; }
+  .hero p { color:#bbb; font-size:16px; line-height:1.7; max-width:760px; font-weight:600; }
+  .hero-meta { display:flex; gap:16px; margin-top:18px; flex-wrap:wrap; }
+  .hero-chip { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:999px; padding:7px 14px; font-size:12px; font-weight:800; color:#fff; }
+  main { flex:1; padding:34px 24px 56px; }
+  .main-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:minmax(0,2.2fr) 260px; gap:32px; align-items:start; }
+  .legal-card { background:#fff; border:1px solid var(--gray2); border-radius:24px; padding:32px; box-shadow:0 10px 30px rgba(0,0,0,0.06); }
+  .legal-card section { padding:26px 0; border-bottom:1px solid var(--gray2); }
+  .legal-card section:first-child { padding-top:0; }
+  .legal-card section:last-child { border-bottom:none; padding-bottom:0; }
+  .section-num { font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--red); margin-bottom:6px; }
+  .legal-card h2 { font-size:20px; font-weight:900; margin-bottom:12px; color:var(--text); }
+  .legal-card p { font-size:14px; line-height:1.85; color:var(--muted); font-weight:600; margin-bottom:10px; }
+  .legal-card p:last-child { margin-bottom:0; }
+  .legal-card ul { margin:10px 0 10px 20px; display:flex; flex-direction:column; gap:6px; }
+  .legal-card li { font-size:14px; line-height:1.7; color:var(--muted); font-weight:600; }
+  .highlight-box { background:#fff8f8; border:1px solid #ffd8d5; border-radius:14px; padding:14px 18px; margin-top:12px; }
+  .highlight-box p { color:#8f1d18 !important; font-weight:700; margin-bottom:0; }
+  .sidebar { display:flex; flex-direction:column; gap:16px; position:sticky; top:84px; }
+  .toc-card { background:#fff; border:1px solid var(--gray2); border-radius:18px; padding:20px; box-shadow:0 4px 16px rgba(0,0,0,0.04); }
+  .toc-card h3 { font-size:13px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:14px; }
+  .toc-list { display:flex; flex-direction:column; gap:4px; }
+  .toc-link { display:block; font-size:13px; font-weight:700; color:var(--muted); text-decoration:none; padding:7px 10px; border-radius:8px; transition:.2s; }
+  .toc-link:hover { background:#fff0f0; color:var(--red); }
+  .contact-card { background:linear-gradient(135deg,#0d0d0d,#1a0505); border-radius:18px; padding:20px; color:#fff; }
+  .contact-card h3 { font-size:14px; font-weight:900; margin-bottom:8px; }
+  .contact-card p { font-size:12px; color:#aaa; line-height:1.6; font-weight:600; margin-bottom:12px; }
+  .contact-social { display:flex; gap:8px; }
+  .social-btn { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:10px; text-decoration:none; color:#fff; flex-shrink:0; transition:.2s; }
+  .social-btn:hover { transform:translateY(-2px); }
+  .social-btn.instagram { background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045); }
+  .social-btn.youtube { background:#ff0000; }
+  footer { background:var(--black); color:#aaa; padding:40px 24px 24px; margin-top:auto; }
+  .footer-inner { max-width:1100px; margin:0 auto; }
+  .footer-top { display:flex; gap:40px; flex-wrap:wrap; margin-bottom:32px; }
+  .footer-brand { flex:1; min-width:220px; }
+  .footer-brand p { font-size:13px; line-height:1.7; color:#888; }
+  .footer-links { flex:2; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:24px; }
+  .footer-col h4 { color:#fff; font-size:14px; font-weight:800; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; }
+  .footer-col a { display:block; color:#888; text-decoration:none; font-size:13px; font-weight:600; margin-bottom:8px; }
+  .footer-col a:hover { color:#fff; }
+  .footer-bottom { border-top:1px solid #222; padding-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .footer-bottom p { font-size:12px; color:#555; }
+  .footer-bottom span { color:var(--red); }
+  .social-icon-link { display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:10px; text-decoration:none; color:#fff; flex-shrink:0; transition:.2s; }
+  .social-icon-link:hover { transform:translateY(-2px); }
+  @media(max-width:900px) { .main-inner { grid-template-columns:1fr; } .sidebar { position:static; } }
+  @media(max-width:768px) { nav { display:none; } .hamburger { display:flex; } main { padding:24px 16px 40px; } .hero { padding:34px 16px; } .legal-card { padding:22px; } }
+</style>
+<link rel="stylesheet" href="animations.css">
+</head>
+<body>
+<header>
+  <a class="logo-wrap" href="index.html"><img src="logo.png" alt="ExamReady" style="height:44px;"></a>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="pyq.html">PYQs</a>
+    <a href="quizzes.html">Quizzes</a>
+    <a href="terms.html" class="active">Terms</a>
+  </nav>
+  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</header>
+<section class="hero">
+  <div class="hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Terms &amp; Conditions</div>
+    <div class="hero-badge">Legal Document</div>
+    <h1>TERMS &amp; CONDITIONS</h1>
+    <p>These Terms and Conditions govern your use of the ExamReady platform, including all study resources, quizzes, solution articles, PDF previews, and admin features. Please read them carefully before using the site.</p>
+    <div class="hero-meta">
+      <div class="hero-chip">Last Updated: April 2026</div>
+      <div class="hero-chip">Effective Immediately</div>
+      <div class="hero-chip">CBSE Students · Class 9–12</div>
+    </div>
+  </div>
+</section>
+<main>
+  <div class="main-inner">
+    <div class="legal-card">
+      <section id="acceptance">
+        <div class="section-num">Section 1</div>
+        <h2>Acceptance of Terms</h2>
+        <p>By accessing or using ExamReady, you confirm that you have read, understood, and agree to be bound by these Terms and Conditions. If you are accessing the platform on behalf of a school, institution, or coaching centre, you represent that you have the authority to bind that entity to these terms.</p>
+        <p>If you are under the age of 18, you must have permission from a parent or guardian to use this platform. Your use of the site constitutes their acceptance of these terms on your behalf.</p>
+        <p>These terms may be updated at any time. Continued use of the platform after changes are published constitutes acceptance of the revised terms.</p>
+      </section>
+      <section id="educational-use">
+        <div class="section-num">Section 2</div>
+        <h2>Educational Use</h2>
+        <p>ExamReady is intended exclusively for educational and revision purposes by CBSE students in Class 9 to 12. The platform provides access to study resources including PYQ papers, question banks, solution articles, quizzes, and short notes.</p>
+        <p>All content on ExamReady is provided to support academic learning. Users should:</p>
+        <ul>
+          <li>Use the platform as a supplementary revision and practice tool alongside their regular school curriculum</li>
+          <li>Cross-verify important academic facts, syllabus updates, and exam patterns with their school or CBSE's official communications</li>
+          <li>Not rely solely on ExamReady content for board examination preparation without consulting teachers and textbooks</li>
+          <li>Treat quiz scores and solution content as practice indicators, not as definitive academic assessments</li>
+        </ul>
+      </section>
+      <section id="admin-responsibility">
+        <div class="section-num">Section 3</div>
+        <h2>Administrator Responsibility</h2>
+        <p>The ExamReady admin panel is intended to be used by authorized personnel only — typically a teacher, school admin, or the site owner. Administrators bear full responsibility for the content they add to the platform.</p>
+        <p>Administrators agree to:</p>
+        <ul>
+          <li>Only upload or link to study materials that they have the legal right to share</li>
+          <li>Not upload copyrighted materials without obtaining appropriate permissions from the copyright holder</li>
+          <li>Ensure that quiz questions and solution content are educationally accurate and appropriate</li>
+          <li>Keep the admin password confidential and not share it with unauthorized individuals</li>
+          <li>Not use the platform to spread misinformation, offensive content, or material unrelated to education</li>
+          <li>Accept responsibility for any data exported from the admin panel and stored externally</li>
+        </ul>
+        <div class="highlight-box">
+          <p>Important: ExamReady cannot and does not verify the accuracy of all admin-uploaded content. The admin is solely responsible for ensuring uploaded materials are appropriate, accurate, and legally shareable.</p>
+        </div>
+      </section>
+      <section id="content-availability">
+        <div class="section-num">Section 4</div>
+        <h2>Content Availability</h2>
+        <p>ExamReady content is stored in the browser's local storage. This means content availability depends on the device and browser being used. Clearing browser data will remove locally stored content from that device.</p>
+        <p>PDF previews and file downloads may depend on third-party hosting services such as Google Drive. ExamReady does not guarantee the permanent availability of externally hosted files. If a Google Drive link becomes inaccessible, ExamReady has no way to restore or replace that content.</p>
+        <p>The platform may be updated, restructured, or modified at any time without prior notice. Features may be added or removed. ExamReady is not liable for any disruption in service or loss of locally stored data.</p>
+      </section>
+      <section id="intellectual-property">
+        <div class="section-num">Section 5</div>
+        <h2>Intellectual Property</h2>
+        <p>The ExamReady platform design, code, branding, and structure are the intellectual property of the site owner. Unauthorized copying, reproduction, or redistribution of the platform's design or code is not permitted.</p>
+        <p>Study content such as CBSE question papers and NCERT solutions may be subject to copyright by their respective owners (CBSE Board, NCERT, etc.). ExamReady facilitates access to such materials for non-commercial educational use only and does not claim ownership over those materials.</p>
+        <p>If you believe any content on ExamReady infringes your copyright, please reach out to us through our social media channels so we can review and address the concern promptly.</p>
+      </section>
+      <section id="acceptable-use">
+        <div class="section-num">Section 6</div>
+        <h2>Acceptable Use Policy</h2>
+        <p>Users must use ExamReady in a lawful and responsible manner. The following activities are strictly prohibited:</p>
+        <ul>
+          <li>Uploading harmful, malicious, offensive, or inappropriate content through the admin panel</li>
+          <li>Attempting to gain unauthorized access to the admin panel or any restricted area</li>
+          <li>Sharing the admin password with students or unauthorized individuals</li>
+          <li>Using the platform to impersonate official CBSE, NCERT, or institutional websites</li>
+          <li>Distributing spam, phishing links, or misleading educational content</li>
+          <li>Using automated bots, scrapers, or crawlers to extract platform content</li>
+          <li>Attempting to inject malicious scripts or interfere with browser storage data</li>
+        </ul>
+        <p>ExamReady reserves the right to update these terms if misuse patterns emerge. Administrators found violating this policy may have their access revoked.</p>
+      </section>
+      <section id="disclaimer-liability">
+        <div class="section-num">Section 7</div>
+        <h2>Disclaimer of Liability</h2>
+        <p>ExamReady provides all content "as is" without any warranty of accuracy, completeness, or fitness for a particular purpose. We are not liable for any academic outcomes, exam results, or decisions made based on content found on this platform.</p>
+        <p>ExamReady is not affiliated with CBSE, NCERT, or any educational institution unless explicitly stated. Resources on this platform are intended as supplementary revision aids only.</p>
+        <p>To the maximum extent permitted by law, ExamReady shall not be liable for any direct, indirect, incidental, or consequential damages arising out of your use of, or inability to use, this platform.</p>
+      </section>
+      <section id="external-links">
+        <div class="section-num">Section 8</div>
+        <h2>External Links &amp; Third-Party Content</h2>
+        <p>ExamReady contains links to third-party websites and resources including Google Drive, YouTube, and Instagram. These links are provided for convenience only. ExamReady does not endorse, control, or accept responsibility for the content, privacy policies, or practices of any third-party websites.</p>
+        <p>When you click on an external link, you leave ExamReady and are subject to the terms and privacy policies of that third-party service. We encourage you to review those policies before interacting with external sites.</p>
+      </section>
+      <section id="social-media">
+        <div class="section-num">Section 9</div>
+        <h2>Social Media &amp; Community</h2>
+        <p>ExamReady maintains official social media accounts on Instagram (@examready.co) and YouTube (@EXAMREADY_STUDY). These channels are provided to share study tips, updates, and educational content with students.</p>
+        <p>Interactions on these social media platforms are governed by the respective platform's terms of service. ExamReady is not responsible for comments, messages, or content posted by third parties on these channels.</p>
+        <p>Please be respectful and constructive in all interactions on our social media pages. Content that is abusive, spammy, or inappropriate may be removed at our discretion.</p>
+      </section>
+      <section id="governing-law">
+        <div class="section-num">Section 10</div>
+        <h2>Governing Law</h2>
+        <p>These Terms and Conditions are governed by and construed in accordance with the laws of India. Any disputes arising out of the use of ExamReady shall be subject to the jurisdiction of courts in India.</p>
+        <p>If any provision of these terms is found to be unenforceable, the remaining provisions shall remain in full force and effect. The failure of ExamReady to enforce any right or provision of these terms shall not constitute a waiver of those rights.</p>
+        <p>These terms constitute the entire agreement between you and ExamReady regarding your use of the platform and supersede any prior agreements or understandings.</p>
+      </section>
+    </div>
+    <aside class="sidebar">
+      <div class="toc-card">
+        <h3>Contents</h3>
+        <div class="toc-list">
+          <a href="#acceptance" class="toc-link">1. Acceptance of Terms</a>
+          <a href="#educational-use" class="toc-link">2. Educational Use</a>
+          <a href="#admin-responsibility" class="toc-link">3. Admin Responsibility</a>
+          <a href="#content-availability" class="toc-link">4. Content Availability</a>
+          <a href="#intellectual-property" class="toc-link">5. Intellectual Property</a>
+          <a href="#acceptable-use" class="toc-link">6. Acceptable Use Policy</a>
+          <a href="#disclaimer-liability" class="toc-link">7. Disclaimer of Liability</a>
+          <a href="#external-links" class="toc-link">8. External Links</a>
+          <a href="#social-media" class="toc-link">9. Social Media</a>
+          <a href="#governing-law" class="toc-link">10. Governing Law</a>
+        </div>
+      </div>
+      <div class="contact-card">
+        <h3>Questions?</h3>
+        <p>Reach out to us on social media if you have questions about these terms.</p>
+        <div class="contact-social">
+          <a href="https://www.instagram.com/examready.co/" target="_blank" rel="noopener noreferrer" class="social-btn instagram" title="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@EXAMREADY_STUDY" target="_blank" rel="noopener noreferrer" class="social-btn youtube" title="YouTube">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div style="font-family:'Bebas Neue';font-size:28px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
+        <p>Free study resources for CBSE students in Class 9 to 12. Practice, preview, and revise in one place.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="solutions.html">Solutions</a>
+          <a href="pyq.html">PYQs</a>
+          <a href="questionbank.html">Question Banks</a>
+          <a href="quizzes.html">Quizzes</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms &amp; Conditions</a>
+          <a href="disclaimer.html">Disclaimer</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ExamReady. Made with <span>&hearts;</span> for students.</p>
+      <div style="display:flex;align-items:center;gap:10px">
+        <a href="https://www.instagram.com/examready.co/" target="_blank" rel="noopener noreferrer" title="Follow us on Instagram" class="social-icon-link" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@EXAMREADY_STUDY" target="_blank" rel="noopener noreferrer" title="Subscribe on YouTube" class="social-icon-link" style="background:#ff0000">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="shared.js"></script>
+<script src="animations.js"></script>
+<script src="ads.js"></script>
+<script>
+function toggleMenu() {
+  const nav = document.getElementById('mainNav');
+  if (nav.dataset.open === '1') {
+    nav.removeAttribute('style');
+    nav.dataset.open = '0';
+  } else {
+    nav.style.display = 'flex';
+    nav.style.flexDirection = 'column';
+    nav.style.position = 'absolute';
+    nav.style.top = '64px';
+    nav.style.left = '0';
+    nav.style.right = '0';
+    nav.style.background = '#111';
+    nav.style.padding = '16px';
+    nav.style.zIndex = '999';
+    nav.dataset.open = '1';
+  }
+}
+</script>
+</body>
+</html>
