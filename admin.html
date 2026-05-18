@@ -367,6 +367,7 @@
       <div class="topbar-title" id="topbarTitle">Dashboard</div>
     </div>
     <div class="topbar-right">
+      <button class="btn btn-green" onclick="exportSiteDataJson()" style="font-size:11px;padding:6px 14px" title="Export site-data.json for Vercel deployment">📦 Deploy</button>
       <span class="topbar-badge">✅ Team Access</span>
       <a href="index.html" class="back-link">← Main Site</a>
     </div>
@@ -389,7 +390,7 @@
           <button class="dashboard-action" onclick="showSection('upload-pdf')">Upload new study file<span>Add PYQs, banks, and notes fast.</span></button>
           <button class="dashboard-action" onclick="showSection('create-quiz')">Create a quiz<span>Build new MCQ practice in seconds.</span></button>
           <button class="dashboard-action" onclick="showSection('announcements')">Post an update<span>Push an announcement banner to students.</span></button>
-          <button class="dashboard-action" onclick="showSection('ads')">Manage Ad Slots<span>Control every ad placement on the site.</span></button>
+          <button class="dashboard-action" onclick="exportSiteDataJson()" style="background:rgba(47,158,68,0.15);border-color:rgba(47,158,68,0.3)">📦 Deploy Changes<span>Export site-data.json and push to GitHub.</span></button>
         </div>
       </div>
       <div class="stat-grid" id="dashStats"></div>
@@ -687,11 +688,25 @@
           <div style="margin-top:14px"><button class="btn btn-red" onclick="saveFeatureToggles()">💾 Save Toggles</button></div>
         </div>
         <div class="settings-card">
-          <h4>💾 Data Management</h4>
-          <p style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px;line-height:1.6">Export or import your site data. All content is stored in localStorage.</p>
+          <h4>🚀 Deploy Site Data</h4>
+          <div style="background:#f0fff4;border:2px solid #b3e6c0;border-radius:12px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.8;color:#1a6a2a;font-weight:600">
+            <strong>How deployment works:</strong><br>
+            1️⃣ Make all your changes in admin (PDFs, quizzes, ads, settings, etc.)<br>
+            2️⃣ Click <strong>"📦 Export site-data.json"</strong> below to download the data file<br>
+            3️⃣ Replace the old <code style="background:rgba(0,0,0,.07);padding:1px 6px;border-radius:4px">site-data.json</code> in your project folder with the new one<br>
+            4️⃣ Push to GitHub → Vercel auto-deploys → <strong>changes are live for everyone!</strong>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <button class="btn btn-red btn-lg" onclick="exportSiteDataJson()" style="font-size:15px;padding:14px 24px">📦 Export site-data.json for Deployment</button>
+            <div style="font-size:11px;color:var(--muted);font-weight:700;text-align:center">⬆ This is the file you commit to GitHub for Vercel deployment</div>
+          </div>
+        </div>
+        <div class="settings-card">
+          <h4>💾 Data Management (Backup)</h4>
+          <p style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px;line-height:1.6">Backup/restore all admin data locally. This does NOT affect the deployed site — use "Export site-data.json" above for deployment.</p>
           <div id="storageUsageBar" style="margin-bottom:14px"></div>
           <div style="display:flex;flex-direction:column;gap:10px">
-            <button class="btn btn-green btn-lg" onclick="exportData()">⬇ Export All Data (JSON)</button>
+            <button class="btn btn-green btn-lg" onclick="exportData()">⬇ Export All Data (JSON Backup)</button>
             <button class="btn btn-edit btn-lg" onclick="document.getElementById('importInput').click()">⬆ Import Data (JSON)</button>
             <input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(this)">
             <button class="btn btn-danger btn-lg" onclick="resetAllData()">⚠ Reset to Defaults</button>
@@ -1750,6 +1765,47 @@ const ALLOWED_EXPORT_KEYS=['examready_pdfs','examready_quizzes','examready_solut
 function exportData(){const data={};let n=0;ALLOWED_EXPORT_KEYS.forEach(key=>{const raw=localStorage.getItem(key);if(raw){try{data[key]=JSON.parse(raw);n++;}catch(e){data[key]=raw;n++;}}});const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='examready-backup-'+new Date().toISOString().slice(0,10)+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),3000);showToast('Exported '+n+' data entries!');}
 function importData(input){const f=input.files[0];if(!f)return;const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(typeof data!=='object'||Array.isArray(data)){showToast('Invalid backup format.','error');return;}let n=0;Object.entries(data).forEach(([k,v])=>{if(ALLOWED_EXPORT_KEYS.includes(k)){localStorage.setItem(k,JSON.stringify(v));n++;}});showToast('Imported '+n+' entries! Reloading…');setTimeout(()=>window.location.reload(),1500);}catch(err){showToast('Invalid or corrupted JSON file.','error');}};reader.onerror=()=>showToast('Could not read the file.','error');reader.readAsText(f);input.value='';}
 function resetAllData(){if(!confirm('⚠ This will DELETE all your content and reset to factory defaults.\n\nThis cannot be undone. Continue?'))return;if(!confirm('Last warning: ALL custom PDFs, quizzes, solutions, and settings will be lost.\n\nProceed?'))return;ALLOWED_EXPORT_KEYS.forEach(key=>localStorage.removeItem(key));showToast('Data reset. Reloading…');setTimeout(()=>window.location.reload(),1500);}
+
+// ============================================================
+// EXPORT SITE-DATA.JSON FOR DEPLOYMENT
+// ============================================================
+function exportSiteDataJson() {
+  const DEPLOY_KEYS = [
+    'examready_pdfs', 'examready_quizzes', 'examready_solution_posts',
+    'er_subjects_map', 'er_site_config', 'er_nav', 'er_announcement',
+    'er_features', 'er_ad_slots', 'er_chapters'
+  ];
+  const data = {};
+  DEPLOY_KEYS.forEach(key => {
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      try { data[key] = JSON.parse(raw); } catch(e) { data[key] = raw; }
+    } else {
+      // Include empty defaults so the file is always complete
+      if (key === 'examready_pdfs' || key === 'er_chapters' || key === 'er_features' ||
+          key === 'er_ad_slots' || key === 'er_subjects_map' || key === 'er_site_config') {
+        data[key] = {};
+      } else if (key === 'examready_quizzes') {
+        data[key] = {};
+      } else if (key === 'examready_solution_posts') {
+        data[key] = [];
+      } else {
+        data[key] = null;
+      }
+    }
+  });
+  // Also include autoads config
+  data['er_adsense_autoads'] = localStorage.getItem('er_adsense_autoads') || '';
+  data['er_adsense_autoads_enabled'] = localStorage.getItem('er_adsense_autoads_enabled') === 'true';
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'site-data.json';
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 3000);
+  showToast('📦 site-data.json exported! Replace it in your project folder and push to GitHub.');
+}
 
 // ============================================================
 // DRAG & DROP UPLOAD

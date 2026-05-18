@@ -1,5 +1,83 @@
 // ===== EXAMREADY SHARED DATA STORE =====
-// All content is persisted in localStorage so admin changes appear site-wide
+// Data is loaded from site-data.json (deployed) and hydrated into localStorage.
+// Admin page writes to localStorage for local preview; export flow creates site-data.json.
+
+// ===== SITE-DATA HYDRATION SYSTEM =====
+// On public pages, fetch site-data.json and seed localStorage so all visitors
+// see the same content regardless of browser. Admin pages skip hydration.
+const _ER_HYDRATION_KEY = 'er_hydrated_hash';
+let _erSiteDataReady = null; // Promise that resolves when hydration is done
+
+function _isAdminPageCheck() {
+  return window.location.pathname.includes('admin');
+}
+
+// Compute a simple hash of a string (for change detection)
+function _simpleHash(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const chr = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0;
+  }
+  return 'h_' + Math.abs(hash).toString(36);
+}
+
+// Keys that site-data.json can provide
+const SITE_DATA_KEYS = [
+  'examready_pdfs', 'examready_quizzes', 'examready_solution_posts',
+  'er_subjects_map', 'er_site_config', 'er_nav', 'er_announcement',
+  'er_features', 'er_ad_slots', 'er_chapters',
+  'er_adsense_autoads', 'er_adsense_autoads_enabled'
+];
+
+function _hydrateSiteData() {
+  if (_isAdminPageCheck()) {
+    // Admin page: don't hydrate, use whatever is in localStorage
+    return Promise.resolve();
+  }
+
+  return fetch('site-data.json?_t=' + Date.now())
+    .then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.text();
+    })
+    .then(function(text) {
+      const newHash = _simpleHash(text);
+      const oldHash = sessionStorage.getItem(_ER_HYDRATION_KEY);
+
+      // If data hasn't changed this session, skip re-hydration
+      if (oldHash === newHash) return;
+
+      const data = JSON.parse(text);
+      if (!data || typeof data !== 'object' || Array.isArray(data)) return;
+
+      SITE_DATA_KEYS.forEach(function(key) {
+        if (data[key] !== undefined && data[key] !== null) {
+          // For string values like er_adsense_autoads, store directly
+          if (typeof data[key] === 'string' || typeof data[key] === 'boolean') {
+            localStorage.setItem(key, String(data[key]));
+          } else {
+            localStorage.setItem(key, JSON.stringify(data[key]));
+          }
+        }
+      });
+
+      // Mark hydration complete with hash
+      sessionStorage.setItem(_ER_HYDRATION_KEY, newHash);
+
+      // Invalidate all caches
+      if (typeof invalidateDataCache === 'function') invalidateDataCache();
+      _subjectsMapCache = null;
+      _subjectsMapRaw = null;
+    })
+    .catch(function() {
+      // site-data.json not found or failed — fall back to defaults/localStorage
+    });
+}
+
+// Start hydration immediately (non-blocking for page render)
+_erSiteDataReady = _hydrateSiteData();
 
 // ===== DEFAULTS =====
 const DEFAULTS = {
@@ -1480,22 +1558,26 @@ if (typeof window !== 'undefined') {
     initSecurityHardeningObserver();
 
     if (!window.location.pathname.includes('admin')) {
-      // Auto-ads injection runs early (injects into <head>)
-      injectAutoAdsScript();
+      // Wait for site-data.json hydration before rendering
+      var hydrationDone = _erSiteDataReady || Promise.resolve();
+      hydrationDone.then(function() {
+        // Auto-ads injection runs early (injects into <head>)
+        injectAutoAdsScript();
 
-      // Chrome + ads deferred so page renders before they execute
-      _defer(function() {
-        syncSharedSiteChrome();
-        applySiteConfig();
-        initResponsiveNav();
-        applyFooterBranding();
-        addFooterLegalLinks();
-      });
+        // Chrome + ads deferred so page renders before they execute
+        _defer(function() {
+          syncSharedSiteChrome();
+          applySiteConfig();
+          initResponsiveNav();
+          applyFooterBranding();
+          addFooterLegalLinks();
+        });
 
-      // Ad injection deferred with lower priority
-      _defer(function() {
-        insertSmartAds();
-        applySecurityHardening();
+        // Ad injection deferred with lower priority
+        _defer(function() {
+          insertSmartAds();
+          applySecurityHardening();
+        });
       });
     }
   });

@@ -1,0 +1,123 @@
+{
+  "examready_pdfs": {
+    "9-math-pyq": [
+      { "id": "p1", "name": "Class 9 Maths PYQ 2023", "year": "2023", "url": "#", "size": "2.1 MB" },
+      { "id": "p2", "name": "Class 9 Maths PYQ 2022", "year": "2022", "url": "#", "size": "1.8 MB" }
+    ],
+    "9-math-qb": [
+      { "id": "p3", "name": "Class 9 Maths Question Bank Ch 1-5", "url": "#", "size": "3.2 MB" }
+    ],
+    "9-math-sol": [
+      { "id": "ps1", "name": "Class 9 Maths NCERT Solutions - All Chapters", "url": "#", "size": "4.5 MB" }
+    ],
+    "9-science-pyq": [
+      { "id": "p4", "name": "Class 9 Science PYQ 2023", "year": "2023", "url": "#", "size": "2.4 MB" }
+    ],
+    "9-science-qb": [
+      { "id": "p5", "name": "Class 9 Science Question Bank", "url": "#", "size": "4.1 MB" }
+    ],
+    "9-science-sol": [
+      { "id": "ps2", "name": "Class 9 Science NCERT Solutions - All Chapters", "url": "#", "size": "3.8 MB" }
+    ],
+    "9-english-sol": [], "9-sst-sol": [], "9-hindi-sol": [],
+    "10-math-pyq": [
+      { "id": "p6", "name": "Class 10 Maths PYQ 2023", "year": "2023", "url": "#", "size": "2.3 MB" },
+      { "id": "p7", "name": "Class 10 Maths PYQ 2022", "year": "2022", "url": "#", "size": "2.0 MB" }
+    ],
+    "10-math-qb": [{ "id": "p8", "name": "Class 10 Maths Question Bank", "url": "#", "size": "3.8 MB" }],
+    "10-math-sol": [{ "id": "ps3", "name": "Class 10 Maths NCERT Solutions - All Chapters", "url": "#", "size": "5.1 MB" }],
+    "10-science-pyq": [{ "id": "p9", "name": "Class 10 Science PYQ 2023", "year": "2023", "url": "#", "size": "2.7 MB" }],
+    "10-science-qb": [],
+    "10-science-sol": [{ "id": "ps4", "name": "Class 10 Science NCERT Solutions", "url": "#", "size": "4.2 MB" }],
+    "10-english-sol": [], "10-sst-sol": [], "10-hindi-sol": [],
+    "11-physics-pyq": [{ "id": "p10", "name": "Class 11 Physics PYQ 2023", "year": "2023", "url": "#", "size": "3.1 MB" }],
+    "11-physics-qb": [], "11-physics-sol": [],
+    "11-chemistry-pyq": [], "11-chemistry-qb": [], "11-chemistry-sol": [],
+    "11-math-pyq": [], "11-math-qb": [], "11-math-sol": [],
+    "11-biology-sol": [], "11-cs-sol": [],
+    "12-physics-pyq": [
+      { "id": "p11", "name": "Class 12 Physics PYQ 2023", "year": "2023", "url": "#", "size": "3.4 MB" },
+      { "id": "p12", "name": "Class 12 Physics PYQ 2022", "year": "2022", "url": "#", "size": "3.0 MB" }
+    ],
+    "12-physics-qb": [], "12-physics-sol": [],
+    "12-chemistry-pyq": [], "12-chemistry-qb": [], "12-chemistry-sol": [],
+    "12-math-pyq": [], "12-math-qb": [], "12-math-sol": [],
+    "12-biology-sol": [], "12-cs-sol": []
+  },
+  "examready_quizzes": {
+    "9-math": [{
+      "id": "q1", "title": "Class 9 Maths - Number Systems", "subject": "Mathematics", "class": "9",
+      "questions": [
+        { "q": "Which of the following is an irrational number?", "opts": ["sqrt(4)", "sqrt(9)", "sqrt(2)", "sqrt(16)"], "ans": 2 },
+        { "q": "Every rational number is also a:", "opts": ["Natural number", "Integer", "Real number", "Whole number"], "ans": 2 },
+        { "q": "The decimal expansion of a rational number is:", "opts": ["Always terminating", "Always non-terminating", "Terminating or repeating", "None"], "ans": 2 }
+      ]
+    }],
+    "9-science": [{
+      "id": "q2", "title": "Class 9 Science - Matter", "subject": "Science", "class": "9",
+      "questions": [
+        { "q": "Which state of matter has definite shape and volume?", "opts": ["Gas", "Liquid", "Solid", "Plasma"], "ans": 2 },
+        { "q": "Conversion of solid to gas directly is called:", "opts": ["Evaporation", "Condensation", "Sublimation", "Fusion"], "ans": 2 }
+      ]
+    }],
+    "10-math": [{
+      "id": "q3", "title": "Class 10 Maths - Real Numbers", "subject": "Mathematics", "class": "10",
+      "questions": [
+        { "q": "HCF of 96 and 404 is:", "opts": ["4", "8", "12", "16"], "ans": 0 },
+        { "q": "Every composite number as a product of primes follows:", "opts": ["Euclid's theorem", "Fundamental theorem of arithmetic", "Division algorithm", "None"], "ans": 1 }
+      ]
+    }],
+    "10-science": [], "11-physics": [], "11-chemistry": [], "11-math": [],
+    "12-physics": [{
+      "id": "q4", "title": "Class 12 Physics - Electrostatics", "subject": "Physics", "class": "12",
+      "questions": [
+        { "q": "The SI unit of electric charge is:", "opts": ["Ampere", "Volt", "Coulomb", "Farad"], "ans": 2 },
+        { "q": "Electric field lines start from:", "opts": ["Negative charge", "Positive charge", "Both", "Neither"], "ans": 1 }
+      ]
+    }],
+    "12-chemistry": [], "12-math": []
+  },
+  "examready_solution_posts": [
+    {
+      "id": "solpost_1",
+      "title": "Class 9 Mathematics: Number Systems Solutions",
+      "classNum": "9", "subjectKey": "math",
+      "summary": "Step-by-step worked answers for important Number Systems questions with easy exam-ready language.",
+      "content": "1. Rational numbers can be written in p/q form where q is not zero.\n\n2. Irrational numbers cannot be expressed in simple p/q form. Examples include sqrt(2) and pi.\n\n3. To compare irrational numbers in exams, first convert them into approximate decimal values and then arrange them carefully.\n\n- Revise the definitions once.\n- Write every step clearly.\n- Avoid skipping simplification in board-style answers.",
+      "author": "ExamReady Team", "updatedAt": "2026-04-03"
+    },
+    {
+      "id": "solpost_2",
+      "title": "Class 10 Science: Chemical Reactions and Equations Solutions",
+      "classNum": "10", "subjectKey": "science",
+      "summary": "Balanced equations, explanation points, and answer-writing format for common textbook exercises.",
+      "content": "1. A chemical reaction is identified through change in color, temperature, state, or formation of a new substance.\n\n2. While writing a balanced equation, make the number of atoms equal on both sides without changing the chemical formula.\n\n3. For CBSE-style answers, mention the observation first and then write the balanced reaction.\n\n- Use symbols only after naming the reactants.\n- Underline key terms in long answers.\n- Mention oxidation and reduction separately when asked.",
+      "author": "ExamReady Team", "updatedAt": "2026-04-03"
+    },
+    {
+      "id": "solpost_3",
+      "title": "Class 11 History: Writing and City Life Solutions",
+      "classNum": "11", "subjectKey": "history",
+      "summary": "Short and long answer support for Mesopotamian civilization topics under Humanities.",
+      "content": "1. Mesopotamian cities grew due to trade, irrigation, and organized administration.\n\n2. Writing helped rulers and traders maintain accounts, records, and legal communication.\n\n3. In descriptive answers, connect city growth with agriculture, surplus, and social organization for better marks.",
+      "author": "ExamReady Team", "updatedAt": "2026-04-03"
+    },
+    {
+      "id": "solpost_4",
+      "title": "Class 12 Accountancy: Partnership Fundamentals Solutions",
+      "classNum": "12", "subjectKey": "accountancy",
+      "summary": "Clean journal formats, adjustments, and explanation notes for partnership basics.",
+      "content": "1. A partnership firm is created through an agreement between two or more persons carrying on business together.\n\n2. The partnership deed should clearly define profit-sharing ratio, salary, interest on capital, and drawings.\n\n3. In numerical questions, write the format first and then pass journal entries in proper sequence.",
+      "author": "ExamReady Team", "updatedAt": "2026-04-03"
+    }
+  ],
+  "er_subjects_map": {},
+  "er_site_config": {},
+  "er_nav": null,
+  "er_announcement": null,
+  "er_features": {},
+  "er_ad_slots": {},
+  "er_chapters": {},
+  "er_adsense_autoads": "",
+  "er_adsense_autoads_enabled": false
+}
