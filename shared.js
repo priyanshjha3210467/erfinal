@@ -44,17 +44,28 @@ function _hydrateSiteData() {
     })
     .then(function(text) {
       const newHash = _simpleHash(text);
-      const oldHash = sessionStorage.getItem(_ER_HYDRATION_KEY);
+      const oldHash = localStorage.getItem(_ER_HYDRATION_KEY);
 
-      // If data hasn't changed this session, skip re-hydration
+      // If we've already hydrated with this exact data, do nothing
       if (oldHash === newHash) return;
 
       const data = JSON.parse(text);
       if (!data || typeof data !== 'object' || Array.isArray(data)) return;
 
+      // Determine if this is a NEW deployment (hash changed from a previous hydration)
+      // vs a fresh browser (no previous hash at all)
+      const isNewDeployment = !!oldHash && oldHash !== newHash;
+      const isFreshBrowser = !oldHash;
+
       SITE_DATA_KEYS.forEach(function(key) {
-        if (data[key] !== undefined && data[key] !== null) {
-          // For string values like er_adsense_autoads, store directly
+        if (data[key] === undefined || data[key] === null) return;
+
+        var existingValue = localStorage.getItem(key);
+
+        // Write to localStorage if:
+        // 1. Fresh browser — localStorage is empty for this key (seed it)
+        // 2. New deployment — site-data.json hash changed (admin exported & pushed)
+        if (isNewDeployment || !existingValue) {
           if (typeof data[key] === 'string' || typeof data[key] === 'boolean') {
             localStorage.setItem(key, String(data[key]));
           } else {
@@ -63,8 +74,8 @@ function _hydrateSiteData() {
         }
       });
 
-      // Mark hydration complete with hash
-      sessionStorage.setItem(_ER_HYDRATION_KEY, newHash);
+      // Store the hash so we can detect future deployments
+      localStorage.setItem(_ER_HYDRATION_KEY, newHash);
 
       // Invalidate all caches
       if (typeof invalidateDataCache === 'function') invalidateDataCache();
