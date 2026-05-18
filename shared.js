@@ -1,94 +1,121 @@
 // ===== EXAMREADY SHARED DATA STORE =====
-// Data is loaded from site-data.json (deployed) and hydrated into localStorage.
-// Admin page writes to localStorage for local preview; export flow creates site-data.json.
+// Data is synced via Firebase Realtime Database.
+// Admin writes go to localStorage + Firebase. Public pages read from Firebase.
 
-// ===== SITE-DATA HYDRATION SYSTEM =====
-// On public pages, fetch site-data.json and seed localStorage so all visitors
-// see the same content regardless of browser. Admin pages skip hydration.
-const _ER_HYDRATION_KEY = 'er_hydrated_hash';
-let _erSiteDataReady = null; // Promise that resolves when hydration is done
+// ===== FIREBASE REALTIME DATABASE =====
+const FIREBASE_DB_URL = 'https://examready-f2df6-default-rtdb.firebaseio.com';
+const FIREBASE_DATA_PATH = '/siteData';
+let _erSiteDataReady = null; // Promise that resolves when data is loaded
 
 function _isAdminPageCheck() {
   return window.location.pathname.includes('admin');
 }
 
-// Compute a simple hash of a string (for change detection)
-function _simpleHash(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const chr = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + chr;
-    hash |= 0;
-  }
-  return 'h_' + Math.abs(hash).toString(36);
-}
-
-// Keys that site-data.json can provide
+// Keys to sync between localStorage and Firebase
 const SITE_DATA_KEYS = [
   'examready_pdfs', 'examready_quizzes', 'examready_solution_posts',
   'er_subjects_map', 'er_site_config', 'er_nav', 'er_announcement',
   'er_features', 'er_ad_slots', 'er_chapters',
-  'er_adsense_autoads', 'er_adsense_autoads_enabled'
+  'er_adsense_autoads', 'er_adsense_autoads_enabled',
+  'er_native_ad_config', 'er_content_ads_config'
 ];
 
-function _hydrateSiteData() {
-  if (_isAdminPageCheck()) {
-    // Admin page: don't hydrate, use whatever is in localStorage
-    return Promise.resolve();
-  }
-
-  return fetch('site-data.json?_t=' + Date.now())
+// ── Firebase REST helpers ──
+function _firebaseGet() {
+  return fetch(FIREBASE_DB_URL + FIREBASE_DATA_PATH + '.json')
     .then(function(res) {
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return res.text();
-    })
-    .then(function(text) {
-      const newHash = _simpleHash(text);
-      const oldHash = localStorage.getItem(_ER_HYDRATION_KEY);
+      if (!res.ok) throw new Error('Firebase GET failed: ' + res.status);
+      return res.json();
+    });
+}
 
-      // If we've already hydrated with this exact data, do nothing
-      if (oldHash === newHash) return;
+function _firebasePut(key, value) {
+  return fetch(FIREBASE_DB_URL + FIREBASE_DATA_PATH + '/' + key + '.json', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(value)
+  }).catch(function() { /* silent fail for non-critical sync */ });
+}
 
-      const data = JSON.parse(text);
-      if (!data || typeof data !== 'object' || Array.isArray(data)) return;
+function _firebasePutAll(data) {
+  return fetch(FIREBASE_DB_URL + FIREBASE_DATA_PATH + '.json', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+}
 
-      // Determine if this is a NEW deployment (hash changed from a previous hydration)
-      // vs a fresh browser (no previous hash at all)
-      const isNewDeployment = !!oldHash && oldHash !== newHash;
-      const isFreshBrowser = !oldHash;
+// ── Hydrate localStorage from Firebase (public pages) ──
+function _hydrateSiteData() {
+  return _firebaseGet()
+    .then(function(data) {
+      if (!data || typeof data !== 'object') return;
 
       SITE_DATA_KEYS.forEach(function(key) {
-        if (data[key] === undefined || data[key] === null) return;
+        var val = data[key];
+        if (val === undefined || val === null) return;
 
-        var existingValue = localStorage.getItem(key);
-
-        // Write to localStorage if:
-        // 1. Fresh browser — localStorage is empty for this key (seed it)
-        // 2. New deployment — site-data.json hash changed (admin exported & pushed)
-        if (isNewDeployment || !existingValue) {
-          if (typeof data[key] === 'string' || typeof data[key] === 'boolean') {
-            localStorage.setItem(key, String(data[key]));
-          } else {
-            localStorage.setItem(key, JSON.stringify(data[key]));
-          }
+        if (typeof val === 'string' || typeof val === 'boolean' || typeof val === 'number') {
+          localStorage.setItem(key, String(val));
+        } else {
+          localStorage.setItem(key, JSON.stringify(val));
         }
       });
 
-      // Store the hash so we can detect future deployments
-      localStorage.setItem(_ER_HYDRATION_KEY, newHash);
-
-      // Invalidate all caches
+      // Invalidate caches after hydration
       if (typeof invalidateDataCache === 'function') invalidateDataCache();
       _subjectsMapCache = null;
       _subjectsMapRaw = null;
     })
     .catch(function() {
-      // site-data.json not found or failed — fall back to defaults/localStorage
+      // Firebase unavailable — fall back to localStorage/defaults silently
     });
 }
 
-// Start hydration immediately (non-blocking for page render)
-_erSiteDataReady = _hydrateSiteData();
+// ── Auto-sync admin writes to Firebase ──
+// Intercepts localStorage.setItem on admin pages so every save
+// automatically pushes to Firebase in real-time.
+var _fbSyncTimers = {};
+var _origLocalStorageSetItem = localStorage.setItem.bind(localStorage);
+
+if (_isAdminPageCheck()) {
+  localStorage.setItem = function(key, value) {
+    _origLocalStorageSetItem(key, value);
+
+    // Debounce Firebase sync for known data keys (500ms)
+    if (SITE_DATA_KEYS.indexOf(key) !== -1) {
+      clearTimeout(_fbSyncTimers[key]);
+      _fbSyncTimers[key] = setTimeout(function() {
+        var parsed;
+        try { parsed = JSON.parse(value); } catch(e) { parsed = value; }
+        _firebasePut(key, parsed);
+      }, 500);
+    }
+  };
+}
+
+// ── Push ALL current localStorage data to Firebase (first-time setup) ──
+function firebasePushAll() {
+  var payload = {};
+  SITE_DATA_KEYS.forEach(function(key) {
+    var raw = localStorage.getItem(key);
+    if (raw) {
+      try { payload[key] = JSON.parse(raw); } catch(e) { payload[key] = raw; }
+    }
+  });
+  return _firebasePutAll(payload)
+    .then(function(res) {
+      if (!res.ok) throw new Error('Push failed: ' + res.status);
+      return res.json();
+    });
+}
+
+// Start hydration on public pages, skip on admin
+if (!_isAdminPageCheck()) {
+  _erSiteDataReady = _hydrateSiteData();
+} else {
+  _erSiteDataReady = Promise.resolve();
+}
 
 // ===== DEFAULTS =====
 const DEFAULTS = {

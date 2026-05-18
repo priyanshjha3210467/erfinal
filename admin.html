@@ -367,7 +367,7 @@
       <div class="topbar-title" id="topbarTitle">Dashboard</div>
     </div>
     <div class="topbar-right">
-      <button class="btn btn-green" onclick="exportSiteDataJson()" style="font-size:11px;padding:6px 14px" title="Export site-data.json for Vercel deployment">📦 Deploy</button>
+      <span id="firebaseSyncBadge" class="topbar-badge" style="background:#e6ffed;color:#2f9e44;cursor:pointer" onclick="firebasePushAll().then(function(){showToast('✅ All data synced to Firebase!')}).catch(function(){showToast('❌ Firebase sync failed — check rules','error')})" title="Click to force-sync all data to Firebase">🔄 Firebase Sync</span>
       <span class="topbar-badge">✅ Team Access</span>
       <a href="index.html" class="back-link">← Main Site</a>
     </div>
@@ -390,7 +390,7 @@
           <button class="dashboard-action" onclick="showSection('upload-pdf')">Upload new study file<span>Add PYQs, banks, and notes fast.</span></button>
           <button class="dashboard-action" onclick="showSection('create-quiz')">Create a quiz<span>Build new MCQ practice in seconds.</span></button>
           <button class="dashboard-action" onclick="showSection('announcements')">Post an update<span>Push an announcement banner to students.</span></button>
-          <button class="dashboard-action" onclick="exportSiteDataJson()" style="background:rgba(47,158,68,0.15);border-color:rgba(47,158,68,0.3)">📦 Deploy Changes<span>Export site-data.json and push to GitHub.</span></button>
+          <button class="dashboard-action" onclick="firebasePushAll().then(function(){showToast('✅ All data synced to Firebase!')}).catch(function(){showToast('❌ Sync failed','error')})" style="background:rgba(47,158,68,0.15);border-color:rgba(47,158,68,0.3)">🔄 Sync to Firebase<span>Push all admin changes live instantly.</span></button>
         </div>
       </div>
       <div class="stat-grid" id="dashStats"></div>
@@ -688,17 +688,17 @@
           <div style="margin-top:14px"><button class="btn btn-red" onclick="saveFeatureToggles()">💾 Save Toggles</button></div>
         </div>
         <div class="settings-card">
-          <h4>🚀 Deploy Site Data</h4>
+          <h4>🔥 Firebase Live Sync</h4>
           <div style="background:#f0fff4;border:2px solid #b3e6c0;border-radius:12px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.8;color:#1a6a2a;font-weight:600">
-            <strong>How deployment works:</strong><br>
-            1️⃣ Make all your changes in admin (PDFs, quizzes, ads, settings, etc.)<br>
-            2️⃣ Click <strong>"📦 Export site-data.json"</strong> below to download the data file<br>
-            3️⃣ Replace the old <code style="background:rgba(0,0,0,.07);padding:1px 6px;border-radius:4px">site-data.json</code> in your project folder with the new one<br>
-            4️⃣ Push to GitHub → Vercel auto-deploys → <strong>changes are live for everyone!</strong>
+            <strong>How it works now:</strong><br>
+            ✅ Every save you make in admin <strong>auto-syncs to Firebase</strong> in real-time<br>
+            ✅ All visitors on <strong>any browser/device</strong> see the latest data instantly<br>
+            ✅ No manual export or git push needed for content changes
           </div>
+          <div id="firebaseStatus" style="padding:12px 16px;background:#fafafa;border:1px solid var(--gray2);border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700;color:var(--muted)">Checking Firebase connection…</div>
           <div style="display:flex;flex-direction:column;gap:10px">
-            <button class="btn btn-red btn-lg" onclick="exportSiteDataJson()" style="font-size:15px;padding:14px 24px">📦 Export site-data.json for Deployment</button>
-            <div style="font-size:11px;color:var(--muted);font-weight:700;text-align:center">⬆ This is the file you commit to GitHub for Vercel deployment</div>
+            <button class="btn btn-red btn-lg" onclick="firebasePushAll().then(function(){showToast('✅ All data pushed to Firebase!');document.getElementById('firebaseStatus').innerHTML='<span style=color:#2f9e44>✅ Connected — All data synced</span>'}).catch(function(e){showToast('❌ Firebase error: '+e.message,'error');document.getElementById('firebaseStatus').innerHTML='<span style=color:var(--red)>❌ Failed — Check Firebase rules</span>'})" style="font-size:15px;padding:14px 24px">🔄 Push All Data to Firebase Now</button>
+            <div style="font-size:11px;color:var(--muted);font-weight:700;text-align:center">Use this for first-time setup or to force a full re-sync</div>
           </div>
         </div>
         <div class="settings-card">
@@ -2842,6 +2842,19 @@ function initAdmin() {
   document.getElementById('announcementEnabled')?.addEventListener('change',updateAnnouncementPreview);
   setupDragDrop();
   updateSolutionEditorStats();
+
+  // Check Firebase connection
+  _firebaseGet().then(function(data) {
+    var badge = document.getElementById('firebaseSyncBadge');
+    var status = document.getElementById('firebaseStatus');
+    if (badge) { badge.textContent = '🟢 Firebase Live'; badge.style.background = '#e6ffed'; badge.style.color = '#2f9e44'; }
+    if (status) status.innerHTML = '<span style="color:#2f9e44">✅ Connected to Firebase — auto-sync active</span>';
+  }).catch(function() {
+    var badge = document.getElementById('firebaseSyncBadge');
+    var status = document.getElementById('firebaseStatus');
+    if (badge) { badge.textContent = '🔴 Firebase Off'; badge.style.background = '#fff0f0'; badge.style.color = '#e8211a'; }
+    if (status) status.innerHTML = '<span style="color:var(--red)">❌ Cannot connect — update Firebase rules to allow read/write</span>';
+  });
 }
 
 // ============================================================
