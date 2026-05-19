@@ -620,7 +620,7 @@ const params = new URLSearchParams(window.location.search);
 const cls = params.get('class');
 const subjectKey = params.get('subject');
 if (!cls || !subjectKey) renderNotFound();
-else renderSubjectPage(cls, subjectKey);
+else whenDataReady(function() { renderSubjectPage(cls, subjectKey); });
 </script>
 </body>
 </html>

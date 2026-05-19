@@ -867,8 +867,10 @@ if (clsParam && ['9','10','11','12'].includes(clsParam)) {
   });
 }
 
-updateSubjectDropdown();
-render();
+whenDataReady(function() {
+  updateSubjectDropdown();
+  render();
+});
 
 // Invalidate notes cache on storage changes from other tabs
 window.addEventListener('storage', function(e) {

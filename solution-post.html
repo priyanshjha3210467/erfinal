@@ -862,10 +862,12 @@ function renderPost(post) {
   initTOC();
 }
 
-const params = new URLSearchParams(window.location.search);
-const post   = findSolutionPostById(params.get('id'));
-if (!post) renderNotFound();
-else renderPost(post);
+whenDataReady(function() {
+  const params = new URLSearchParams(window.location.search);
+  const post   = findSolutionPostById(params.get('id'));
+  if (!post) renderNotFound();
+  else renderPost(post);
+});
 </script>
 </body>
 </html>

@@ -463,10 +463,12 @@ function renderPost(note) {
   initRP();
 }
 
-const params = new URLSearchParams(window.location.search);
-const note = findNoteById(params.get('id'));
-if (!note) renderNotFound();
-else renderPost(note);
+whenDataReady(function() {
+  const params = new URLSearchParams(window.location.search);
+  const note = findNoteById(params.get('id'));
+  if (!note) renderNotFound();
+  else renderPost(note);
+});
 </script>
 </body>
 </html>

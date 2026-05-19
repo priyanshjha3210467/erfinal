@@ -117,6 +117,13 @@ if (!_isAdminPageCheck()) {
   _erSiteDataReady = Promise.resolve();
 }
 
+// ── Public API: wait for Firebase hydration before rendering ──
+// Usage: whenDataReady(function() { renderPage(); });
+function whenDataReady(fn) {
+  var ready = _erSiteDataReady || Promise.resolve();
+  ready.then(fn).catch(function() { fn(); /* render with fallback data on error */ });
+}
+
 // ===== DEFAULTS =====
 const DEFAULTS = {
   pdfs: {
