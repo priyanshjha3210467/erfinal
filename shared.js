@@ -13,11 +13,12 @@ function _isAdminPageCheck() {
 
 // Keys to sync between localStorage and Firebase
 const SITE_DATA_KEYS = [
-  'examready_pdfs', 'examready_quizzes', 'examready_solution_posts',
+  'examready_pdfs', 'examready_quizzes', 'examready_solution_posts', 'examready_notes',
   'er_subjects_map', 'er_site_config', 'er_nav', 'er_announcement',
-  'er_features', 'er_ad_slots', 'er_chapters',
+  'er_features', 'er_ad_slots', 'er_ad_slots_overrides', 'er_chapters',
   'er_adsense_autoads', 'er_adsense_autoads_enabled',
-  'er_native_ad_config', 'er_content_ads_config'
+  'er_native_ad_config', 'er_content_ads', 'er_custom_pages',
+  'er_logo', 'er_footer_brand_logo'
 ];
 
 // ── Firebase REST helpers ──
@@ -34,7 +35,18 @@ function _firebasePut(key, value) {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(value)
-  }).catch(function() { /* silent fail for non-critical sync */ });
+  })
+  .then(function(res) {
+    if (!res.ok) {
+      var msg = 'Firebase sync failed for key "' + key + '": ' + res.status;
+      console.error(msg);
+      if (typeof showToast === 'function') showToast('❌ ' + msg, 'error');
+    }
+  })
+  .catch(function(err) {
+    console.error('Firebase network error for key "' + key + '":', err);
+    if (typeof showToast === 'function') showToast('❌ Network error syncing to Firebase', 'error');
+  });
 }
 
 function _firebasePutAll(data) {
@@ -53,17 +65,18 @@ function _hydrateSiteData() {
 
       SITE_DATA_KEYS.forEach(function(key) {
         var val = data[key];
-        if (val === undefined || val === null) return;
-
-        if (typeof val === 'string' || typeof val === 'boolean' || typeof val === 'number') {
-          localStorage.setItem(key, String(val));
+        if (val === undefined || val === null) {
+          Storage.prototype.removeItem.call(localStorage, key);
+        } else if (typeof val === 'string' || typeof val === 'boolean' || typeof val === 'number') {
+          Storage.prototype.setItem.call(localStorage, key, String(val));
         } else {
-          localStorage.setItem(key, JSON.stringify(val));
+          Storage.prototype.setItem.call(localStorage, key, JSON.stringify(val));
         }
       });
 
       // Invalidate caches after hydration
       if (typeof invalidateDataCache === 'function') invalidateDataCache();
+      if (typeof invalidateNotesCache === 'function') invalidateNotesCache();
       _subjectsMapCache = null;
       _subjectsMapRaw = null;
     })
@@ -110,12 +123,8 @@ function firebasePushAll() {
     });
 }
 
-// Start hydration on public pages, skip on admin
-if (!_isAdminPageCheck()) {
-  _erSiteDataReady = _hydrateSiteData();
-} else {
-  _erSiteDataReady = Promise.resolve();
-}
+// Start hydration on all pages
+_erSiteDataReady = _hydrateSiteData();
 
 // ── Public API: wait for Firebase hydration before rendering ──
 // Usage: whenDataReady(function() { renderPage(); });
