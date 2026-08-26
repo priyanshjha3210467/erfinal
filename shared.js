@@ -1525,6 +1525,7 @@ function _injectBetweenSections(slots) {
 }
 
 function insertSmartAds() {
+  return; // Ads disabled
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
   if (currentPage === 'admin.html') return;
   if (document.body?.dataset?.erSmartAds === '1') return;
@@ -1577,6 +1578,7 @@ function insertSmartAds() {
 
 // ── AdSense Auto-Ads global injection ──────────────────────────────────────
 function injectAutoAdsScript() {
+  return; // Auto-ads disabled
   try {
     if (localStorage.getItem('er_adsense_autoads_enabled') !== 'true') return;
     const code = (localStorage.getItem('er_adsense_autoads') || '').trim();

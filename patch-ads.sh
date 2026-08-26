@@ -24,34 +24,8 @@ echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━�
 PATCHED=0
 SKIPPED=0
 
-for file in *.html; do
-  if [[ "$file" == "admin.html" ]]; then
-    echo -e "${YELLOW}⏭  Skipped: $file (admin panel — ads not injected here)${NC}"
-    SKIPPED=$((SKIPPED+1))
-    continue
-  fi
-
-  if grep -q 'src="ads.js"' "$file"; then
-    echo -e "${YELLOW}⏭  Already patched: $file${NC}"
-    SKIPPED=$((SKIPPED+1))
-    continue
-  fi
-
-  if ! grep -q 'src="animations.js"' "$file"; then
-    echo -e "${YELLOW}⚠  No animations.js found — skipping: $file${NC}"
-    SKIPPED=$((SKIPPED+1))
-    continue
-  fi
-
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' 's|<script src="animations.js"></script>|<script src="animations.js"></script>\n<script src="ads.js"></script>|g' "$file"
-  else
-    sed -i 's|<script src="animations.js"></script>|<script src="animations.js"></script>\n<script src="ads.js"></script>|g' "$file"
-  fi
-
-  echo -e "${GREEN}✅ Patched: $file${NC}"
-  PATCHED=$((PATCHED+1))
-done
+echo "Ad injection is disabled."
+exit 0
 
 echo ""
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
