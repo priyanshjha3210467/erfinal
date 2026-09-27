@@ -26,7 +26,7 @@
   var AD_SLOT_KEYS = [
     'top','top_banner','footer','pre_footer',
     'inline','inline_1','inline_2','inline_3','between','between_sections',
-    'results','results_banner','solution_mid','quiz_sidebar','pdf_viewer',
+    'results','results_banner','quiz_sidebar','pdf_viewer',
     'sticky','sidebar_sticky','mobile_bottom'
   ];
 

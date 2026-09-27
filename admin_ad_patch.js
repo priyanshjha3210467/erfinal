@@ -36,11 +36,10 @@ var AD_SLOT_GROUPS = [
   },
   {
     group: '🎯 High-Intent Pages',
-    desc: 'Slots on quiz, solution, and results pages — highest student purchase intent.',
+    desc: 'Slots on quiz and results pages — highest student purchase intent.',
     slots: [
-      { key:'results',        label:'Results / Post-Article',      where:'After quiz results or article end',  pages:'quiz.html, solution-post.html', size:'Responsive',              system:'shared.js', priority:'veryhigh', tip:'Peak intent placement — students just finished studying. Use coaching, books, or mock-test ads.' },
-      { key:'results_banner', label:'Results Banner (ads.js)',     where:'After quiz result card',             pages:'quiz.html, solution-post.html', size:'Responsive',              system:'ads.js',    priority:'veryhigh', tip:'Same high-intent placement for ads.js. Use the same code.' },
-      { key:'solution_mid',   label:'Mid-Article (ads.js)',        where:'Halfway through solution article',   pages:'solution-post.html',            size:'In-article / Native',     system:'ads.js',    priority:'high',     tip:'Inserted mid-read when engagement is highest.' },
+      { key:'results',        label:'Results / Post-Article',      where:'After quiz results or article end',  pages:'quiz.html', size:'Responsive',              system:'shared.js', priority:'veryhigh', tip:'Peak intent placement — students just finished studying. Use coaching, books, or mock-test ads.' },
+      { key:'results_banner', label:'Results Banner (ads.js)',     where:'After quiz result card',             pages:'quiz.html', size:'Responsive',              system:'ads.js',    priority:'veryhigh', tip:'Same high-intent placement for ads.js. Use the same code.' },
       { key:'quiz_sidebar',   label:'Quiz Sidebar (ads.js)',       where:'Inside quiz page side panel',        pages:'quiz.html',                     size:'160×600 or Responsive',   system:'ads.js',    priority:'high',     tip:'Shown while a student is actively taking a quiz.' },
       { key:'pdf_viewer',     label:'PDF Viewer Banner',           where:'Between the PDF toolbar and viewer', pages:'pdf-viewer.html',               size:'Responsive',              system:'shared.js', priority:'high',     tip:'Dedicated monetisation slot for PDF previews without breaking the viewer layout.' },
     ]

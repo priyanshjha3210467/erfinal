@@ -1,0 +1,2 @@
+class,subject,chapter,quiz,question,optionA,optionB,optionC,optionD,correct,explanation,year,difficulty
+9,math,Number Systems,Number Systems Quiz,Which is irrational?,sqrt(4),sqrt(9),sqrt(2),sqrt(16),C,,2024,Easy

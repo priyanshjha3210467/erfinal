@@ -155,9 +155,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="index.html">Home</a>
     <a href="class9.html">Class 9</a>
     <a href="class10.html">Class 10</a>
-    <a href="class11.html">Class 11</a>
-    <a href="class12.html">Class 12</a>
-    <a href="solutions.html">Solutions</a>
     <a href="pyq.html">PYQs</a>
     <a href="quizzes.html" class="active">Quizzes</a>
   </nav>
@@ -175,7 +172,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="hero-stats">
       <div><div class="stat-num" id="totalQuizzes">0</div><div class="stat-label">Quizzes</div></div>
       <div><div class="stat-num" id="totalQs">0</div><div class="stat-label">Questions</div></div>
-      <div><div class="stat-num">4</div><div class="stat-label">Classes</div></div>
+      <div><div class="stat-num">2</div><div class="stat-label">Classes</div></div>
       <div><div class="stat-num">Free</div><div class="stat-label">Always</div></div>
     </div>
   </div>
@@ -187,8 +184,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button class="filter-btn active" onclick="filterClass(this,'all')">All Classes</button>
     <button class="filter-btn" onclick="filterClass(this,'9')">Class 9</button>
     <button class="filter-btn" onclick="filterClass(this,'10')">Class 10</button>
-    <button class="filter-btn" onclick="filterClass(this,'11')">Class 11</button>
-    <button class="filter-btn" onclick="filterClass(this,'12')">Class 12</button>
   </div>
   <div id="quizContent"></div>
 </main>
@@ -198,33 +193,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="footer-top">
       <div class="footer-brand">
         <div style="font-family:'Bebas Neue';font-size:28px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
-        <p>Free study resources for CBSE students in Class 9 to 12. PYQs, Question Banks, Quizzes and Solutions - all free.</p>
+        <p>Free study resources for CBSE students in Class 9 to 10. PYQs, Question Banks, Quizzes and Flashcards - all free.</p>
       </div>
       <div class="footer-links">
         <div class="footer-col">
           <h4>Classes</h4>
           <a href="class9.html">Class 9</a>
           <a href="class10.html">Class 10</a>
-          <a href="class11.html">Class 11</a>
-          <a href="class12.html">Class 12</a>
         </div>
         <div class="footer-col">
           <h4>Resources</h4>
-          <a href="solutions.html">CBSE Solutions</a>
           <a href="pyq.html">PYQ Papers</a>
           <a href="questionbank.html">Question Banks</a>
           <a href="quizzes.html">Quizzes</a>
+          <a href="flashcards.html">Flashcards</a>
+          <a href="mistakes.html">Mistakes</a>
+          <a href="student.html">Progress</a>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
       <p>&copy; 2026 ExamReady. Made with <span>&hearts;</span> for students.</p>
-      <p>CBSE Resources for Class 9-12</p>
+      <p>CBSE Resources for Class 9-10</p>
     </div>
   </div>
 </footer>
 
-<script src="shared.js"></script>
+<script src="examready-config.js"></script>
+<script src="student-storage.js"></script>
+<script src="shared.js?v=20260927-2"></script>
 <script src="animations.js"></script>
 <script>
 let activeClass = 'all';
@@ -242,7 +239,7 @@ function renderQuizzes() {
   let html = '';
   let totalQ = 0;
   let totalQuiz = 0;
-  const classesData = getClassCatalog();
+  const classesData = getClassCatalog().filter(item => ['9', '10'].includes(String(item.cls)));
   const toShow = activeClass === 'all' ? classesData : classesData.filter(item => item.cls === activeClass);
 
   toShow.forEach(classData => {

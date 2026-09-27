@@ -117,11 +117,11 @@
 
   function initScrollAnimations() {
     const targets = document.querySelectorAll(
-      '.subject-card, .class-card, .quiz-card, .sol-card, .feature-card, ' +
-      '.pdf-item, .qb-card, .post-card, .related-item, .resource-item, ' +
+      '.subject-card, .class-card, .quiz-card, .feature-card, ' +
+      '.pdf-item, .qb-card, .related-item, .resource-item, ' +
       '.legal-card section, .stat-card, .insight-card, .table-card, .settings-card, ' +
       '.hero-stats .stat, .section-label, .section-divider, .stream-section, ' +
-      '.solution-tips-card, .recent-card, .nav-builder-item, .note-card'
+      '.recent-card, .nav-builder-item'
     );
 
     _scrollObserver = new IntersectionObserver((entries) => {
@@ -149,8 +149,8 @@
 
     /* Stagger grid siblings */
     document.querySelectorAll(
-      '.subject-grid, .class-grid, .quiz-grid, .solutions-grid, ' +
-      '.features-grid, .stat-grid, .post-grid, .qb-grid, .stream-grid, .notes-grid'
+      '.subject-grid, .class-grid, .quiz-grid, ' +
+      '.features-grid, .stat-grid, .qb-grid, .stream-grid'
     ).forEach(grid => {
       grid.classList.add('er-stagger');
       Array.from(grid.children).forEach((child, idx) => {
@@ -226,7 +226,7 @@
     });
 
     /* Subtle 3D tilt on class cards */
-    document.querySelectorAll('.class-card, .quiz-card, .feature-card, .post-card').forEach(card => {
+    document.querySelectorAll('.class-card, .quiz-card, .feature-card').forEach(card => {
       card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
         const cx = rect.left + rect.width / 2;
@@ -247,7 +247,7 @@
 
   /* ─── 8. CLICK RIPPLE EFFECT ─────────────── */
   function initRipple() {
-    const rippleTargets = '.btn-primary, .btn-dl, .quiz-btn, .btn-red, .post-link, .resource-link, .filter-btn, .res-tab, .tab-btn, .nav-btn, .auth-btn, .btn';
+    const rippleTargets = '.btn-primary, .btn-dl, .quiz-btn, .btn-red, .resource-link, .filter-btn, .res-tab, .tab-btn, .nav-btn, .auth-btn, .btn';
 
     document.addEventListener('click', (e) => {
       const btn = e.target.closest(rippleTargets);

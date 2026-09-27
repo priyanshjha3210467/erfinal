@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<title>Mistake Notebook - ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="animations.css">
+<style>
+  :root { --red:#e8211a; --black:#0d0d0d; --gray:#f5f5f5; --line:#e5e5e5; --muted:#686868; --green:#198754; }
+  *,*::before,*::after { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; display:flex; flex-direction:column; color:#1a1a1a; font-family:'Nunito',sans-serif; background:#fff; }
+  header { background:var(--black); min-height:64px; padding:0 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; position:sticky; top:0; z-index:10; }
+  .logo-wrap { display:flex; align-items:center; flex-shrink:0; }.logo-wrap img { height:44px; }
+  nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; } nav a { color:#ccc; text-decoration:none; font-size:14px; font-weight:800; padding:8px 13px; border-radius:8px; } nav a:hover,nav a.active { color:#fff; background:#252525; }
+  main { width:100%; max-width:1160px; margin:0 auto; padding:42px 24px 64px; flex:1; }
+  .hero { background:#101010; color:#fff; padding:34px 34px 30px; border-radius:12px; display:flex; align-items:flex-end; justify-content:space-between; gap:24px; }
+  .eyebrow { color:#ff8e71; font-size:12px; font-weight:900; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+  h1 { margin:0; font:normal clamp(48px,8vw,78px)/.9 'Bebas Neue',sans-serif; letter-spacing:1px; } h1 span { color:#ff604b; }
+  .hero p { max-width:620px; color:#c6c6c6; font-size:15px; line-height:1.6; font-weight:700; margin:14px 0 0; }
+  .hero-count { min-width:140px; padding:16px 18px; border:1px solid #424242; border-radius:10px; } .hero-count strong { display:block; font:normal 48px/1 'Bebas Neue',sans-serif; } .hero-count span { color:#aaa; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:1px; }
+  .toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:26px 0 20px; } select,.btn { font:800 13px 'Nunito',sans-serif; border-radius:8px; } select { min-width:170px; padding:10px 12px; border:2px solid var(--line); background:#fff; } .btn { padding:10px 14px; border:0; cursor:pointer; } .btn-primary { background:var(--red); color:#fff; } .btn-secondary { background:#f0f0f0; color:#333; } .btn:hover { filter:brightness(.96); }
+  .summary { color:var(--muted); font-weight:800; font-size:13px; margin-left:auto; }
+  .notebook-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(285px,1fr)); gap:16px; }
+  .mistake-card { border:1px solid var(--line); border-top:4px solid var(--red); border-radius:10px; padding:18px; box-shadow:0 5px 20px rgba(0,0,0,.05); display:flex; flex-direction:column; min-height:270px; }
+  .mistake-meta { color:var(--red); font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.8px; margin-bottom:10px; } .mistake-card h2 { font-size:18px; line-height:1.4; margin:0 0 14px; } .mistake-answer { border-top:1px solid var(--line); padding-top:12px; color:#444; font-size:14px; line-height:1.55; margin-bottom:12px; } .mistake-answer strong { color:#198754; display:block; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:3px; }
+  .streak-line { color:var(--muted); font-size:12px; font-weight:800; margin-bottom:14px; } .card-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:auto; } .card-actions .btn { flex:1; min-width:105px; }
+  .empty { background:var(--gray); border-radius:10px; padding:50px 24px; text-align:center; color:var(--muted); } .empty strong { color:#1a1a1a; display:block; font-size:20px; margin-bottom:6px; } .empty a { color:var(--red); font-weight:900; }
+  .toast { position:fixed; right:20px; bottom:20px; background:#111; color:#fff; border-radius:8px; padding:12px 16px; font-weight:800; font-size:13px; box-shadow:0 8px 24px #0003; opacity:0; transform:translateY(8px); pointer-events:none; transition:.2s; } .toast.show { opacity:1; transform:translateY(0); }
+  footer { background:var(--black); color:#aaa; padding:28px 24px; } footer p { margin:0; text-align:center; font-size:12px; }
+  @media(max-width:800px) { nav { display:none; } .hero { align-items:flex-start; flex-direction:column; } .summary { width:100%; margin-left:0; } }
+  @media(max-width:520px) { main { padding:28px 16px 48px; } .hero { padding:26px 22px; } .toolbar select { width:100%; } }
+</style>
+</head>
+<body>
+<header><a class="logo-wrap" href="index.html"><img src="logo.png" alt="ExamReady"></a><nav id="mainNav"></nav><div class="hamburger" aria-label="Open navigation menu"><span></span><span></span><span></span></div></header>
+<main>
+  <section class="hero"><div><div class="eyebrow">Learn from the questions that slowed you down</div><h1>MISTAKE <span>NOTEBOOK</span></h1><p>Every wrong quiz answer is kept here until you can answer it correctly twice in a row. Turn the hardest ones into your own flashcards.</p></div><div class="hero-count"><strong id="mistakeCount">0</strong><span>Open mistakes</span></div></section>
+  <div class="toolbar"><select id="subjectFilter" aria-label="Filter mistakes by subject"><option value="">All subjects</option></select><select id="chapterFilter" aria-label="Filter mistakes by chapter"><option value="">All chapters</option></select><button class="btn btn-secondary" id="clearFilters" type="button">Clear filters</button><span class="summary" id="summary"></span></div>
+  <section id="notebookGrid" class="notebook-grid"></section>
+</main>
+<footer><p>ExamReady · Mistake Notebook</p></footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="examready-config.js"></script><script src="student-storage.js"></script><script src="shared.js?v=20260927-2"></script><script src="animations.js"></script>
+<script>
+  let mistakes = [];
+  const esc = value => typeof escapeHtml === 'function' ? escapeHtml(value == null ? '' : String(value)) : String(value || '');
+  function showToast(message) { const toast = document.getElementById('toast'); toast.textContent = message; toast.classList.add('show'); clearTimeout(showToast.timer); showToast.timer = setTimeout(() => toast.classList.remove('show'), 2200); }
+  function getFiltered() { const subject = document.getElementById('subjectFilter').value; const chapter = document.getElementById('chapterFilter').value; return mistakes.filter(item => (!subject || item.subject === subject) && (!chapter || item.chapter === chapter)); }
+  function populateFilters() {
+    const subject = document.getElementById('subjectFilter').value; const chapter = document.getElementById('chapterFilter').value;
+    const subjects = [...new Set(mistakes.map(item => item.subject).filter(Boolean))].sort(); const chapters = [...new Set(mistakes.map(item => item.chapter).filter(Boolean))].sort();
+    document.getElementById('subjectFilter').innerHTML = '<option value="">All subjects</option>' + subjects.map(item => `<option value="${esc(item)}">${esc(item)}</option>`).join('');
+    document.getElementById('chapterFilter').innerHTML = '<option value="">All chapters</option>' + chapters.map(item => `<option value="${esc(item)}">${esc(item)}</option>`).join('');
+    if (subjects.includes(subject)) document.getElementById('subjectFilter').value = subject; if (chapters.includes(chapter)) document.getElementById('chapterFilter').value = chapter;
+  }
+  function render() {
+    mistakes = ExamReadyStorage.getMistakes(); populateFilters();
+    document.getElementById('mistakeCount').textContent = mistakes.length;
+    const filtered = getFiltered(); document.getElementById('summary').textContent = `${filtered.length} shown · ${mistakes.length} total`;
+    const grid = document.getElementById('notebookGrid');
+    if (!filtered.length) { grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><strong>${mistakes.length ? 'No mistakes match those filters.' : 'Your notebook is clear.'}</strong><span>${mistakes.length ? 'Try another subject or chapter.' : 'Answer a quiz and missed questions will appear here automatically.'}</span>${mistakes.length ? '' : '<br><a href="quizzes.html">Practice a quiz</a>'}</div>`; return; }
+    const personal = new Set(ExamReadyStorage.getPersonalFlashcards().map(card => card.sourceMistakeId));
+    grid.innerHTML = filtered.map(item => `<article class="mistake-card" data-id="${esc(item.id)}"><div class="mistake-meta">${esc(item.subject || 'General')} ${item.chapter ? ' · ' + esc(item.chapter) : ''}</div><h2>${esc(item.prompt)}</h2><div class="mistake-answer" hidden><strong>Correct answer</strong>${esc(item.answer)}${item.hint ? `<br><br><strong>Explanation</strong>${esc(item.hint)}` : ''}</div><div class="streak-line">Correct twice in a row to clear · ${Number(item.correctStreak) || 0}/2</div><div class="card-actions"><button class="btn btn-secondary" data-action="reveal" type="button">Show answer</button><button class="btn btn-primary" data-action="wrong" type="button">Still learning</button><button class="btn btn-secondary" data-action="correct" type="button">I knew it</button><button class="btn btn-secondary" data-action="convert" type="button" ${personal.has(item.id) ? 'disabled' : ''}>${personal.has(item.id) ? 'Saved as flashcard' : 'Make flashcard'}</button></div></article>`).join('');
+  }
+  document.getElementById('notebookGrid').addEventListener('click', event => {
+    const button = event.target.closest('[data-action]'); if (!button) return; const card = button.closest('[data-id]'); const id = card.dataset.id; const action = button.dataset.action;
+    if (action === 'reveal') { const answer = card.querySelector('.mistake-answer'); answer.hidden = !answer.hidden; button.textContent = answer.hidden ? 'Show answer' : 'Hide answer'; }
+    if (action === 'wrong') { ExamReadyStorage.answerMistake(id, false); showToast('Kept in your notebook. Keep going.'); render(); }
+    if (action === 'correct') { const result = ExamReadyStorage.answerMistake(id, true); showToast(result && result.cleared ? 'Cleared after two correct answers.' : 'Nice. One more correct answer clears it.'); render(); }
+    if (action === 'convert') { ExamReadyStorage.convertMistakeToPersonalFlashcard(id); showToast('Added to your personal flashcards.'); render(); }
+  });
+  document.getElementById('subjectFilter').addEventListener('change', render); document.getElementById('chapterFilter').addEventListener('change', render);
+  document.getElementById('clearFilters').addEventListener('click', () => { document.getElementById('subjectFilter').value = ''; document.getElementById('chapterFilter').value = ''; render(); });
+  if (typeof ExamReadyStorage !== 'undefined') ExamReadyStorage.subscribe(render);
+  whenDataReady(render);
+</script>
+</body>
+</html>

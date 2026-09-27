@@ -267,9 +267,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="index.html">Home</a>
     <a href="class9.html">Class 9</a>
     <a href="class10.html">Class 10</a>
-    <a href="class11.html">Class 11</a>
-    <a href="class12.html">Class 12</a>
-    <a href="solutions.html">Solutions</a>
     <a href="pyq.html">PYQs</a>
     <a href="quizzes.html" class="active">Quizzes</a>
   </nav>
@@ -298,33 +295,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="footer-top">
       <div class="footer-brand">
         <div style="font-family:'Bebas Neue';font-size:28px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
-        <p>Free study resources for CBSE students in Class 9 to 12. PYQs, Question Banks, Quizzes and Solutions - all free.</p>
+        <p>Free study resources for CBSE students in Class 9 to 10. PYQs, Question Banks, Quizzes and Flashcards - all free.</p>
       </div>
       <div class="footer-links">
         <div class="footer-col">
           <h4>Classes</h4>
           <a href="class9.html">Class 9</a>
           <a href="class10.html">Class 10</a>
-          <a href="class11.html">Class 11</a>
-          <a href="class12.html">Class 12</a>
         </div>
         <div class="footer-col">
           <h4>Resources</h4>
-          <a href="solutions.html">CBSE Solutions</a>
           <a href="pyq.html">PYQ Papers</a>
           <a href="questionbank.html">Question Banks</a>
           <a href="quizzes.html">Quizzes</a>
+          <a href="flashcards.html">Flashcards</a>
+          <a href="mistakes.html">Mistakes</a>
+          <a href="student.html">Progress</a>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
       <p>&copy; 2026 ExamReady. Made with <span>&hearts;</span> for students.</p>
-      <p>CBSE Resources for Class 9&ndash;12</p>
+      <p>CBSE Resources for Class 9&ndash;10</p>
     </div>
   </div>
 </footer>
 
-<script src="shared.js"></script>
+<script src="examready-config.js"></script>
+<script src="student-storage.js"></script>
+<script src="shared.js?v=20260927-2"></script>
 <script src="animations.js"></script>
 <script>
 let quiz = null;
@@ -334,6 +333,8 @@ let questionTimes = [];
 let currentQuestionStartedAt = 0;
 let timerRemaining = 0;
 let timerInterval = null;
+let loggedAnswers = new Set();
+let resultLogged = false;
 
 function getQueryQuizId() {
   const params = new URLSearchParams(window.location.search);
@@ -536,12 +537,15 @@ function updateLiveTimerUI() {
 function renderQuizPage() {
   const quizId = getQueryQuizId();
   quiz = normalizeQuizData(findQuizById(quizId));
+  if (quiz && !['9', '10'].includes(String(quiz.classNum))) { window.location.replace('index.html'); return; }
   if (!quiz || !quiz.questions || !quiz.questions.length) {
     renderNotFound();
     return;
   }
   answers = new Array(quiz.questions.length).fill(null);
   questionTimes = new Array(quiz.questions.length).fill(0);
+  loggedAnswers = new Set();
+  resultLogged = false;
   currentQ = 0;
   currentQuestionStartedAt = 0;
   if (timerInterval) clearInterval(timerInterval);
@@ -554,7 +558,25 @@ function renderQuizPage() {
 }
 
 function selectAnswer(index) {
+  recordCurrentQuestionTime();
   answers[currentQ] = index;
+  if (!loggedAnswers.has(currentQ) && typeof ExamReadyStorage !== 'undefined' && ExamReadyStorage.recordQuestionAnswer) {
+    const question = quiz.questions[currentQ];
+    loggedAnswers.add(currentQ);
+    ExamReadyStorage.recordQuestionAnswer({
+      questionId: `${quiz.id || 'quiz'}:${currentQ}`,
+      quizId: quiz.id,
+      prompt: question.q,
+      correctAnswer: question.opts[question.ans],
+      answer: question.opts[index],
+      explanation: question.solution,
+      class: quiz.classNum,
+      subject: quiz.subjectLabel,
+      chapter: quiz.chapterId || quiz.chapter || '',
+      correct: index === question.ans,
+      time: questionTimes[currentQ] || 0
+    });
+  }
   const optionButtons = document.querySelectorAll('.opt-btn');
   if (optionButtons[index]) optionButtons[index].classList.add('selected-animate');
   setTimeout(() => renderQuestion(), 100);
@@ -614,6 +636,19 @@ function showResult(timerEnded = false) {
   const avgTime = answeredCount ? Math.round(questionTimes.reduce((sum, value) => sum + value, 0) / answeredCount) : 0;
   const passed = pct >= quiz.passPercentage;
   const goodResult = pct >= 75;
+  if (!resultLogged && typeof ExamReadyStorage !== 'undefined' && ExamReadyStorage.recordQuizResult) {
+    resultLogged = true;
+    ExamReadyStorage.recordQuizResult({
+      quizId: quiz.id,
+      title: quiz.title,
+      class: quiz.classNum,
+      subject: quiz.subjectLabel,
+      score: pct,
+      correct,
+      total,
+      time: questionTimes.reduce((sum, value) => sum + value, 0)
+    });
+  }
   const showMode = quiz.showSolutions; // 'after_each' | 'after_quiz' | 'never'
   const canShowReview = showMode === 'after_quiz' || showMode === 'after_each';
   const reviewMarkup = canShowReview ? quiz.questions.map((question, index) => {
@@ -666,6 +701,8 @@ function restartQuiz() {
   if (timerInterval) clearInterval(timerInterval);
   answers = new Array(quiz.questions.length).fill(null);
   questionTimes = new Array(quiz.questions.length).fill(0);
+  loggedAnswers = new Set();
+  resultLogged = false;
   currentQ = 0;
   currentQuestionStartedAt = 0;
   if (quiz.timerEnabled) {

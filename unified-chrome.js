@@ -195,8 +195,6 @@
     { label: 'Class 10',  url: 'class10.html' },
     { label: 'Class 11',  url: 'class11.html' },
     { label: 'Class 12',  url: 'class12.html' },
-    { label: 'Solutions', url: 'solutions.html' },
-    { label: 'Notes',     url: 'notes.html' },
     { label: 'PYQs',      url: 'pyq.html' },
     { label: 'Quizzes',   url: 'quizzes.html' },
   ];

@@ -102,9 +102,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="index.html">Home</a>
     <a href="class9.html" >Class 9</a>
     <a href="class10.html"class="active">Class 10</a>
-    <a href="class11.html">Class 11</a>
-    <a href="class12.html">Class 12</a>
-    <a href="solutions.html">Solutions</a>
     <a href="pyq.html">PYQs</a>
     <a href="quizzes.html">Quizzes</a>
   </nav>
@@ -116,9 +113,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="breadcrumb"><a href="index.html">Home</a> / Class 10</div>
     <div class="hero-badge">CBSE Class 10</div>
     <h1>CLASS <span>10</span> RESOURCES</h1>
-    <p>PYQs, question banks, SPQs, institutional papers, short notes, solutions, and quizzes for every subject in one place.</p>
+    <p>PYQs, question banks, SPQs, institutional papers, quizzes, and flashcards for every subject in one place.</p>
     <div class="hero-stats">
-      <div><div class="stat-num">6+</div><div class="stat-label">Resource Types</div></div>
+      <div><div class="stat-num">5+</div><div class="stat-label">Resource Types</div></div>
       <div><div class="stat-num" id="subjectCount">—</div><div class="stat-label">Subjects</div></div>
       <div><div class="stat-num">Free</div><div class="stat-label">Always</div></div>
     </div>
@@ -136,18 +133,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="footer-top">
       <div class="footer-brand">
         <div style="font-family:'Bebas Neue';font-size:28px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
-        <p>Free study resources for CBSE students in Class 9 to 12. PYQs, question banks, SPQs, notes, quizzes, and solutions — all free.</p>
+        <p>Free study resources for CBSE students in Class 9 to 10. PYQs, question banks, SPQs, quizzes, and flashcards — all free.</p>
       </div>
       <div class="footer-links">
         <div class="footer-col">
           <h4>Classes</h4>
           <a href="class9.html">Class 9</a><a href="class10.html"class="active">Class 10</a>
-          <a href="class11.html">Class 11</a><a href="class12.html">Class 12</a>
+          
         </div>
         <div class="footer-col">
           <h4>Resources</h4>
-          <a href="solutions.html">CBSE Solutions</a><a href="pyq.html">PYQ Papers</a>
-          <a href="questionbank.html">Question Banks</a><a href="quizzes.html">Quizzes</a>
+          <a href="pyq.html">PYQ Papers</a><a href="questionbank.html">Question Banks</a>
+          <a href="quizzes.html">Quizzes</a><a href="flashcards.html">Flashcards</a><a href="mistakes.html">Mistakes</a><a href="student.html">Progress</a>
         </div>
       </div>
     </div>
@@ -157,7 +154,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </footer>
 
-<script src="shared.js"></script>
+<script src="examready-config.js"></script>
+<script src="student-storage.js"></script>
+<script src="shared.js?v=20260927-2"></script>
 <script src="animations.js"></script>
 <script>
 const CLASS = '10';
@@ -179,10 +178,9 @@ function renderGrid() {
     return;
   }
 
-  const TYPES = ['pyq','qb','spq','ip','notes'];
+  const TYPES = ['pyq','qb','spq','ip'];
   grid.innerHTML = subjects.map(subject => {
     const total = TYPES.reduce((sum, t) => sum + ((allPdfs[`${CLASS}-${subject.key}-${t}`] || []).length), 0)
-      + getSolutionPostsByClassAndSubject(CLASS, subject.key).length
       + ((allQuizzes[`${CLASS}-${subject.key}`] || []).length);
     return `<a class="subject-card" href="${buildSubjectPageUrl(CLASS, subject.key)}" aria-label="Open ${escapeHtml(subject.label)} resources">
       <div class="subject-card-emoji">${subject.icon || '📚'}</div>

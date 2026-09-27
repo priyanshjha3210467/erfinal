@@ -117,9 +117,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="index.html">Home</a>
     <a href="class9.html">Class 9</a>
     <a href="class10.html">Class 10</a>
-    <a href="class11.html">Class 11</a>
-    <a href="class12.html">Class 12</a>
-    <a href="solutions.html">Solutions</a>
     <a href="pyq.html">PYQs</a>
     <a href="questionbank.html" class="active">Question Banks</a>
     <a href="quizzes.html">Quizzes</a>
@@ -134,10 +131,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="breadcrumb"><a href="index.html">Home</a> / Question Banks</div>
     <div class="hero-badge">📚 Chapter-wise Questions</div>
     <h1>QUESTION <span>BANKS</span></h1>
-    <p>Curated chapter-wise question banks covering all important topics for Class 9 to 12. Practice with confidence.</p>
+    <p>Curated chapter-wise question banks covering all important topics for Class 9 to 10. Practice with confidence.</p>
     <div class="hero-stats">
       <div><div class="stat-num">100+</div><div class="stat-label">Banks</div></div>
-      <div><div class="stat-num">4</div><div class="stat-label">Classes</div></div>
+      <div><div class="stat-num">2</div><div class="stat-label">Classes</div></div>
       <div><div class="stat-num">10+</div><div class="stat-label">Subjects</div></div>
       <div><div class="stat-num">Free</div><div class="stat-label">Always</div></div>
     </div>
@@ -151,8 +148,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <button class="filter-btn active" onclick="filterClass(this,'all')">All Classes</button>
       <button class="filter-btn" onclick="filterClass(this,'9')">Class 9</button>
       <button class="filter-btn" onclick="filterClass(this,'10')">Class 10</button>
-      <button class="filter-btn" onclick="filterClass(this,'11')">Class 11</button>
-      <button class="filter-btn" onclick="filterClass(this,'12')">Class 12</button>
     </div>
     <div class="filter-bar">
       <span class="filter-label">Year:</span>
@@ -167,33 +162,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="footer-top">
       <div class="footer-brand">
         <div style="font-family:'Bebas Neue';font-size:28px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
-        <p>Free study resources for CBSE students in Class 9 to 12. PYQs, Question Banks, Quizzes & Solutions — all free.</p>
+        <p>Free study resources for CBSE students in Class 9 to 10. PYQs, Question Banks, Quizzes & Flashcards — all free.</p>
       </div>
       <div class="footer-links">
         <div class="footer-col">
           <h4>Classes</h4>
           <a href="class9.html">Class 9</a>
           <a href="class10.html">Class 10</a>
-          <a href="class11.html">Class 11</a>
-          <a href="class12.html">Class 12</a>
         </div>
         <div class="footer-col">
           <h4>Resources</h4>
-          <a href="solutions.html">CBSE Solutions</a>
           <a href="pyq.html">PYQ Papers</a>
           <a href="questionbank.html">Question Banks</a>
           <a href="quizzes.html">Quizzes</a>
+          <a href="flashcards.html">Flashcards</a>
+          <a href="mistakes.html">Mistakes</a>
+          <a href="student.html">Progress</a>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
       <p>© 2026 ExamReady. Made with <span>♥</span> for students.</p>
-      <p>CBSE Resources for Class 9–12</p>
+      <p>CBSE Resources for Class 9–10</p>
     </div>
   </div>
 </footer>
 
-<script src="shared.js"></script>
+<script src="examready-config.js"></script>
+<script src="student-storage.js"></script>
+<script src="shared.js?v=20260927-2"></script>
 <script src="animations.js"></script>
 <script>
 let activeClass = 'all';
@@ -209,7 +206,7 @@ function filterClass(btn, cls) {
 function buildYearFilters() {
   const allPdfs = getData('pdfs') || {};
   const years = new Set();
-  getClassCatalog().forEach(cls =>
+  getClassCatalog().filter(cls => ['9', '10'].includes(String(cls.cls))).forEach(cls =>
     cls.subjects.forEach(sub => {
       (allPdfs[`${cls.cls}-${sub.key}-qb`] || []).forEach(p => {
         if (p.year) years.add(String(p.year));
@@ -247,7 +244,7 @@ function renderQBs() {
   const allPdfs = getData('pdfs') || {};
   const container = document.getElementById('qbContent');
   let html = '';
-  const classesData = getClassCatalog();
+  const classesData = getClassCatalog().filter(cls => ['9', '10'].includes(String(cls.cls)));
   const toShow = activeClass === 'all' ? classesData : classesData.filter(c => c.cls === activeClass);
 
   toShow.forEach(classData => {

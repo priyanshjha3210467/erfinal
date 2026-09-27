@@ -245,13 +245,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .nav-builder-item { display:flex; align-items:center; gap:10px; background:#fff; border:2px solid var(--gray2); border-radius:8px; padding:10px 14px; margin-bottom:8px; cursor:grab; transition:.2s; }
   .nav-builder-item:hover { border-color:var(--red); }
   .drag-handle { color:var(--muted); font-size:16px; cursor:grab; user-select:none; }
-  .solution-editor-grid { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(260px,.8fr); gap:18px; }
-  .solution-editor-aside { display:flex; flex-direction:column; gap:16px; }
-  .solution-tips-card { background:#fff7f7; border:1px solid #ffd7d4; border-radius:16px; padding:16px; }
-  .solution-tips-card h4 { margin:0 0 10px; font-size:14px; font-weight:900; }
-  .solution-tips-card p { margin:0; color:var(--muted); font-size:12px; line-height:1.7; }
-  .solution-metric { display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid var(--gray2); font-size:12px; }
-  .solution-metric strong { font-size:13px; }
   .chapter-list-item { display:flex; align-items:center; justify-content:space-between; gap:14px; background:#fff; border:1px solid var(--gray2); border-radius:10px; padding:14px 16px; margin-bottom:8px; transition:.2s; }
   .chapter-list-item:hover { border-color:var(--red); }
   .chapter-num-badge { font-family:'Bebas Neue'; font-size:18px; color:var(--red); min-width:36px; }
@@ -294,8 +287,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .settings-grid { grid-template-columns:1fr; }
     .dashboard-hero { grid-template-columns:1fr; }
     .dashboard-panel-grid { grid-template-columns:1fr; }
-    .solution-editor-grid { grid-template-columns:1fr; }
-    .ad-guide-grid { grid-template-columns:1fr; }
+      .ad-guide-grid { grid-template-columns:1fr; }
   }
 </style>
 </head>
@@ -345,11 +337,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="sidebar-section">Content</div>
   <button class="nav-item" onclick="showSection('pdfs')"><span class="nav-icon">📄</span> PDFs &amp; Papers</button>
   <button class="nav-item" onclick="showSection('upload-pdf')"><span class="nav-icon">⬆</span> Upload PDF/File</button>
-  <button class="nav-item" onclick="showSection('solutions')"><span class="nav-icon">📖</span> Solutions</button>
   <button class="nav-item" onclick="showSection('quizzes')"><span class="nav-icon">🎯</span> All Quizzes</button>
-  <button class="nav-item" onclick="showSection('notes')"><span class="nav-icon">📝</span> Short Notes</button>
-  <button class="nav-item" onclick="showSection('create-note')"><span class="nav-icon">✏</span> Add Note</button>
   <button class="nav-item" onclick="showSection('create-quiz')"><span class="nav-icon">➕</span> Create Quiz</button>
+  <button class="nav-item" onclick="showSection('flashcards')"><span class="nav-icon">▣</span> Flashcards</button>
 
   <div class="sidebar-section">Structure</div>
   <button class="nav-item" onclick="showSection('subjects')"><span class="nav-icon">📚</span> Subjects Manager</button>
@@ -364,7 +354,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <div class="sidebar-section">Monetisation</div>
   <button class="nav-item" onclick="showSection('ads')"><span class="nav-icon">💰</span> Ad Manager</button>
-  <button class="nav-item" onclick="showSection('content-ads')"><span class="nav-icon">✍️</span> In-Content Ads</button>
   <button class="nav-item" onclick="showSection('ad-placeholders')"><span class="nav-icon">🏷️</span> Ad Placeholders</button>
 
   <div class="sidebar-section">Insights</div>
@@ -406,7 +395,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="dashboard-chip-row" id="dashboardHighlights"></div>
         </div>
         <div class="dashboard-actions">
-          <button class="dashboard-action" onclick="showSection('upload-pdf')">Upload new study file<span>Add PYQs, banks, and notes fast.</span></button>
+          <button class="dashboard-action" onclick="showSection('upload-pdf')">Upload new study file<span>Add PYQs, question banks, and papers fast.</span></button>
           <button class="dashboard-action" onclick="showSection('create-quiz')">Create a quiz<span>Build new MCQ practice in seconds.</span></button>
           <button class="dashboard-action" onclick="showSection('announcements')">Post an update<span>Push an announcement banner to students.</span></button>
           <button class="dashboard-action" onclick="firebasePushAll().then(function(){showToast('✅ All data synced to Firebase!')}).catch(function(){showToast('❌ Sync failed','error')})" style="background:rgba(47,158,68,0.15);border-color:rgba(47,158,68,0.3)">🔄 Sync to Firebase<span>Push all admin changes live instantly.</span></button>
@@ -447,9 +436,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="page-subtitle">Browse, filter, edit, and delete uploaded PDFs and paper links.</div>
       <div class="filter-bar">
         <select class="filter-select" id="pdfClassFilter" onchange="renderPDFTable()"><option value="">All Classes</option><option value="9">Class 9</option><option value="10">Class 10</option><option value="11">Class 11</option><option value="12">Class 12</option></select>
-        <select class="filter-select" id="pdfTypeFilter" onchange="renderPDFTable()"><option value="">All Types</option><option value="pyq">PYQ Papers</option><option value="qb">Question Banks</option><option value="spq">SPQ Papers</option><option value="ip">Institutional Papers</option><option value="notes">Short Notes</option></select>
+        <select class="filter-select" id="pdfTypeFilter" onchange="renderPDFTable()"><option value="">All Types</option><option value="pyq">PYQ Papers</option><option value="qb">Question Banks</option><option value="spq">SPQ Papers</option><option value="ip">Institutional Papers</option></select>
         <input type="text" class="filter-select" id="pdfSearch" placeholder="🔍 Search by name..." onkeyup="renderPDFTable()" style="min-width:200px">
         <button class="btn btn-gray" onclick="clearPdfFilters()">✕ Clear</button>
+        <button class="btn btn-edit" onclick="openCsvImportModal('resources')">📋 Import CSV</button>
         <button class="btn btn-red" onclick="showSection('upload-pdf')">⬆ Upload PDF</button>
       </div>
       <div class="table-card">
@@ -461,7 +451,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div id="pdfBulkBar" style="display:none;padding:12px 18px;background:linear-gradient(135deg,#0d0d0d,#1a0505);border-radius:0 0 12px 12px;color:#fff;font-size:13px;font-weight:700;display:none;align-items:center;gap:10px;flex-wrap:wrap">
         <span id="pdfBulkCount">0 selected</span>
         <button class="btn btn-danger" onclick="bulkDeletePdfs()">🗑 Delete Selected</button>
-        <select id="bulkRetypeSelect" class="filter-select" style="color:#fff;background:#222;border-color:#444"><option value="">Retype to…</option><option value="pyq">PYQ</option><option value="qb">Question Bank</option><option value="spq">SPQ</option><option value="ip">Institutional</option><option value="notes">Notes</option></select>
+        <select id="bulkRetypeSelect" class="filter-select" style="color:#fff;background:#222;border-color:#444"><option value="">Retype to…</option><option value="pyq">PYQ</option><option value="qb">Question Bank</option><option value="spq">SPQ</option><option value="ip">Institutional</option></select>
         <button class="btn btn-edit" onclick="bulkRetypePdfs()">🔄 Apply Retype</button>
         <input type="text" id="bulkYearInput" placeholder="Year…" style="width:80px;padding:6px 10px;border-radius:8px;border:2px solid #444;background:#222;color:#fff;font-family:'Nunito';font-size:12px;font-weight:700">
         <button class="btn btn-green" onclick="bulkAssignYear()">📅 Set Year</button>
@@ -482,7 +472,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
           <div class="form-group"><label>Chapter (optional)</label><select id="pdfChapter"><option value="">— No Chapter —</option></select><div class="form-hint">Assign this file to a chapter for organised subject pages</div></div>
           <div class="form-row">
-            <div class="form-group"><label>Type *</label><select id="pdfType"><option value="pyq">PYQ Paper</option><option value="qb">Question Bank</option><option value="spq">SPQ Paper</option><option value="ip">Institutional Paper</option><option value="notes">Short Notes</option></select></div>
+            <div class="form-group"><label>Type *</label><select id="pdfType"><option value="pyq">PYQ Paper</option><option value="qb">Question Bank</option><option value="spq">SPQ Paper</option><option value="ip">Institutional Paper</option></select></div>
             <div class="form-group"><label>Year / Session</label><input type="text" id="pdfYear" placeholder="e.g. 2024"></div>
           </div>
           <div class="form-group"><label>PDF / Google Drive URL *</label><input type="url" id="pdfUrl" placeholder="https://drive.google.com/..."><div class="form-hint">Paste a direct link to your PDF or Google Drive share link</div></div>
@@ -504,12 +494,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
 
-    <!-- ===== SOLUTIONS ===== -->
-    <div class="admin-section" id="sec-solutions"></div>
-    <div class="admin-section" id="sec-upload-solution"></div>
-    <div class="admin-section" id="sec-notes"></div>
-    <div class="admin-section" id="sec-create-note"></div>
-
     <!-- ===== ALL QUIZZES ===== -->
     <div class="admin-section" id="sec-quizzes">
       <div class="page-title">🎯 All Quizzes</div>
@@ -519,6 +503,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <select class="filter-select" id="quizSubjFilter" onchange="renderQuizTable()"><option value="">All Subjects</option></select>
         <input type="text" class="filter-select" id="quizSearch" placeholder="🔍 Search by title..." onkeyup="renderQuizTable()" style="min-width:200px">
         <button class="btn btn-gray" onclick="clearQuizFilters()">✕ Clear</button>
+        <button class="btn btn-edit" onclick="openCsvImportModal('questions')">📋 Import CSV</button>
         <button class="btn btn-red" onclick="startNewQuiz()">➕ Create Quiz</button>
       </div>
       <div class="table-card">
@@ -557,6 +542,43 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
 
+    <!-- ===== FLASHCARDS ===== -->
+    <div class="admin-section" id="sec-flashcards">
+      <div class="page-title">▣ Flashcards</div>
+      <div class="page-subtitle">Create revision decks by class, subject, and chapter. Published decks appear on the student site.</div>
+      <div class="filter-bar">
+        <select class="filter-select" id="fcClassFilter" onchange="renderFlashcardTable()"><option value="">All Classes</option><option value="9">Class 9</option><option value="10">Class 10</option><option value="11">Class 11</option><option value="12">Class 12</option></select>
+        <input type="text" class="filter-select" id="fcSearch" placeholder="🔍 Search decks..." onkeyup="renderFlashcardTable()" style="min-width:220px">
+        <button class="btn btn-gray" onclick="clearFlashcardFilters()">✕ Clear</button>
+        <button class="btn btn-edit" onclick="openCsvImportModal('flashcards')">📋 Import CSV</button>
+        <button class="btn btn-red" onclick="startNewFlashcardDeck()">➕ New Deck</button>
+      </div>
+      <div class="table-card">
+        <div class="table-header"><h3>Deck Library</h3><span id="fcDeckCount" style="font-size:12px;color:var(--muted);font-weight:700"></span></div>
+        <div style="overflow-x:auto"><table><thead><tr><th>Deck</th><th>Class</th><th>Subject</th><th>Chapter</th><th>Cards</th><th>Status</th><th>Actions</th></tr></thead><tbody id="fcDeckTableBody"></tbody></table></div>
+      </div>
+      <div class="form-card" style="max-width:860px;margin-top:20px">
+        <div class="table-header"><h3 id="fcFormTitle">➕ Create Flashcard Deck</h3><span id="fcFormSubtitle" style="font-size:12px;color:var(--muted);font-weight:700">Deck details and cards</span></div>
+        <div class="form-body">
+          <input type="hidden" id="editFlashcardId">
+          <div class="form-group"><label>Deck Title *</label><input type="text" id="fcTitle" maxlength="120" placeholder="e.g. Class 9 Maths - Number Systems"></div>
+          <div class="form-group"><label>Description</label><textarea id="fcDescription" rows="2" maxlength="500" placeholder="What will students revise in this deck?"></textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label>Class *</label><select id="fcClass" onchange="onFlashcardClassChange()"><option value="9">Class 9</option><option value="10">Class 10</option><option value="11">Class 11</option><option value="12">Class 12</option></select></div>
+            <div class="form-group"><label>Subject *</label><select id="fcSubject" onchange="onFlashcardSubjectChange()"></select></div>
+          </div>
+          <div class="form-group"><label>Chapter</label><select id="fcChapter"><option value="">— General revision —</option></select></div>
+          <label style="display:flex;align-items:center;gap:9px;font-size:13px;font-weight:900;margin:6px 0 18px"><input type="checkbox" id="fcPublished"> Published on the student site</label>
+          <div style="border-top:2px solid var(--gray2);padding-top:18px;margin-bottom:14px">
+            <div style="font-weight:900;font-size:15px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">Cards <span id="fcCardCount" class="badge badge-blue">0 cards</span></div>
+            <div id="fcCardList"></div>
+            <button class="add-q-btn" type="button" onclick="addFlashcardRow()" style="width:100%">＋ Add Card</button>
+          </div>
+          <div style="display:flex;gap:10px"><button class="btn btn-red btn-lg" onclick="saveFlashcardDeck()">💾 Save Deck</button><button class="btn btn-gray btn-lg" onclick="resetFlashcardForm();showSection('flashcards')">Cancel</button></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== SUBJECTS MANAGER ===== -->
     <div class="admin-section" id="sec-subjects">
       <div class="page-title">📚 Subjects Manager</div>
@@ -574,7 +596,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- ===== CHAPTERS MANAGER ===== -->
     <div class="admin-section" id="sec-chapters">
       <div class="page-title">📖 Chapters Manager</div>
-      <div class="page-subtitle">Create and manage chapter lists used across PDFs, quizzes, and solutions.</div>
+      <div class="page-subtitle">Create and manage chapter lists used across PDFs, quizzes, and public subject pages.</div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;align-items:flex-end">
         <div class="form-group" style="margin-bottom:0;min-width:120px"><label>Class</label><select id="chapterClassSel" class="filter-select" onchange="onChapterClassChange()"><option value="9">Class 9</option><option value="10">Class 10</option><option value="11">Class 11</option><option value="12">Class 12</option></select></div>
         <div class="form-group" style="margin-bottom:0;min-width:200px"><label>Subject</label><select id="chapterSubjectSel" class="filter-select" onchange="onChapterSubjectChange()"></select></div>
@@ -703,7 +725,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="toggle-wrap"><div><div class="toggle-label">Quiz Module</div><div class="toggle-desc">Show quizzes section to students</div></div><button class="toggle on" id="toggleQuizzes" onclick="toggleFeature(this,'quizzes')"></button></div>
           <div class="toggle-wrap"><div><div class="toggle-label">PYQ Papers</div><div class="toggle-desc">Show PYQ papers on site</div></div><button class="toggle on" id="togglePyqs" onclick="toggleFeature(this,'pyqs')"></button></div>
           <div class="toggle-wrap"><div><div class="toggle-label">Question Banks</div><div class="toggle-desc">Show question banks section</div></div><button class="toggle on" id="toggleQbs" onclick="toggleFeature(this,'qbs')"></button></div>
-          <div class="toggle-wrap"><div><div class="toggle-label">Solutions</div><div class="toggle-desc">Show CBSE solutions section</div></div><button class="toggle on" id="toggleSolutions" onclick="toggleFeature(this,'solutions')"></button></div>
           <div style="margin-top:14px"><button class="btn btn-red" onclick="saveFeatureToggles()">💾 Save Toggles</button></div>
         </div>
         <div class="settings-card">
@@ -828,10 +849,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <option value="class12.html">class12.html</option>
               <option value="quiz.html">quiz.html</option>
               <option value="quizzes.html">quizzes.html</option>
-              <option value="solutions.html">solutions.html</option>
-              <option value="solution-post.html">solution-post.html</option>
-              <option value="notes.html">notes.html</option>
-              <option value="note-post.html">note-post.html</option>
+              <option value="flashcards.html">flashcards.html</option>
               <option value="pyq.html">pyq.html</option>
               <option value="questionbank.html">questionbank.html</option>
               <option value="subject.html">subject.html</option>
@@ -864,19 +882,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- ===== IN-CONTENT ADS (rendered by content-ads-admin.js) ===== -->
-    <div class="admin-section" id="sec-content-ads">
-      <div class="page-title" style="margin-bottom:4px">✍️ In-Content Ad Settings</div>
-      <div class="page-subtitle">Control ad placement inside <strong>Note Posts</strong> and <strong>Solution Posts</strong>. Each position can be toggled individually and linked to a real AdSense code slot.</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:20px;padding:14px 18px;background:#fff;border:1px solid var(--gray2);border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.04)">
-        <button class="btn btn-red btn-lg" onclick="erContentAdsAdmin.saveAll()">💾 Save All Slots + Settings</button>
-        <button class="btn btn-gray" onclick="erContentAdsAdmin.exportConfig()">⬇ Export Config</button>
-        <button class="btn btn-edit" onclick="document.getElementById('cadImportInput').click()">⬆ Import Config</button>
-        <input type="file" id="cadImportInput" accept=".json" style="display:none" onchange="erContentAdsAdmin.importConfig(this)">
-      </div>
-      <div id="contentAdsContainer"><div style="text-align:center;padding:48px;color:var(--muted);font-weight:700">Loading…</div></div>
     </div>
 
     <!-- ===== AD PLACEHOLDERS ===== -->
@@ -943,7 +948,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </div>
 
-<script src="shared.js"></script>
+<script src="shared.js?v=20260927-2"></script>
 <script>
 // ============================================================
 // UTILITIES
@@ -1277,8 +1282,6 @@ function onPdfClassChange() { updateSubjectOptions('pdfSubject','pdfClass'); set
 function onPdfSubjectChange() { refreshChapterDropdown('pdfChapter','pdfClass','pdfSubject'); }
 function onQuizClassChange() { updateSubjectOptions('quizSubject','quizClass'); setTimeout(() => refreshChapterDropdown('quizChapter','quizClass','quizSubject'), 30); }
 function onQuizSubjectChange() { refreshChapterDropdown('quizChapter','quizClass','quizSubject'); }
-function onSolClassChange() { updateSubjectOptions('solSubject','solClass'); setTimeout(() => refreshChapterDropdown('solChapter','solClass','solSubject'), 30); }
-function onSolSubjectChange() { refreshChapterDropdown('solChapter','solClass','solSubject'); }
 
 // ============================================================
 // NAVIGATION / SECTIONS
@@ -1290,15 +1293,12 @@ function showSection(id) {
   if (sec) sec.classList.add('active');
   const titles = {
     dashboard:'Dashboard', pdfs:'PDFs & Papers', 'upload-pdf':'Upload PDF',
-    solutions:'Solutions', 'upload-solution':'Add Solution',
-    notes:'Short Notes', 'create-note':'Add / Edit Note',
-    quizzes:'All Quizzes', 'create-quiz':'Quiz Builder',
+    quizzes:'All Quizzes', 'create-quiz':'Quiz Builder', flashcards:'Flashcards',
     subjects:'Subjects Manager', 'new-subject':'New Subject Page',
     chapters:'Chapters Manager',
     'site-editor':'Site Editor', 'nav-editor':'Navigation',
     announcements:'Announcements', settings:'Settings',
     ads:'Ad Manager',
-    'content-ads':'In-Content Ads',
     'ad-placeholders':'Ad Placeholders',
     'content-health':'Content Health',
     'chapter-mapper':'Chapter Mapper',
@@ -1310,12 +1310,9 @@ function showSection(id) {
   });
   if (id==='dashboard')     renderDashboard();
   if (id==='pdfs')          renderPDFTable();
-  if (id==='solutions')     renderSolutionsTable();
-  if (id==='notes')         { setupNotesManager(); renderNotesTable(); }
-  if (id==='create-note')   { setupNotesManager(); onNoteClassChange(); updateNoteEditorStats(); }
   if (id==='quizzes')       { populateQuizSubjectFilter(); renderQuizTable(); }
+  if (id==='flashcards')    { initFlashcardsSection(); renderFlashcardTable(); }
   if (id==='upload-pdf')    { updateSubjectOptions('pdfSubject','pdfClass'); setTimeout(() => refreshChapterDropdown('pdfChapter','pdfClass','pdfSubject'), 40); }
-  if (id==='upload-solution'){ updateSubjectOptions('solSubject','solClass'); setTimeout(() => refreshChapterDropdown('solChapter','solClass','solSubject'), 40); }
   if (id==='subjects')      switchSubjectClass(currentSubjClass);
   if (id==='chapters')      initChaptersSection();
   if (id==='nav-editor')    renderNavEditor();
@@ -1323,7 +1320,6 @@ function showSection(id) {
   if (id==='announcements') loadAnnouncement();
   if (id==='settings')      loadSettings();
   if (id==='ads')           renderAdManager();
-  if (id==='content-ads' && typeof renderContentAdsSettings==='function') renderContentAdsSettings();
   if (id==='ad-placeholders' && typeof renderAdPlaceholders==='function') renderAdPlaceholders();
   if (id==='content-health' && typeof renderContentHealth==='function') renderContentHealth();
   if (id==='chapter-mapper' && typeof renderChapterMapper==='function') renderChapterMapper();
@@ -1372,10 +1368,10 @@ function populateQuizSubjectFilter() {
 // HELPERS
 // ============================================================
 function getAllPDFs() {
-  const pdfs = getData('pdfs') || {}; const all = [];
+  const pdfs = getData('pdfs') || {}; const all = []; const activeTypes = new Set(['pyq','qb','spq','ip']);
   Object.entries(pdfs).forEach(([key, list]) => {
     const parts = key.split('-'); const cls = parts[0]; const type = parts[parts.length-1]; const subj = parts.slice(1,-1).join('-');
-    if (type!=='sol') (Array.isArray(list)?list:[]).forEach(p => all.push({...p, class:cls, subject:subj, type}));
+    if (activeTypes.has(type)) (Array.isArray(list)?list:[]).forEach(p => all.push({...p, class:cls, subject:subj, type}));
   });
   return all;
 }
@@ -1387,11 +1383,8 @@ function getAllQuizzes() {
   });
   return all;
 }
-function getAllSolutionsSafe() {
-  try { const posts = typeof getAllSolutionPosts==='function' ? getAllSolutionPosts() : (getData('solution_posts')||[]); return (Array.isArray(posts)?posts:[]).map(p => ({...p,class:p.classNum,subject:p.subjectKey,name:p.title,type:'sol'})); } catch(e) { return []; }
-}
 function getResourceTypeMeta(type) {
-  const map = { pyq:{label:'PYQ',full:'PYQ Papers',badge:'badge-red'}, qb:{label:'QB',full:'Question Banks',badge:'badge-green'}, spq:{label:'SPQ',full:'SPQ Papers',badge:'badge-purple'}, ip:{label:'INST',full:'Institutional Papers',badge:'badge-orange'}, notes:{label:'NOTES',full:'Short Notes',badge:'badge-blue'}, sol:{label:'SOL',full:'Solutions',badge:'badge-red'} };
+  const map = { pyq:{label:'PYQ',full:'PYQ Papers',badge:'badge-red'}, qb:{label:'QB',full:'Question Banks',badge:'badge-green'}, spq:{label:'SPQ',full:'SPQ Papers',badge:'badge-purple'}, ip:{label:'INST',full:'Institutional Papers',badge:'badge-orange'} };
   return map[type] || { label:type.toUpperCase(), full:type.toUpperCase(), badge:'badge-blue' };
 }
 function clearPdfFilters() { document.getElementById('pdfClassFilter').value=''; document.getElementById('pdfTypeFilter').value=''; document.getElementById('pdfSearch').value=''; renderPDFTable(); }
@@ -1401,7 +1394,7 @@ function clearQuizFilters() { document.getElementById('quizClassFilter').value='
 // DASHBOARD
 // ============================================================
 function renderDashboard() {
-  const allPDFs=getAllPDFs(), allSols=getAllSolutionsSafe(), allQuizzes=getAllQuizzes(), map=getSubjectsMap();
+  const allPDFs=getAllPDFs(), allQuizzes=getAllQuizzes(), map=getSubjectsMap();
   const totalSubjects=Object.values(map).reduce((a,v)=>a+v.length,0);
   const totalQuestions=allQuizzes.reduce((a,q)=>a+(q.questions||[]).length,0);
   const storageKB=(JSON.stringify(localStorage).length/1024).toFixed(1);
@@ -1409,23 +1402,22 @@ function renderDashboard() {
   document.getElementById('dashStats').innerHTML =
     '<div class="stat-card"><div class="stat-num">'+allPDFs.length+'</div><div class="stat-lbl">Total PDFs</div></div>'+
     '<div class="stat-card"><div class="stat-num">'+allPDFs.filter(p=>p.type==='pyq').length+'</div><div class="stat-lbl">PYQ Papers</div></div>'+
-    '<div class="stat-card"><div class="stat-num">'+allSols.length+'</div><div class="stat-lbl">Solutions</div></div>'+
     '<div class="stat-card"><div class="stat-num">'+allQuizzes.length+'</div><div class="stat-lbl">Quizzes</div></div>'+
     '<div class="stat-card"><div class="stat-num">'+totalSubjects+'</div><div class="stat-lbl">Subjects</div></div>'+
     '<div class="stat-card"><div class="stat-num">'+liveAds+'</div><div class="stat-lbl">Live Ad Slots</div></div>';
   document.getElementById('dashboardHighlights').innerHTML=
-    '<div class="dashboard-chip">'+(allPDFs.length+allSols.length)+' files live</div>'+
+    '<div class="dashboard-chip">'+allPDFs.length+' files live</div>'+
     '<div class="dashboard-chip">'+allQuizzes.length+' quizzes</div>'+
     '<div class="dashboard-chip">'+activeAds+' ad slots enabled</div>'+
     '<div class="dashboard-chip">'+liveAds+' slots have live code</div>'+
     '<div class="dashboard-chip">'+storageKB+' KB data</div>';
   document.getElementById('classCoverage').innerHTML=['9','10','11','12'].map(cls=>{
-    const classSubjects=map[cls]||[]; const classQuizCount=allQuizzes.filter(q=>q.classNum===cls).length; const classPdfCount=allPDFs.filter(p=>p.class===cls).length+allSols.filter(p=>p.class===cls).length;
+    const classSubjects=map[cls]||[]; const classQuizCount=allQuizzes.filter(q=>q.classNum===cls).length; const classPdfCount=allPDFs.filter(p=>p.class===cls).length;
     return '<div class="coverage-row"><div class="coverage-main"><strong>Class '+cls+'</strong><span>'+classSubjects.length+' subjects, '+classPdfCount+' files, '+classQuizCount+' quizzes</span></div><div class="coverage-value">'+(classSubjects.length+classQuizCount)+'</div></div>';
   }).join('');
   document.getElementById('systemHealth').innerHTML=[
     {title:'Quiz readiness',desc:totalQuestions>=10?'Good question count.':'Add more quiz questions.',good:totalQuestions>=10},
-    {title:'Content depth',desc:(allPDFs.length+allSols.length)>=10?'Library looks healthy.':'Upload more materials.',good:(allPDFs.length+allSols.length)>=10},
+    {title:'Content depth',desc:allPDFs.length>=10?'Library looks healthy.':'Upload more materials.',good:allPDFs.length>=10},
     {title:'Ad monetisation',desc:liveAds>0?liveAds+' slots have live ad code.':'No ads live yet — visit Ad Manager.',good:liveAds>0},
   ].map(i=>'<div class="health-row"><div class="health-main"><strong>'+i.title+'</strong><span>'+i.desc+'</span></div><div class="health-badge '+(i.good?'good':'warn')+'">'+(i.good?'Healthy':'Watch')+'</div></div>').join('');
   const recentPDFs=allPDFs.slice(-5).reverse();
@@ -1553,6 +1545,65 @@ function editQuiz(cls,subj,qid) {
   document.getElementById('quizQList').innerHTML=''; qCount=0; (quiz.questions||[]).forEach(q=>addQuestion(q)); showSection('create-quiz');
 }
 function deleteQuiz(cls,subj,qid) { if(!confirm('Delete this quiz permanently?'))return; const key=cls+'-'+subj; const allQuizzes=getData('quizzes')||{}; if(allQuizzes[key])allQuizzes[key]=allQuizzes[key].filter(q=>q.id!==qid); setData('quizzes',allQuizzes); populateQuizSubjectFilter(); renderQuizTable(); showToast('Quiz deleted.'); }
+
+// ============================================================
+// FLASHCARDS
+// ============================================================
+function getFlashcardStoreAdmin() {
+  const raw = getData('flashcards') || {};
+  const decks = Array.isArray(raw) ? raw : (Array.isArray(raw.decks) ? raw.decks : []);
+  return { version: Number(raw.version) || 1, decks: decks.filter(deck => deck && typeof deck === 'object') };
+}
+function saveFlashcardStoreAdmin(store) {
+  setData('flashcards', { version: Number(store.version) || 1, decks: store.decks || [] });
+}
+function initFlashcardsSection() {
+  updateSubjectOptions('fcSubject','fcClass');
+  setTimeout(() => refreshChapterDropdown('fcChapter','fcClass','fcSubject'), 40);
+}
+function onFlashcardClassChange() { updateSubjectOptions('fcSubject','fcClass'); setTimeout(() => refreshChapterDropdown('fcChapter','fcClass','fcSubject'), 30); }
+function onFlashcardSubjectChange() { refreshChapterDropdown('fcChapter','fcClass','fcSubject'); }
+function clearFlashcardFilters() { document.getElementById('fcClassFilter').value=''; document.getElementById('fcSearch').value=''; renderFlashcardTable(); }
+function renderFlashcardTable() {
+  const body=document.getElementById('fcDeckTableBody'); if(!body)return;
+  const cls=document.getElementById('fcClassFilter')?.value||'', search=(document.getElementById('fcSearch')?.value||'').toLowerCase().trim();
+  const decks=getFlashcardStoreAdmin().decks.filter(deck => (!cls||String(deck.class)===cls) && (!search||[deck.title,deck.description,deck.subjectLabel,deck.chapter].join(' ').toLowerCase().includes(search)));
+  const count=document.getElementById('fcDeckCount'); if(count)count.textContent=decks.length+' deck'+(decks.length===1?'':'s');
+  if(!decks.length){body.innerHTML='<tr><td colspan="7"><div class="empty-state"><div class="emoji">▣</div><p>No flashcard decks match these filters.</p></div></td></tr>';return;}
+  body.innerHTML=decks.map(deck=>'<tr><td><strong>'+safeHtml(deck.title||'Untitled deck')+'</strong><div style="font-size:11px;color:var(--muted);margin-top:3px">'+safeHtml(deck.description||'')+'</div></td><td>Class '+safeHtml(deck.class||'')+'</td><td>'+safeHtml(deck.subjectLabel||deck.subject||'')+'</td><td>'+safeHtml(deck.chapter||'General')+'</td><td>'+((deck.cards||[]).length)+'</td><td><span class="badge '+(deck.published?'badge-green':'badge-gray')+'">'+(deck.published?'Published':'Draft')+'</span></td><td><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-edit" style="font-size:11px" data-id="'+safeHtml(deck.id)+'" onclick="editFlashcardDeck(this.dataset.id)">✏ Edit</button><button class="btn btn-gray" style="font-size:11px" data-id="'+safeHtml(deck.id)+'" onclick="toggleFlashcardPublish(this.dataset.id)">'+(deck.published?'Unpublish':'Publish')+'</button><button class="btn btn-danger" style="font-size:11px" data-id="'+safeHtml(deck.id)+'" onclick="deleteFlashcardDeck(this.dataset.id)">🗑</button></div></td></tr>').join('');
+}
+function resetFlashcardForm() {
+  document.getElementById('editFlashcardId').value=''; document.getElementById('fcFormTitle').textContent='➕ Create Flashcard Deck'; document.getElementById('fcFormSubtitle').textContent='Deck details and cards';
+  document.getElementById('fcTitle').value=''; document.getElementById('fcDescription').value=''; document.getElementById('fcClass').value='9'; document.getElementById('fcPublished').checked=true;
+  updateSubjectOptions('fcSubject','fcClass'); setTimeout(() => refreshChapterDropdown('fcChapter','fcClass','fcSubject'), 40); document.getElementById('fcCardList').innerHTML=''; updateFlashcardCardCount();
+}
+function startNewFlashcardDeck() { resetFlashcardForm(); addFlashcardRow(); showSection('flashcards'); }
+function addFlashcardRow(data) {
+  const list=document.getElementById('fcCardList'); if(!list)return; const id=genId(); const card=data||{};
+  const row=document.createElement('div'); row.className='fc-card-row'; row.dataset.fcRow=id; row.style.cssText='border:1px solid var(--gray2);border-radius:10px;padding:14px;margin-bottom:10px;background:#fafafa';
+  row.innerHTML='<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:9px"><strong style="font-size:13px">Card <span class="fc-card-number"></span></strong><button type="button" class="btn btn-danger" style="font-size:11px;padding:5px 9px" onclick="this.closest(\'[data-fc-row]\').remove();updateFlashcardCardCount()">🗑 Remove</button></div><div class="form-row"><div class="form-group"><label>Front *</label><textarea class="fc-front" rows="3" maxlength="4000" placeholder="Prompt or question">'+safeHtml(card.front||'')+'</textarea></div><div class="form-group"><label>Back *</label><textarea class="fc-back" rows="3" maxlength="4000" placeholder="Answer or explanation">'+safeHtml(card.back||'')+'</textarea></div></div><div class="form-group"><label>Hint (optional)</label><input class="fc-hint" maxlength="500" value="'+safeHtml(card.hint||'')+'" placeholder="A small clue shown with the answer"></div>';
+  list.appendChild(row); updateFlashcardCardCount();
+}
+function updateFlashcardCardCount() {
+  const rows=[...document.querySelectorAll('#fcCardList [data-fc-row]')]; rows.forEach((row,index)=>{const label=row.querySelector('.fc-card-number');if(label)label.textContent=index+1;}); const badge=document.getElementById('fcCardCount'); if(badge)badge.textContent=rows.length+' card'+(rows.length===1?'':'s');
+}
+function collectFlashcardCards() {
+  return [...document.querySelectorAll('#fcCardList [data-fc-row]')].map(row=>({
+    id:row.dataset.cardId||genId(), front:row.querySelector('.fc-front')?.value.trim()||'', back:row.querySelector('.fc-back')?.value.trim()||'', hint:row.querySelector('.fc-hint')?.value.trim()||''
+  })).filter(card=>card.front&&card.back);
+}
+function saveFlashcardDeck() {
+  const title=document.getElementById('fcTitle').value.trim(), description=document.getElementById('fcDescription').value.trim(), cls=document.getElementById('fcClass').value, subject=document.getElementById('fcSubject').value, chapterId=document.getElementById('fcChapter').value, chapterOption=document.getElementById('fcChapter').selectedOptions[0];
+  const cards=collectFlashcardCards(); if(!title){showToast('Deck title is required.','error');return;} if(!subject){showToast('Please select a subject.','error');return;} if(!cards.length){showToast('Add at least one complete card.','error');return;}
+  const store=getFlashcardStoreAdmin(), id=document.getElementById('editFlashcardId').value||genId(), existing=store.decks.find(deck=>deck.id===id);
+  const payload={id,title:title.slice(0,120),description:description.slice(0,500),class:cls,subject,subjectLabel:getSubjectLabel(cls,subject),chapterId,chapter:chapterOption&&chapterOption.value?chapterOption.textContent.replace(/^Ch\s*\d+\s*/,'').trim():'General revision',published:document.getElementById('fcPublished').checked,cards};
+  const index=store.decks.findIndex(deck=>deck.id===id); if(index>-1)store.decks[index]={...existing,...payload}; else store.decks.push(payload); saveFlashcardStoreAdmin(store); showToast('Flashcard deck saved!'); resetFlashcardForm(); renderFlashcardTable();
+}
+function editFlashcardDeck(id) {
+  const deck=getFlashcardStoreAdmin().decks.find(item=>item.id===id); if(!deck)return; document.getElementById('editFlashcardId').value=deck.id; document.getElementById('fcFormTitle').textContent='✏ Edit Flashcard Deck'; document.getElementById('fcFormSubtitle').textContent='Update deck details or cards'; document.getElementById('fcTitle').value=deck.title||''; document.getElementById('fcDescription').value=deck.description||''; document.getElementById('fcClass').value=deck.class||'9'; document.getElementById('fcPublished').checked=deck.published===true; updateSubjectOptions('fcSubject','fcClass'); document.getElementById('fcSubject').value=deck.subject||''; refreshChapterDropdown('fcChapter','fcClass','fcSubject'); document.getElementById('fcChapter').value=deck.chapterId||''; document.getElementById('fcCardList').innerHTML=''; (deck.cards||[]).forEach(card=>{addFlashcardRow(card);const row=document.querySelector('#fcCardList [data-fc-row]:last-child');if(row)row.dataset.cardId=card.id;}); showSection('flashcards');
+}
+function toggleFlashcardPublish(id) { const store=getFlashcardStoreAdmin(), deck=store.decks.find(item=>item.id===id); if(!deck)return; deck.published=!deck.published; saveFlashcardStoreAdmin(store); renderFlashcardTable(); showToast(deck.published?'Deck published!':'Deck unpublished.'); }
+function deleteFlashcardDeck(id) { if(!confirm('Delete this flashcard deck and its cards?'))return; const store=getFlashcardStoreAdmin(); store.decks=store.decks.filter(deck=>deck.id!==id); saveFlashcardStoreAdmin(store); renderFlashcardTable(); showToast('Flashcard deck deleted.'); }
 
 // ============================================================
 // SUBJECTS MANAGER
@@ -1692,8 +1743,8 @@ function handleLogoUpload(input) {
 // ============================================================
 // NAVIGATION EDITOR
 // ============================================================
-const DEFAULT_NAV=[{label:'Home',url:'index.html'},{label:'Class 9',url:'class9.html'},{label:'Class 10',url:'class10.html'},{label:'Class 11',url:'class11.html'},{label:'Class 12',url:'class12.html'},{label:'Solutions',url:'solutions.html'},{label:'Notes',url:'notes.html'},{label:'PYQs',url:'pyq.html'},{label:'Question Banks',url:'questionbank.html'},{label:'Quizzes',url:'quizzes.html'}];
-function getNavItemsAdmin() { try{const s=localStorage.getItem('er_nav');return s?JSON.parse(s):[...DEFAULT_NAV];}catch(e){return[...DEFAULT_NAV];} }
+const DEFAULT_NAV=[{label:'Home',url:'index.html'},{label:'Class 9',url:'class9.html'},{label:'Class 10',url:'class10.html'},{label:'Class 11',url:'class11.html'},{label:'Class 12',url:'class12.html'},{label:'PYQs',url:'pyq.html'},{label:'Question Banks',url:'questionbank.html'},{label:'Quizzes',url:'quizzes.html'},{label:'Flashcards',url:'flashcards.html'}];
+function getNavItemsAdmin() { const RM=['solutions.html','notes.html','note-post.html','solution-post.html']; try{const s=localStorage.getItem('er_nav');return (s?JSON.parse(s):[...DEFAULT_NAV]).filter(i=>!RM.includes(String((i&&i.url)||'').trim().toLowerCase()));}catch(e){return[...DEFAULT_NAV];} }
 function renderNavEditor() { const items=getNavItemsAdmin(); document.getElementById('navItemsList').innerHTML=items.map(item=>'<div class="nav-builder-item"><span class="drag-handle">⋮⋮</span><input type="text" value="'+safeHtml(item.label)+'" class="nav-label-input" placeholder="Label" style="flex:1;padding:7px 10px;border:1.5px solid var(--gray2);border-radius:7px;font-family:\'Nunito\';font-size:13px;font-weight:700"><input type="text" value="'+safeHtml(item.url)+'" class="nav-url-input" placeholder="URL" style="flex:2;padding:7px 10px;border:1.5px solid var(--gray2);border-radius:7px;font-family:\'Nunito\';font-size:12px"><button class="btn btn-danger" style="padding:6px 10px;font-size:11px" onclick="this.closest(\'.nav-builder-item\').remove()">✕</button></div>').join(''); }
 function addNavItem() { const list=document.getElementById('navItemsList'); const div=document.createElement('div'); div.className='nav-builder-item'; div.innerHTML='<span class="drag-handle">⋮⋮</span><input type="text" class="nav-label-input" placeholder="Label" style="flex:1;padding:7px 10px;border:1.5px solid var(--gray2);border-radius:7px;font-family:\'Nunito\';font-size:13px;font-weight:700"><input type="text" class="nav-url-input" placeholder="page.html" style="flex:2;padding:7px 10px;border:1.5px solid var(--gray2);border-radius:7px;font-family:\'Nunito\';font-size:12px"><button class="btn btn-danger" style="padding:6px 10px;font-size:11px" onclick="this.closest(\'.nav-builder-item\').remove()">✕</button>'; list.appendChild(div); div.querySelector('.nav-label-input').focus(); }
 function saveNavigation() {
@@ -1740,16 +1791,16 @@ function updateAnnouncementPreview() {
 // SETTINGS
 // ============================================================
 function loadSettings() {
-  const allPDFs=getAllPDFs(),allSols=getAllSolutionsSafe(),allQuizzes=getAllQuizzes();
+  const allPDFs=getAllPDFs(),allQuizzes=getAllQuizzes();
   const storageKB=(JSON.stringify(localStorage).length/1024).toFixed(1);
   const storagePercent=Math.min(100,(parseFloat(storageKB)/5120)*100).toFixed(0);
   const barEl=document.getElementById('storageUsageBar');
   if(barEl)barEl.innerHTML='<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:4px"><span>localStorage Used</span><span>'+storageKB+' KB / ~5 MB</span></div><div style="height:6px;background:var(--gray2);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+storagePercent+'%;background:'+(parseFloat(storagePercent)>80?'var(--red)':'var(--green)')+';border-radius:4px;transition:.3s"></div></div>';
   document.getElementById('settingsStats').innerHTML=[
-    {label:'Total PDFs',val:allPDFs.length},{label:'Solutions',val:allSols.length},{label:'Total Quizzes',val:allQuizzes.length},{label:'Quiz Questions',val:allQuizzes.reduce((a,q)=>a+(q.questions||[]).length,0)},{label:'localStorage',val:storageKB+' KB'},
+    {label:'Total PDFs',val:allPDFs.length},{label:'Total Quizzes',val:allQuizzes.length},{label:'Quiz Questions',val:allQuizzes.reduce((a,q)=>a+(q.questions||[]).length,0)},{label:'localStorage',val:storageKB+' KB'},
   ].map(s=>'<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gray2);font-size:13px"><span style="font-weight:700;color:var(--muted)">'+s.label+'</span><span style="font-weight:900">'+s.val+'</span></div>').join('');
   const features=(()=>{try{return JSON.parse(localStorage.getItem('er_features')||'{}');}catch(e){return{};}})();
-  ['quizzes','pyqs','qbs','solutions'].forEach(f=>{const btn=document.getElementById('toggle'+f.charAt(0).toUpperCase()+f.slice(1));if(btn)btn.className='toggle'+(features[f]!==false?' on':'');});
+  ['quizzes','pyqs','qbs'].forEach(f=>{const btn=document.getElementById('toggle'+f.charAt(0).toUpperCase()+f.slice(1));if(btn)btn.className='toggle'+(features[f]!==false?' on':'');});
   const display=document.getElementById('adminPasswordDisplay'); if(display){display.dataset.revealed='0';display.textContent=maskPassword();}
 }
 function maskPassword(){return 'Stored securely as a hash';}
@@ -1759,7 +1810,7 @@ function toggleInputVisibility(id,btn){const input=document.getElementById(id);i
 function toggleCurrentPassword(btn){const display=document.getElementById('adminPasswordDisplay');if(display){display.dataset.revealed='0';display.textContent=maskPassword();}if(btn)btn.textContent='Show Password';showToast('For security, the saved admin password is not viewable in the browser.','warn');}
 function copyAdminPassword(){showToast('Copying the saved admin password is disabled for security.','warn');}
 function toggleFeature(btn){btn.classList.toggle('on');}
-function saveFeatureToggles(){const features={};['quizzes','pyqs','qbs','solutions'].forEach(f=>{const btn=document.getElementById('toggle'+f.charAt(0).toUpperCase()+f.slice(1));features[f]=!!(btn?.classList.contains('on'));});localStorage.setItem('er_features',JSON.stringify(features));showToast('Feature toggles saved!');}
+function saveFeatureToggles(){const features={};['quizzes','pyqs','qbs'].forEach(f=>{const btn=document.getElementById('toggle'+f.charAt(0).toUpperCase()+f.slice(1));features[f]=!!(btn?.classList.contains('on'));});localStorage.setItem('er_features',JSON.stringify(features));showToast('Feature toggles saved!');}
 async function changePassword(){
   const curr=document.getElementById('currPass').value,newP=document.getElementById('newPass').value,conf=document.getElementById('confirmPass').value;
   if(!(await verifyAdminPassword(curr))){showToast('Current password is wrong.','error');return;}
@@ -1780,21 +1831,21 @@ async function changePassword(){
 // ============================================================
 // DATA MANAGEMENT
 // ============================================================
-const ALLOWED_EXPORT_KEYS=['examready_pdfs','examready_quizzes','examready_solution_posts','examready_notes','er_subjects_map','er_site_config','er_nav','er_announcement','er_features','er_custom_pages','er_ad_slots','er_ad_slots_overrides','er_chapters','er_adsense_autoads','er_adsense_autoads_enabled','er_native_ad_config','er_content_ads','er_logo','er_footer_brand_logo'];
+const ALLOWED_EXPORT_KEYS=['examready_pdfs','examready_quizzes','examready_flashcards','er_content_version','er_subjects_map','er_site_config','er_nav','er_announcement','er_features','er_custom_pages','er_ad_slots','er_ad_slots_overrides','er_chapters','er_adsense_autoads','er_adsense_autoads_enabled','er_native_ad_config','er_logo','er_footer_brand_logo'];
 function exportData(){const data={};let n=0;ALLOWED_EXPORT_KEYS.forEach(key=>{const raw=localStorage.getItem(key);if(raw){try{data[key]=JSON.parse(raw);n++;}catch(e){data[key]=raw;n++;}}});const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='examready-backup-'+new Date().toISOString().slice(0,10)+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),3000);showToast('Exported '+n+' data entries!');}
 function importData(input){const f=input.files[0];if(!f)return;const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(typeof data!=='object'||Array.isArray(data)){showToast('Invalid backup format.','error');return;}let n=0;Object.entries(data).forEach(([k,v])=>{if(ALLOWED_EXPORT_KEYS.includes(k)){localStorage.setItem(k,JSON.stringify(v));n++;}});showToast('Imported '+n+' entries! Reloading…');setTimeout(()=>window.location.reload(),1500);}catch(err){showToast('Invalid or corrupted JSON file.','error');}};reader.onerror=()=>showToast('Could not read the file.','error');reader.readAsText(f);input.value='';}
-function resetAllData(){if(!confirm('⚠ This will DELETE all your content and reset to factory defaults.\n\nThis cannot be undone. Continue?'))return;if(!confirm('Last warning: ALL custom PDFs, quizzes, solutions, and settings will be lost.\n\nProceed?'))return;ALLOWED_EXPORT_KEYS.forEach(key=>localStorage.removeItem(key));showToast('Data reset. Reloading…');setTimeout(()=>window.location.reload(),1500);}
+function resetAllData(){if(!confirm('⚠ This will DELETE all your content and reset to factory defaults.\n\nThis cannot be undone. Continue?'))return;if(!confirm('Last warning: ALL custom PDFs, quizzes, and settings will be lost.\n\nProceed?'))return;ALLOWED_EXPORT_KEYS.forEach(key=>localStorage.removeItem(key));showToast('Data reset. Reloading…');setTimeout(()=>window.location.reload(),1500);}
 
 // ============================================================
 // EXPORT SITE-DATA.JSON FOR DEPLOYMENT
 // ============================================================
 function exportSiteDataJson() {
   const DEPLOY_KEYS = [
-    'examready_pdfs', 'examready_quizzes', 'examready_solution_posts', 'examready_notes',
+    'examready_pdfs', 'examready_quizzes',
     'er_subjects_map', 'er_site_config', 'er_nav', 'er_announcement',
     'er_features', 'er_ad_slots', 'er_ad_slots_overrides', 'er_chapters',
     'er_adsense_autoads', 'er_adsense_autoads_enabled',
-    'er_native_ad_config', 'er_content_ads', 'er_custom_pages',
+    'er_native_ad_config', 'er_custom_pages',
     'er_logo', 'er_footer_brand_logo'
   ];
   const data = {};
@@ -1809,8 +1860,6 @@ function exportSiteDataJson() {
         data[key] = {};
       } else if (key === 'examready_quizzes') {
         data[key] = {};
-      } else if (key === 'examready_solution_posts') {
-        data[key] = [];
       } else {
         data[key] = null;
       }
@@ -1835,56 +1884,7 @@ function exportSiteDataJson() {
 function setupDragDrop(){const area=document.getElementById('uploadArea');if(!area)return;['dragover','dragleave','drop'].forEach(ev=>{area.addEventListener(ev,e=>{e.preventDefault();area.classList.toggle('dragover',ev==='dragover');if(ev==='drop'){const f=e.dataTransfer.files[0];if(f){const input=document.getElementById('fileInput');try{const dt=new DataTransfer();dt.items.add(f);input.files=dt.files;handleFileSelect(input);}catch(err){showToast('Drag & drop not supported here. Use the file picker.','warn');}}}});});}
 
 // ============================================================
-// SOLUTIONS MANAGER
-// ============================================================
-function setupTextSolutionManager(){
-  const listSection=document.getElementById('sec-solutions'); const editorSection=document.getElementById('sec-upload-solution'); if(!listSection||!editorSection)return;
-  listSection.innerHTML='<div class="page-title">Solution Articles</div><div class="page-subtitle">Manage published solution articles and chapter-level study content.</div><div class="filter-bar"><select class="filter-select" id="solClassFilter" onchange="renderSolutionsTable()"><option value="">All Classes</option><option value="9">Class 9</option><option value="10">Class 10</option><option value="11">Class 11</option><option value="12">Class 12</option></select><button class="btn btn-red" onclick="startSolutionPost()">+ New Article</button></div><div class="table-card"><div class="table-header"><h3>Published Solution Articles</h3><span style="font-size:12px;color:var(--muted);font-weight:700" id="solCount"></span></div><div style="overflow-x:auto"><table><thead><tr><th>Title</th><th>Class</th><th>Subject</th><th>Summary</th><th>Updated</th><th>Actions</th></tr></thead><tbody id="solTableBody"></tbody></table></div></div>';
-  editorSection.innerHTML='<div class="page-title" id="solutionEditorTitle">Create Solution Article</div><div class="page-subtitle">Write and publish detailed text solutions for students.</div><div class="form-card" style="max-width:none"><div class="table-header"><h3>Article Editor</h3></div><div class="form-body"><input type="hidden" id="solEditId"><div class="solution-editor-grid"><div><div class="form-group"><label>Article Title *</label><input type="text" id="solName" placeholder="e.g. Class 10 Science - Chemical Reactions Solutions"></div><div class="form-row"><div class="form-group"><label>Class *</label><select id="solClass" onchange="onSolClassChange()"><option value="9">Class 9</option><option value="10">Class 10</option><option value="11">Class 11</option><option value="12">Class 12</option></select></div><div class="form-group"><label>Subject *</label><select id="solSubject" onchange="onSolSubjectChange()"></select></div></div><div class="form-group"><label>Chapter (optional)</label><select id="solChapter"><option value="">— No Chapter —</option></select></div><div class="form-group"><label>Short Summary *</label><textarea id="solSummary" rows="4" placeholder="One short summary for cards and article header." oninput="updateSolutionEditorStats()"></textarea></div><div class="form-group"><label>Solution Content *</label><textarea id="solContent" rows="15" placeholder="Write the full solution here. Use blank lines between paragraphs. Start list lines with - for bullets." oninput="updateSolutionEditorStats()"></textarea></div></div><div class="solution-editor-aside"><div class="table-card"><div class="table-header"><h3>Editor Stats</h3></div><div class="form-body" id="solutionEditorStats"></div></div><div class="solution-tips-card"><h4>Writing tips</h4><p>Keep summaries under two lines. Use short paragraphs and break steps clearly so articles are easy to read on mobile.</p></div></div></div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-red btn-lg" onclick="uploadSolution()">💾 Save Article</button><button class="btn btn-gray btn-lg" onclick="resetSolutionForm()">↺ Clear</button><button class="btn btn-gray btn-lg" onclick="showSection(\'solutions\')">Back</button></div></div></div>';
-  updateSubjectOptions('solSubject','solClass'); setTimeout(()=>refreshChapterDropdown('solChapter','solClass','solSubject'),40);
-}
-function updateSolutionEditorStats(){const summary=document.getElementById('solSummary')?.value?.trim()||'';const content=document.getElementById('solContent')?.value?.trim()||'';const stats=document.getElementById('solutionEditorStats');if(!stats)return;const words=content?content.split(/\s+/).filter(Boolean).length:0;const paragraphs=content?content.split(/\n\s*\n/).filter(b=>b.trim()).length:0;stats.innerHTML=[{label:'Summary',val:summary.length+' chars'},{label:'Body words',val:words},{label:'Paragraphs',val:paragraphs},{label:'Reading style',val:words>140?'Full article':'Short note'}].map(s=>'<div class="solution-metric"><span>'+s.label+'</span><strong>'+s.val+'</strong></div>').join('');}
-function startSolutionPost(){resetSolutionForm();const title=document.getElementById('solutionEditorTitle');if(title)title.textContent='Create Solution Article';showSection('upload-solution');}
-function resetSolutionForm(){['solEditId','solName','solSummary','solContent'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});const solClass=document.getElementById('solClass');if(solClass)solClass.value='9';updateSubjectOptions('solSubject','solClass');setTimeout(()=>refreshChapterDropdown('solChapter','solClass','solSubject'),40);updateSolutionEditorStats();}
-function renderSolutionsTable(){const cls=document.getElementById('solClassFilter')?.value||'';let posts=getAllSolutionsSafe();if(cls)posts=posts.filter(p=>p.class===cls);const countEl=document.getElementById('solCount');if(countEl)countEl.textContent=posts.length+' article'+(posts.length!==1?'s':'');const tbody=document.getElementById('solTableBody');if(!tbody)return;tbody.innerHTML=posts.length?posts.map(post=>{const histCount=getSolutionHistory(post.id||'').length;return '<tr><td><b>'+safeHtml(post.name||post.title||'')+'</b></td><td><span class="badge badge-blue">Class '+safeHtml(post.class||'')+'</span></td><td>'+safeHtml(getSubjectLabel(post.class,post.subject))+'</td><td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+safeHtml(typeof getSolutionExcerpt==='function'?getSolutionExcerpt(post,80):(post.summary||'').slice(0,80))+'</td><td>'+safeHtml(typeof formatHumanDate==='function'?formatHumanDate(post.updatedAt):(post.updatedAt||''))+'</td><td><div style="display:flex;gap:6px"><button class="btn btn-edit" style="padding:5px 10px;font-size:11px" data-id="'+safeHtml(post.id)+'" onclick="editSolutionPost(this.dataset.id)">✏ Edit</button>'+(histCount>0?'<button class="btn btn-gray" style="padding:5px 10px;font-size:11px" data-id="'+safeHtml(post.id)+'" onclick="openSolHistoryModal(this.dataset.id)">📜 History ('+histCount+')</button>':'')+'<button class="btn btn-danger" style="padding:5px 10px;font-size:11px" data-id="'+safeHtml(post.id)+'" onclick="deleteSolutionPost(this.dataset.id)">🗑 Delete</button></div></td></tr>';}).join(''):'<tr class="empty-row"><td colspan="6">No solution articles added yet</td></tr>';}
-function getSolutionPostsStore(){try{if(typeof getAllSolutionPosts==='function')return getAllSolutionPosts();return getData('solution_posts')||[];}catch(e){return[];}}
-function saveSolutionPostsStore(posts){if(typeof saveAllSolutionPosts==='function')saveAllSolutionPosts(posts);else setData('solution_posts',posts);}
-function snapshotSolutionHistory(post) {
-  if (!post || !post.id) return;
-  const key = 'er_sol_history_' + post.id;
-  let history = [];
-  try { history = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) { history = []; }
-  history.unshift({ ...post, _snapshotAt: new Date().toISOString() });
-  if (history.length > 5) history = history.slice(0, 5);
-  localStorage.setItem(key, JSON.stringify(history));
-}
-function getSolutionHistory(id) {
-  try { return JSON.parse(localStorage.getItem('er_sol_history_' + id) || '[]'); } catch(e) { return []; }
-}
-function uploadSolution(){
-  const editId=document.getElementById('solEditId').value.trim(),title=document.getElementById('solName').value.trim(),classNum=document.getElementById('solClass').value,subjectKey=document.getElementById('solSubject').value,summary=document.getElementById('solSummary').value.trim(),content=document.getElementById('solContent').value.trim(),chapterId=document.getElementById('solChapter')?.value||'';
-  if(!title){showToast('Please enter an article title.','error');return;}if(!subjectKey){showToast('Please select a subject.','error');return;}if(!summary){showToast('Please enter a short summary.','error');return;}if(!content){showToast('Please enter solution content.','error');return;}
-  const posts=getSolutionPostsStore();
-  // ── Version snapshot: save the previous version before overwriting ──
-  if (editId) {
-    const prev = posts.find(p => p.id === editId);
-    if (prev) snapshotSolutionHistory(prev);
-  }
-  const payload={id:editId||genId(),title,classNum,subjectKey,summary,content,chapterId,author:'ExamReady Team',updatedAt:new Date().toISOString().slice(0,10)};
-  const next=editId?posts.map(p=>p.id===editId?{...p,...payload}:p):[payload,...posts];saveSolutionPostsStore(next);resetSolutionForm();renderSolutionsTable();renderDashboard();showToast(editId?'Solution article updated!':'Solution article published!');showSection('solutions');
-}
-function editSolutionPost(id){
-  const post=getSolutionPostsStore().find(p=>p.id===id);if(!post){showToast('Post not found.','error');return;}
-  showSection('upload-solution');const titleEl=document.getElementById('solutionEditorTitle');if(titleEl)titleEl.textContent='Edit Solution Article';
-  document.getElementById('solEditId').value=post.id;document.getElementById('solName').value=post.title||'';document.getElementById('solClass').value=post.classNum||'9';updateSubjectOptions('solSubject','solClass');
-  const subjSel=document.getElementById('solSubject');if(subjSel&&post.subjectKey)setTimeout(()=>{if(subjSel)subjSel.value=post.subjectKey||'';},0);
-  document.getElementById('solSummary').value=post.summary||'';document.getElementById('solContent').value=post.content||'';
-  const cls=post.classNum||'9';const subj=post.subjectKey||'';setTimeout(()=>{populateChapterDropdown('solChapter',cls,subj);setTimeout(()=>{const el=document.getElementById('solChapter');if(el)el.value=post.chapterId||'';},50);},40);updateSolutionEditorStats();
-}
-function deleteSolutionPost(id){if(!confirm('Delete this solution article permanently?'))return;saveSolutionPostsStore(getSolutionPostsStore().filter(p=>p.id!==id));renderSolutionsTable();renderDashboard();showToast('Solution article deleted.');}
-
-// ============================================================
-// ====== AD MANAGER — COMPLETE REWRITE (replaces old version)
+// AD MANAGER — COMPLETE REWRITE (replaces old version)
 // ============================================================
 // This replaces the ad manager JS block in admin.html.
 // Paste this entire block to replace the old "AD MANAGER" section.
@@ -1915,11 +1915,10 @@ var AD_SLOT_GROUPS = [
   },
   {
     group: '🎯 High-Intent Pages',
-    desc: 'Slots on quiz, solution, and results pages — highest student purchase intent.',
+    desc: 'Slots on quiz and results pages with focused study intent.',
     slots: [
-      { key:'results',        label:'Results / Post-Article',      where:'After quiz results or article end',  pages:'quiz.html, solution-post.html', size:'Responsive',              system:'shared.js', priority:'veryhigh', tip:'Peak intent placement — students just finished studying. Use coaching, books, or mock-test ads.' },
-      { key:'results_banner', label:'Results Banner (ads.js)',     where:'After quiz result card',             pages:'quiz.html, solution-post.html', size:'Responsive',              system:'ads.js',    priority:'veryhigh', tip:'Same high-intent placement for ads.js. Use the same code.' },
-      { key:'solution_mid',   label:'Mid-Article (ads.js)',        where:'Halfway through solution article',   pages:'solution-post.html',            size:'In-article / Native',     system:'ads.js',    priority:'high',     tip:'Inserted mid-read when engagement is highest.' },
+      { key:'results',        label:'Quiz Results',                  where:'After quiz results',                 pages:'quiz.html', size:'Responsive', system:'shared.js', priority:'veryhigh', tip:'Shown after a student finishes studying with a quiz. Use coaching, books, or mock-test ads.' },
+      { key:'results_banner', label:'Results Banner (ads.js)',     where:'After quiz result card',             pages:'quiz.html', size:'Responsive', system:'ads.js', priority:'veryhigh', tip:'Same high-intent placement for ads.js. Use the same code.' },
       { key:'quiz_sidebar',   label:'Quiz Sidebar (ads.js)',       where:'Inside quiz page side panel',        pages:'quiz.html',                     size:'160×600 or Responsive',   system:'ads.js',    priority:'high',     tip:'Shown while a student is actively taking a quiz.' },
       { key:'pdf_viewer',     label:'PDF Viewer Banner',           where:'Between the PDF toolbar and viewer', pages:'pdf-viewer.html',               size:'Responsive',              system:'shared.js', priority:'high',     tip:'Dedicated monetisation slot for PDF previews without breaking the viewer layout.' },
     ]
@@ -1953,11 +1952,8 @@ function normalizeAdSlots(input) {
   var raw = (input && typeof input === 'object' && !Array.isArray(input)) ? input : {};
   var out = {};
   ALL_AD_SLOTS.forEach(function(s) {
-    var defaults = { enabled: true, adCode: '', notes: '', cpm: 0, adCodeB: '', abEnabled: false };
+    var defaults = { enabled: true, adCode: '', memo: '', cpm: 0, adCodeB: '', abEnabled: false };
     out[s.key] = Object.assign(defaults, raw[s.key] || {});
-  });
-  Object.keys(raw).forEach(function(k) {
-    if (!out[k]) out[k] = Object.assign({ enabled: true, adCode: '', notes: '', cpm: 0, adCodeB: '', abEnabled: false }, raw[k]);
   });
   AD_SLOT_LINKS.forEach(function(pair) {
     var primary = out[pair[0]] || { enabled: true, adCode: '' };
@@ -2063,7 +2059,7 @@ function renderSiteMap(slots) {
   // Categorize slots into page zones
   var zones = [
     { id: 'hero', label: '🦸 Hero / Top Zone', icon: '⬆', keys: ['top','top_banner'] },
-    { id: 'content', label: '📰 Main Content Zone', icon: '📄', keys: ['inline','inline_1','inline_2','inline_3','between','between_sections','solution_mid','quiz_sidebar','pdf_viewer'] },
+    { id: 'content', label: '📰 Main Content Zone', icon: '📄', keys: ['inline','inline_1','inline_2','inline_3','between','between_sections','quiz_sidebar','pdf_viewer'] },
     { id: 'results', label: '🎯 Results / Post Zone', icon: '🏆', keys: ['results','results_banner'] },
     { id: 'sticky', label: '📌 Sticky / Persistent', icon: '📎', keys: ['sticky','sidebar_sticky','mobile_bottom'] },
     { id: 'footer', label: '🦶 Footer Zone', icon: '⬇', keys: ['footer','pre_footer'] },
@@ -2147,7 +2143,7 @@ function buildAdSlotCard(s, cfg) {
   var hasCode  = !!adCode.trim();
   var adCodeB  = cfg.adCodeB || '';
   var abEnabled = cfg.abEnabled === true;
-  var notes    = cfg.notes || '';
+  var memo     = cfg.memo || '';
   var borderColor = hasCode && enabled ? 'rgba(47,158,68,.4)' : enabled ? 'var(--gray2)' : 'rgba(200,0,0,.2)';
   var statusHtml  = hasCode && enabled
     ? '<span class="ad-status-live">✅ Live</span>'
@@ -2225,10 +2221,10 @@ function buildAdSlotCard(s, cfg) {
         '<p style="font-size:11px;color:var(--muted);font-weight:600;margin:6px 0 0">50/50 split using Math.random(). Same group persists within a user session via sessionStorage.</p>' +
       '</div>' +
     '</div>' +
-    // Performance Notes
+    // Performance memo
     '<div style="margin-bottom:10px">' +
-      '<label style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:5px;display:block">📊 Performance Notes</label>' +
-      '<input type="text" id="adnotes-' + safeHtml(s.key) + '" value="' + safeHtml(notes) + '" placeholder="e.g. CPM: $2.40, best performer, needs refresh" style="width:100%;padding:8px 12px;border:2px solid var(--gray2);border-radius:8px;font-family:\'Nunito\';font-size:12px;font-weight:600;outline:none" onfocus="this.style.borderColor=\'var(--red)\'" onblur="this.style.borderColor=\'var(--gray2)\'">' +
+      '<label style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:5px;display:block">📊 Performance Memo</label>' +
+      '<input type="text" id="admemo-' + safeHtml(s.key) + '" value="' + safeHtml(memo) + '" placeholder="e.g. CPM: $2.40, best performer, needs refresh" style="width:100%;padding:8px 12px;border:2px solid var(--gray2);border-radius:8px;font-family:\'Nunito\';font-size:12px;font-weight:600;outline:none" onfocus="this.style.borderColor=\'var(--red)\'" onblur="this.style.borderColor=\'var(--gray2)\'">' +
     '</div>' +
     // Mirror chip
     (function() {
@@ -2266,14 +2262,14 @@ window.adMgr = {
     var toggleEl = document.getElementById('adtoggle-' + key);
     var abCodeEl = document.getElementById('abcode-'   + key);
     var abToggle = document.getElementById('abtoggle-' + key);
-    var notesEl  = document.getElementById('adnotes-'  + key);
+    var memoEl   = document.getElementById('admemo-'   + key);
     if (!codeEl) { showToast('Slot "' + key + '" not found.', 'error'); return; }
     slots[key] = Object.assign(slots[key] || {}, {
       enabled:   toggleEl ? toggleEl.classList.contains('on') : true,
       adCode:    codeEl.value,
       adCodeB:   abCodeEl ? abCodeEl.value : (slots[key]?.adCodeB || ''),
       abEnabled: abToggle ? abToggle.classList.contains('on') : false,
-      notes:     notesEl ? notesEl.value : (slots[key]?.notes || ''),
+      memo:      memoEl ? memoEl.value : (slots[key]?.memo || ''),
     });
     // ── Mirror sync: if this key is a primary in AD_SLOT_LINKS, auto-copy to twin ──
     AD_SLOT_LINKS.forEach(function(pair) {
@@ -2317,14 +2313,14 @@ window.adMgr = {
       var toggleEl = document.getElementById('adtoggle-' + s.key);
       var abCodeEl = document.getElementById('abcode-'   + s.key);
       var abToggle = document.getElementById('abtoggle-' + s.key);
-      var notesEl  = document.getElementById('adnotes-'  + s.key);
+      var memoEl   = document.getElementById('admemo-'   + s.key);
       if (!codeEl) return;
       slots[s.key] = Object.assign(slots[s.key] || {}, {
         enabled:   toggleEl ? toggleEl.classList.contains('on') : true,
         adCode:    codeEl.value,
         adCodeB:   abCodeEl ? abCodeEl.value : (slots[s.key]?.adCodeB || ''),
         abEnabled: abToggle ? abToggle.classList.contains('on') : false,
-        notes:     notesEl ? notesEl.value : (slots[s.key]?.notes || ''),
+        memo:      memoEl ? memoEl.value : (slots[s.key]?.memo || ''),
       });
     });
     persistAdSlots(slots);
@@ -2498,352 +2494,6 @@ window.adMgr = {
 window.renderAdManager = renderAdManager;
 
 // ============================================================
-// NOTES MANAGER — Integrated into admin.html
-// ============================================================
-
-// ─── NOTES STORAGE HELPERS ──────────────────────────────────
-function getAllNotesAdmin() {
-  try {
-    const stored = getData('notes');
-    if (Array.isArray(stored) && stored.length > 0) {
-      return JSON.parse(JSON.stringify(stored)).sort((a, b) =>
-        new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime()
-      );
-    }
-    return [
-      {
-        id: 'note_demo_1',
-        title: 'Class 10 Maths: Real Numbers - Key Concepts',
-        classNum: '10', subjectKey: 'math',
-        summary: 'Essential properties of rational and irrational numbers, Euclid\'s lemma, and decimal expansions for quick board revision.',
-        content: `Every real number is either rational or irrational. Rational numbers have terminating or repeating decimal expansions.
-
-Euclid's Division Lemma: For any two positive integers a and b, we can write a = bq + r where 0 <= r < b.
-
-[TIP] To prove a number is irrational, assume it is rational and arrive at a contradiction.
-
-Key facts:
-- sqrt(2), sqrt(3), sqrt(5) are all irrational
-- Sum of rational and irrational is always irrational
-
-[IMPORTANT] The Fundamental Theorem of Arithmetic: Every composite number can be expressed as a product of primes in exactly one way.`,
-        tags: ['important', 'formula', 'exam-tips'],
-        author: 'ExamReady Team', updatedAt: '2026-04-17', chapterId: ''
-      }
-    ];
-  } catch (e) { return []; }
-}
-
-function saveAllNotesAdmin(notes) {
-  setData('notes', Array.isArray(notes) ? notes : []);
-}
-
-// ─── NOTES EDITOR STATS ─────────────────────────────────────
-function updateNoteEditorStats() {
-  const summary = (document.getElementById('noteEditorSummary')?.value || '').trim();
-  const content = (document.getElementById('noteEditorContent')?.value || '').trim();
-  const tags = (document.getElementById('noteEditorTags')?.value || '').split(',').map(t => t.trim()).filter(Boolean);
-  const words = content.split(/\s+/).filter(Boolean).length;
-  const paras = content.split(/\n\s*\n/).filter(b => b.trim()).length;
-  const statsEl = document.getElementById('noteEditorStats');
-  if (!statsEl) return;
-  statsEl.innerHTML = [
-    { label: 'Summary', val: summary.length + ' chars' },
-    { label: 'Body words', val: words },
-    { label: 'Paragraphs', val: paras },
-    { label: 'Tags', val: tags.length },
-    { label: 'Read time', val: Math.max(1, Math.round(words / 200)) + ' min' },
-  ].map(s => `<div class="solution-metric"><span>${s.label}</span><strong>${s.val}</strong></div>`).join('');
-}
-
-// ─── NOTES TABLE RENDER ──────────────────────────────────────
-function renderNotesTable() {
-  const clsFilter = (document.getElementById('noteClassFilter')?.value || '').trim();
-  const subjFilter = (document.getElementById('noteSubjFilter')?.value || '').trim();
-  const searchVal = (document.getElementById('noteSearch')?.value || '').toLowerCase().trim();
-  const tbody = document.getElementById('noteTableBody');
-  const countEl = document.getElementById('noteCount');
-  if (!tbody) return;
-
-  let notes = getAllNotesAdmin();
-  if (clsFilter) notes = notes.filter(n => n.classNum === clsFilter);
-  if (subjFilter) notes = notes.filter(n => n.subjectKey === subjFilter);
-  if (searchVal) notes = notes.filter(n =>
-    (n.title || '').toLowerCase().includes(searchVal) ||
-    (n.summary || '').toLowerCase().includes(searchVal) ||
-    (n.tags || []).some(t => t.includes(searchVal))
-  );
-
-  if (countEl) countEl.textContent = notes.length + ' note' + (notes.length !== 1 ? 's' : '');
-
-  tbody.innerHTML = notes.length ? notes.map(note => `
-    <tr>
-      <td><b style="font-size:13px">${safeHtml(note.title)}</b></td>
-      <td><span class="badge badge-blue">Class ${safeHtml(note.classNum)}</span></td>
-      <td>${safeHtml(getSubjectLabel(note.classNum, note.subjectKey))}</td>
-      <td>${(note.tags || []).slice(0, 3).map(t => `<span class="badge badge-purple" style="margin-right:3px;font-size:10px">${safeHtml(t)}</span>`).join('')}</td>
-      <td>${safeHtml(note.updatedAt || 'Recently')}</td>
-      <td>
-        <div style="display:flex;gap:6px">
-          <button class="btn btn-edit" style="padding:5px 10px;font-size:11px"
-            data-nid="${safeHtml(note.id)}" onclick="editNoteFromBtn(this.dataset.nid)">✏ Edit</button>
-          <button class="btn btn-danger" style="padding:5px 10px;font-size:11px"
-            data-nid="${safeHtml(note.id)}" onclick="deleteNoteFromBtn(this.dataset.nid)">🗑 Delete</button>
-        </div>
-      </td>
-    </tr>`).join('') : '<tr class="empty-row"><td colspan="6">No notes found</td></tr>';
-}
-
-function editNoteFromBtn(id) { editNote(id); }
-function deleteNoteFromBtn(id) { deleteNote(id); }
-
-// ─── NOTE SUBJECT FILTER ─────────────────────────────────────
-function populateNoteSubjectFilter() {
-  const sel = document.getElementById('noteSubjFilter');
-  if (!sel) return;
-  const cls = document.getElementById('noteClassFilter')?.value || '';
-  if (!cls) { sel.innerHTML = '<option value="">All Subjects</option>'; return; }
-  const subs = (getSubjectsMap()[cls] || []);
-  sel.innerHTML = '<option value="">All Subjects</option>' +
-    subs.map(s => `<option value="${safeHtml(s.key)}">${safeHtml(s.label)}</option>`).join('');
-}
-
-// ─── NOTE EDITOR CLASS/SUBJECT CHANGE ───────────────────────
-function onNoteClassChange() {
-  const cls = document.getElementById('noteEditorClass')?.value || '';
-  const subjSel = document.getElementById('noteEditorSubject');
-  if (!subjSel) return;
-  const subs = (getSubjectsMap()[cls] || []);
-  subjSel.innerHTML = subs.length
-    ? subs.map(s => `<option value="${safeHtml(s.key)}">${safeHtml(s.icon || '')} ${safeHtml(s.label)}</option>`).join('')
-    : '<option value="">No subjects</option>';
-  onNoteSubjectChange();
-}
-
-function onNoteSubjectChange() {
-  const cls = document.getElementById('noteEditorClass')?.value || '';
-  const subjKey = document.getElementById('noteEditorSubject')?.value || '';
-  populateChapterDropdown('noteEditorChapter', cls, subjKey);
-}
-
-// ─── NOTES MANAGER SETUP ─────────────────────────────────────
-function setupNotesManager() {
-  const listSection = document.getElementById('sec-notes');
-  const editorSection = document.getElementById('sec-create-note');
-  if (!listSection || !editorSection) return;
-
-  listSection.innerHTML = `
-    <div class="page-title">📝 Short Notes</div>
-    <div class="page-subtitle">Publish, edit, and remove short text notes for any subject and class. Notes appear on the public Notes page and inside subject hubs.</div>
-    <div class="filter-bar">
-      <select class="filter-select" id="noteClassFilter" onchange="populateNoteSubjectFilter();renderNotesTable()">
-        <option value="">All Classes</option>
-        <option value="9">Class 9</option>
-        <option value="10">Class 10</option>
-        <option value="11">Class 11</option>
-        <option value="12">Class 12</option>
-      </select>
-      <select class="filter-select" id="noteSubjFilter" onchange="renderNotesTable()">
-        <option value="">All Subjects</option>
-      </select>
-      <input type="text" class="filter-select" id="noteSearch" placeholder="🔍 Search by title or tag..." onkeyup="renderNotesTable()" style="min-width:200px">
-      <button class="btn btn-gray" onclick="clearNoteFilters()">✕ Clear</button>
-      <button class="btn btn-red" onclick="startNewNote()">➕ New Note</button>
-    </div>
-    <div class="table-card">
-      <div class="table-header">
-        <h3>Published Notes</h3>
-        <span id="noteCount" style="font-size:12px;color:var(--muted);font-weight:700"></span>
-      </div>
-      <div style="overflow-x:auto">
-        <table>
-          <thead><tr><th>Title</th><th>Class</th><th>Subject</th><th>Tags</th><th>Updated</th><th>Actions</th></tr></thead>
-          <tbody id="noteTableBody"></tbody>
-        </table>
-      </div>
-    </div>`;
-
-  editorSection.innerHTML = `
-    <div class="page-title" id="noteEditorPageTitle">➕ Create New Note</div>
-    <div class="page-subtitle">Write concise notes with key points, formulas, and exam tips. Use - for bullet lists. Start a paragraph with [TIP], [WARNING], or [IMPORTANT] for callout boxes.</div>
-    <div class="form-card" style="max-width:none">
-      <div class="table-header"><h3>Note Editor</h3></div>
-      <div class="form-body">
-        <input type="hidden" id="noteEditorId">
-        <div class="solution-editor-grid">
-          <div>
-            <div class="form-group"><label>Note Title *</label><input type="text" id="noteEditorTitle" placeholder="e.g. Class 10 Maths - Triangles Quick Notes" oninput="updateNoteEditorStats()"></div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Class *</label>
-                <select id="noteEditorClass" onchange="onNoteClassChange()">
-                  <option value="9">Class 9</option>
-                  <option value="10">Class 10</option>
-                  <option value="11">Class 11</option>
-                  <option value="12">Class 12</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Subject *</label>
-                <select id="noteEditorSubject" onchange="onNoteSubjectChange()"></select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Chapter (optional)</label>
-              <select id="noteEditorChapter"><option value="">— No Chapter —</option></select>
-              <div class="form-hint">Assign this note to a chapter for the subject hub page</div>
-            </div>
-            <div class="form-group">
-              <label>Short Summary * <span style="font-size:10px;font-weight:700;color:var(--muted)">(shown on cards and at the top of the note)</span></label>
-              <textarea id="noteEditorSummary" rows="3" placeholder="Key takeaway in 1-2 sentences." oninput="updateNoteEditorStats()"></textarea>
-            </div>
-            <div class="form-group">
-              <label>Note Content * <span style="font-size:10px;font-weight:700;color:var(--muted)">— Use blank lines to separate paragraphs</span></label>
-              <textarea id="noteEditorContent" rows="18" placeholder="Write your note here.
-
-Use - at the start of lines for bullet points.
-1. Use numbers for ordered lists.
-
-[TIP] Add tip callout boxes like this.
-[WARNING] Or warning boxes.
-[IMPORTANT] Or important boxes." oninput="updateNoteEditorStats()" style="font-family:monospace;font-size:13px"></textarea>
-            </div>
-            <div class="form-group">
-              <label>Tags <span style="font-size:10px;font-weight:700;color:var(--muted)">(comma-separated)</span></label>
-              <input type="text" id="noteEditorTags" placeholder="important, formula, exam-tips, concept" oninput="updateNoteEditorStats()">
-              <div class="form-hint">Recommended: <strong>important</strong>, <strong>formula</strong>, <strong>exam-tips</strong>, <strong>concept</strong></div>
-            </div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
-              <button class="btn btn-red btn-lg" onclick="saveNote()">💾 Save Note</button>
-              <button class="btn btn-gray btn-lg" onclick="startNewNote()">↺ Clear</button>
-              <button class="btn btn-gray btn-lg" onclick="showSection('notes')">Cancel</button>
-            </div>
-          </div>
-          <div class="solution-editor-aside">
-            <div class="table-card">
-              <div class="table-header"><h3>Editor Stats</h3></div>
-              <div class="form-body" id="noteEditorStats"></div>
-            </div>
-            <div style="background:#fffbf0;border:1px solid #ffe8a0;border-radius:16px;padding:16px">
-              <h4 style="font-size:14px;font-weight:900;margin-bottom:10px">✍ Writing Tips</h4>
-              <p style="font-size:12px;color:var(--muted);line-height:1.75">
-                <strong>Callouts:</strong> Start a paragraph with <code>[TIP]</code>, <code>[WARNING]</code>, or <code>[IMPORTANT]</code> followed by your text.<br><br>
-                <strong>Lists:</strong> Start lines with <code>- </code> for bullets or <code>1. </code> for numbered steps.<br><br>
-                <strong>Keep it concise.</strong> Aim for 150–400 words.
-              </p>
-            </div>
-            <div style="background:#f0fff4;border:1px solid #b2f2cb;border-radius:16px;padding:16px">
-              <h4 style="font-size:14px;font-weight:900;margin-bottom:8px">🏷 Suggested Tags</h4>
-              <div style="display:flex;flex-wrap:wrap;gap:6px">
-                ${['important','formula','exam-tips','concept','definition','theorem','shortcut','revision'].map(t =>
-                  `<span style="background:#e6ffed;color:#2f9e44;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800;cursor:pointer"
-                    onclick="(function(tag){const f=document.getElementById('noteEditorTags');const cur=f.value.split(',').map(t=>t.trim()).filter(Boolean);if(!cur.includes(tag)){cur.push(tag);f.value=cur.join(', ');updateNoteEditorStats();}})(this.textContent)">${t}</span>`
-                ).join('')}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>`;
-
-  onNoteClassChange();
-  updateNoteEditorStats();
-}
-
-// ─── NOTE CRUD ───────────────────────────────────────────────
-function startNewNote() {
-  document.getElementById('noteEditorId').value = '';
-  document.getElementById('noteEditorTitle').value = '';
-  document.getElementById('noteEditorSummary').value = '';
-  document.getElementById('noteEditorContent').value = '';
-  document.getElementById('noteEditorTags').value = '';
-  document.getElementById('noteEditorClass').value = '9';
-  const titleEl = document.getElementById('noteEditorPageTitle');
-  if (titleEl) titleEl.textContent = '➕ Create New Note';
-  onNoteClassChange();
-  updateNoteEditorStats();
-  showSection('create-note');
-}
-
-function saveNote() {
-  const id = document.getElementById('noteEditorId')?.value?.trim();
-  const title = document.getElementById('noteEditorTitle')?.value?.trim();
-  const cls = document.getElementById('noteEditorClass')?.value;
-  const subj = document.getElementById('noteEditorSubject')?.value;
-  const summary = document.getElementById('noteEditorSummary')?.value?.trim();
-  const content = document.getElementById('noteEditorContent')?.value?.trim();
-  const tagsRaw = document.getElementById('noteEditorTags')?.value || '';
-  const chapId = document.getElementById('noteEditorChapter')?.value || '';
-  const tags = tagsRaw.split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
-
-  if (!title) { showToast('Please enter a note title.', 'error'); return; }
-  if (!subj) { showToast('Please select a subject.', 'error'); return; }
-  if (!summary) { showToast('Please enter a short summary.', 'error'); return; }
-  if (!content) { showToast('Please enter note content.', 'error'); return; }
-
-  const notes = getAllNotesAdmin();
-  const payload = {
-    id: id || genId(),
-    title, classNum: cls, subjectKey: subj, summary, content,
-    tags, chapterId: chapId,
-    author: 'ExamReady Team',
-    updatedAt: new Date().toISOString().slice(0, 10),
-  };
-
-  const next = id ? notes.map(n => n.id === id ? { ...n, ...payload } : n) : [payload, ...notes];
-  saveAllNotesAdmin(next);
-  showToast(id ? 'Note updated!' : 'Note published!');
-  renderNotesTable();
-  renderDashboard();
-  showSection('notes');
-}
-
-function editNote(noteId) {
-  const note = getAllNotesAdmin().find(n => n.id === noteId);
-  if (!note) { showToast('Note not found.', 'error'); return; }
-  showSection('create-note');
-  document.getElementById('noteEditorId').value = note.id;
-  document.getElementById('noteEditorTitle').value = note.title || '';
-  document.getElementById('noteEditorClass').value = note.classNum || '9';
-  onNoteClassChange();
-  const subjSel = document.getElementById('noteEditorSubject');
-  if (subjSel && note.subjectKey) {
-    setTimeout(() => {
-      subjSel.value = note.subjectKey;
-      onNoteSubjectChange();
-      setTimeout(() => {
-        const chapSel = document.getElementById('noteEditorChapter');
-        if (chapSel) chapSel.value = note.chapterId || '';
-      }, 60);
-    }, 0);
-  }
-  document.getElementById('noteEditorSummary').value = note.summary || '';
-  document.getElementById('noteEditorContent').value = note.content || '';
-  document.getElementById('noteEditorTags').value = (note.tags || []).join(', ');
-  const titleEl = document.getElementById('noteEditorPageTitle');
-  if (titleEl) titleEl.textContent = '✏ Edit Note';
-  updateNoteEditorStats();
-}
-
-function deleteNote(noteId) {
-  if (!confirm('Delete this note permanently?')) return;
-  saveAllNotesAdmin(getAllNotesAdmin().filter(n => n.id !== noteId));
-  renderNotesTable();
-  renderDashboard();
-  showToast('Note deleted.');
-}
-
-function clearNoteFilters() {
-  const cf = document.getElementById('noteClassFilter');
-  const sf = document.getElementById('noteSubjFilter');
-  const sc = document.getElementById('noteSearch');
-  if (cf) cf.value = '';
-  if (sf) sf.innerHTML = '<option value="">All Subjects</option>';
-  if (sc) sc.value = '';
-  renderNotesTable();
-}
-
-// ============================================================
 // INIT
 // ============================================================
 function initAdmin() {
@@ -2853,17 +2503,13 @@ function initAdmin() {
   updateSubjectOptions('pdfSubject','pdfClass');
   updateSubjectOptions('quizSubject','quizClass');
   populateQuizSubjectFilter();
-  setupTextSolutionManager();
-  setupNotesManager();
-  setTimeout(()=>{refreshChapterDropdown('pdfChapter','pdfClass','pdfSubject');refreshChapterDropdown('quizChapter','quizClass','quizSubject');setTimeout(()=>{refreshChapterDropdown('solChapter','solClass','solSubject');},60);},60);
+  setTimeout(()=>{refreshChapterDropdown('pdfChapter','pdfClass','pdfSubject');refreshChapterDropdown('quizChapter','quizClass','quizSubject');},60);
   renderDashboard();
-  renderSolutionsTable();
   loadSettings();
   document.getElementById('announcementText')?.addEventListener('input',updateAnnouncementPreview);
   document.getElementById('announcementColor')?.addEventListener('input',updateAnnouncementPreview);
   document.getElementById('announcementEnabled')?.addEventListener('change',updateAnnouncementPreview);
   setupDragDrop();
-  updateSolutionEditorStats();
 
   // Check Firebase connection
   _firebaseGet().then(function(data) {
@@ -2886,8 +2532,6 @@ function initAdmin() {
         if (typeof renderDashboard === 'function') renderDashboard();
         if (typeof renderPDFTable === 'function') renderPDFTable();
         if (typeof renderQuizTable === 'function') renderQuizTable();
-        if (typeof renderNotesTable === 'function') renderNotesTable();
-        if (typeof renderSolutionsTable === 'function') renderSolutionsTable();
       }).catch(function(){});
     }, 15000);
   }
@@ -2914,7 +2558,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 </script>
   <script src="adfix_patch.js"></script>
-  <script src="content-ads-admin.js"></script>
   <script src="admin-extensions.js"></script>
 </body>
 </html>

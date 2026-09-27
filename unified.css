@@ -265,8 +265,6 @@ body {
 .er-res-type-icon.qb    { background: #f0fff4; color: #2f9e44; }
 .er-res-type-icon.spq   { background: #f3f0ff; color: #6741d9; }
 .er-res-type-icon.ip    { background: #fff8f0; color: #e67700; }
-.er-res-type-icon.notes { background: #f0f4ff; color: #3b5bdb; }
-.er-res-type-icon.sol   { background: #fff0f0; color: var(--red); }
 .er-res-type-icon.quiz  { background: #fffbf0; color: #c97a00; }
 .er-res-btn {
   flex-shrink: 0; background: var(--red); color: #fff; border: none;

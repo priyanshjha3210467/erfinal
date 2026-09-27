@@ -349,9 +349,8 @@ nav a:hover,nav a.active{color:#fff;background:rgba(255,255,255,0.09);}
 .res-type-icon.qb   { background: #f0fff4; color: #2f9e44; }
 .res-type-icon.spq  { background: #f3f0ff; color: #6741d9; }
 .res-type-icon.ip   { background: #fff8f0; color: #e67700; }
-.res-type-icon.notes{ background: #f0f4ff; color: #3b5bdb; }
-.res-type-icon.sol  { background: #fff0f0; color: var(--red); }
 .res-type-icon.quiz { background: #fffbf0; color: #c97a00; }
+.res-type-icon.fc { background: #fff4ed; color: #e8590c; }
 .res-item-body { min-width: 0; flex: 1; }
 .res-item-badge { font-size: 9.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); margin-bottom: 4px; }
 .res-item-title { font-size: 15px; font-weight: 900; line-height: 1.35; color: var(--text); margin-bottom: 4px; }
@@ -373,8 +372,8 @@ nav a:hover,nav a.active{color:#fff;background:rgba(255,255,255,0.09);}
 .res-action:hover { background: #c41a14; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(232,33,26,0.3); }
 .res-action.quiz-btn { background: #c97a00; }
 .res-action.quiz-btn:hover { background: #a06200; }
-.res-action.sol-btn { background: var(--black); }
-.res-action.sol-btn:hover { background: #222; }
+.res-action.fc-btn { background: #e8590c; }
+.res-action.fc-btn:hover { background: #c2410c; }
 
 /* Section label inside "All" panel */
 .res-section-label {
@@ -539,11 +538,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="index.html">Home</a>
     <a href="class9.html">Class 9</a>
     <a href="class10.html">Class 10</a>
-    <a href="class11.html">Class 11</a>
-    <a href="class12.html">Class 12</a>
-    <a href="solutions.html">Solutions</a>
     <a href="pyq.html">PYQs</a>
     <a href="quizzes.html">Quizzes</a>
+    <a href="flashcards.html">Flashcards</a>
   </nav>
   <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
 </header>
@@ -578,22 +575,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="footer-top">
       <div class="footer-brand">
         <div style="font-family:'Bebas Neue';font-size:26px;color:#fff;letter-spacing:2px;margin-bottom:12px">EX<span style="color:var(--red)">A</span>M READY</div>
-        <p>Chapter-organised CBSE resources. Every PYQ, quiz, solution, and note — right where you need it.</p>
+        <p>Chapter-organised CBSE resources with PDFs, quizzes, and practice material right where you need it.</p>
       </div>
       <div class="footer-links">
-        <div class="footer-col"><h4>Classes</h4><a href="class9.html">Class 9</a><a href="class10.html">Class 10</a><a href="class11.html">Class 11</a><a href="class12.html">Class 12</a></div>
-        <div class="footer-col"><h4>Resources</h4><a href="solutions.html">Solutions</a><a href="pyq.html">PYQ Papers</a><a href="questionbank.html">Question Banks</a><a href="quizzes.html">Quizzes</a></div>
+        <div class="footer-col"><h4>Classes</h4><a href="class9.html">Class 9</a><a href="class10.html">Class 10</a></div>
+        <div class="footer-col"><h4>Resources</h4><a href="pyq.html">PYQ Papers</a><a href="questionbank.html">Question Banks</a><a href="quizzes.html">Quizzes</a><a href="flashcards.html">Flashcards</a><a href="mistakes.html">Mistakes</a><a href="student.html">Progress</a></div>
       </div>
     </div>
     <div class="footer-bottom"><p>&copy; 2026 ExamReady. Made with <span>♥</span> for students.</p></div>
   </div>
 </footer>
 
-<script src="shared.js"></script>
-<script src="notes-module-for-shared.js"></script>
+<script src="examready-config.js"></script>
+<script src="student-storage.js"></script>
+<script src="shared.js?v=20260927-2"></script>
 <script src="animations.js"></script>
 <script>
-/* ── helpers ── */
 function toggleMenu() {
   const nav = document.getElementById('mainNav');
   if (nav.dataset.open === '1') { nav.removeAttribute('style'); nav.dataset.open = '0'; }
@@ -603,7 +600,6 @@ function buildChUrl(cls, subjectKey, chId) {
   return `chapter.html?class=${encodeURIComponent(cls)}&subject=${encodeURIComponent(subjectKey)}&chapter=${encodeURIComponent(chId)}`;
 }
 
-/* ── Reading progress ── */
 function initRP() {
   const fill = document.getElementById('rpfill');
   if (!fill) return;
@@ -613,66 +609,33 @@ function initRP() {
   }, { passive:true });
 }
 
-/* ── Resource type definitions ── */
 const PDF_TYPES = [
-  { key:'pyq',  label:'PYQ Papers',          iconTxt:'PYQ',  cls:'pyq'  },
-  { key:'qb',   label:'Question Banks',       iconTxt:'QB',   cls:'qb'   },
-  { key:'spq',  label:'SPQ Papers',           iconTxt:'SPQ',  cls:'spq'  },
-  { key:'ip',   label:'Institutional Papers', iconTxt:'INST', cls:'ip'   },
+  { key:'pyq', label:'PYQ Papers', iconTxt:'PYQ', cls:'pyq' },
+  { key:'qb', label:'Question Banks', iconTxt:'QB', cls:'qb' },
+  { key:'spq', label:'SPQ Papers', iconTxt:'SPQ', cls:'spq' },
+  { key:'ip', label:'Institutional Papers', iconTxt:'INST', cls:'ip' },
 ];
 
 let activeResourceTab = 'all';
 let activeYear = 'all';
 
 function isPdfTab(key) { return PDF_TYPES.some(t => t.key === key); }
-
 function sortYearsDesc(values) {
   return [...new Set(values.map(v => String(v)))].sort((a,b) => {
     const d = Number(b) - Number(a);
     return Number.isNaN(d) ? String(b).localeCompare(String(a)) : d;
   });
 }
-
 function getAvailableYears(pdfMap) {
   const years = [];
   PDF_TYPES.forEach(t => (pdfMap[t.key]||[]).forEach(item => { if (item.year) years.push(item.year); }));
   return sortYearsDesc(years);
 }
-
-function buildNoteMeta(note) {
-  const excerpt = typeof getNoteExcerpt === 'function' ? getNoteExcerpt(note, 90) : '';
-  const parts = [];
-  if (excerpt) parts.push(excerpt);
-  if (note && note.updatedAt) parts.push(`Updated: ${note.updatedAt}`);
-  return parts.join(' | ') || 'Quick revision note';
-}
-
 function updateYearFilterVisibility() {
   const wrap = document.getElementById('yearFilterWrap');
   if (!wrap) return;
   wrap.classList.toggle('visible', isPdfTab(activeResourceTab));
 }
-
-/* ── Build resource item HTML ── */
-function resItemHtml(iconTxt, iconCls, badge, title, meta, href, actionLabel, actionCls) {
-  return `<div class="res-item">
-    <div class="res-item-left">
-      <div class="res-type-icon ${escapeHtml(iconCls)}">${escapeHtml(iconTxt)}</div>
-      <div class="res-item-body">
-        <div class="res-item-badge">${escapeHtml(badge)}</div>
-        <div class="res-item-title">${escapeHtml(title)}</div>
-        <div class="res-item-meta">${escapeHtml(meta)}</div>
-      </div>
-    </div>
-    <a class="res-action ${escapeHtml(actionCls||'')}" href="${href}">${escapeHtml(actionLabel)}</a>
-  </div>`;
-}
-
-function buildPanel(itemsHtml, emptyLabel) {
-  if (!itemsHtml) return `<div class="empty-res"><div class="e-icon">📭</div><strong>Nothing here yet</strong><p>${escapeHtml(emptyLabel)}</p></div>`;
-  return itemsHtml;
-}
-
 function buildYearFilters(years) {
   const container = document.getElementById('yearFilters');
   if (!container) return;
@@ -689,62 +652,73 @@ function buildYearFilters(years) {
   append('All Years', 'all');
   years.forEach(y => append(y, y));
 }
-
-function countChRes(allPdfs, sols, quizzes, notes, cls, subjectKey, chId) {
-  return PDF_TYPES.reduce((a,t) => a + (allPdfs[`${cls}-${subjectKey}-${t.key}`]||[]).filter(p=>(p.chapterId||'')=== chId).length, 0)
-    + sols.filter(s=>(s.chapterId||'')=== chId).length
-    + notes.filter(n=>(n.chapterId||'')=== chId).length
-    + quizzes.filter(q=>(q.chapterId||'')=== chId).length;
+function resItemHtml(iconTxt, iconCls, badge, title, meta, href, actionLabel, actionCls) {
+  return `<div class="res-item">
+    <div class="res-item-left">
+      <div class="res-type-icon ${escapeHtml(iconCls)}">${escapeHtml(iconTxt)}</div>
+      <div class="res-item-body">
+        <div class="res-item-badge">${escapeHtml(badge)}</div>
+        <div class="res-item-title">${escapeHtml(title)}</div>
+        <div class="res-item-meta">${escapeHtml(meta)}</div>
+      </div>
+    </div>
+    <a class="res-action ${escapeHtml(actionCls||'')}" href="${href}">${escapeHtml(actionLabel)}</a>
+  </div>`;
 }
-
-/* ── Not found ── */
+function buildPanel(itemsHtml, emptyLabel) {
+  if (!itemsHtml) return `<div class="empty-res"><div class="e-icon">📭</div><strong>Nothing here yet</strong><p>${escapeHtml(emptyLabel)}</p></div>`;
+  return itemsHtml;
+}
+function countChRes(allPdfs, quizzes, cls, subjectKey, chId, flashcardDecks) {
+  return PDF_TYPES.reduce((a,t) => a + (allPdfs[`${cls}-${subjectKey}-${t.key}`]||[]).filter(p=>(p.chapterId||'')=== chId).length, 0)
+    + quizzes.filter(q=>(q.chapterId||'')=== chId).length
+    + (flashcardDecks || []).filter(deck => String(deck.chapterId || '') === String(chId)).length;
+}
 function renderNotFound(msg) {
   document.getElementById('heroIcon').textContent = '❌';
   document.getElementById('heroName').textContent = 'NOT FOUND';
   document.getElementById('pageBody').innerHTML = `<div class="empty-res" style="grid-column:1/-1"><div class="e-icon">🔍</div><strong>Chapter not found</strong><p>${escapeHtml(msg||'Go back to the subject page.')}</p></div>`;
 }
 
-/* ── Main render ── */
 function renderPage() {
   const p = new URLSearchParams(window.location.search);
   const cls = p.get('class'), subjectKey = p.get('subject'), chapterId = p.get('chapter');
+  if (cls && !['9', '10'].includes(String(cls))) { window.location.replace('index.html'); return; }
   if (!cls || !subjectKey || !chapterId) { renderNotFound('Missing URL parameters.'); return; }
 
-  const chapters  = getChapters(cls, subjectKey);
-  const chapter   = chapters.find(c => c.id === chapterId);
-  if (!chapter) { renderNotFound('Chapter not found — it may have been deleted.'); return; }
+  const chapters = getChapters(cls, subjectKey);
+  const chapter = chapters.find(c => c.id === chapterId);
+  if (!chapter) { renderNotFound('Chapter not found. It may have been deleted.'); return; }
 
-  const classMeta  = getClassMeta(cls);
-  const subject    = getSubjectMeta(cls, subjectKey);
+  const classMeta = getClassMeta(cls);
+  const subject = getSubjectMeta(cls, subjectKey);
   if (!classMeta || !subject) { renderNotFound('Subject not found.'); return; }
 
   const subjectUrl = buildSubjectPageUrl(cls, subjectKey);
-  const allPdfs    = getData('pdfs') || {};
+  const allPdfs = getData('pdfs') || {};
   const allQuizzes = (getData('quizzes')||{})[`${cls}-${subjectKey}`] || [];
-  const allSols    = getSolutionPostsByClassAndSubject(cls, subjectKey);
-  const subjectNotes = typeof getNotesByClassAndSubject === 'function' ? getNotesByClassAndSubject(cls, subjectKey) : [];
+  const allFlashcardDecks = typeof getFlashcardDecks === 'function' ? getFlashcardDecks({ publishedOnly: true, includePersonal: false }) : [];
 
-  /* Filter to this chapter */
   const pdfMap = {};
   PDF_TYPES.forEach(t => {
     pdfMap[t.key] = (allPdfs[`${cls}-${subjectKey}-${t.key}`]||[]).filter(p => (p.chapterId||'') === chapterId);
   });
-  const sols    = allSols.filter(s => (s.chapterId||'') === chapterId);
-  const allNotes = subjectNotes.filter(n => (n.chapterId||'') === chapterId);
   const quizzes = allQuizzes.filter(q => (q.chapterId||'') === chapterId);
+  const flashcardDecks = allFlashcardDecks.filter(deck => String(deck.class || '') === String(cls)
+    && (String(deck.subject || '') === String(subjectKey) || String(deck.subjectKey || '') === String(subjectKey)
+      || String(deck.subjectLabel || '') === String(subject.label))
+    && (String(deck.chapterId || '') === String(chapterId) || String(deck.chapter || '') === String(chapter.name)));
   const availableYears = getAvailableYears(pdfMap);
   if (activeYear !== 'all' && !availableYears.includes(String(activeYear))) activeYear = 'all';
 
   const totalPdfs = PDF_TYPES.reduce((a,t) => a + pdfMap[t.key].length, 0);
-  const totalAll  = totalPdfs + allNotes.length + sols.length + quizzes.length;
+  const totalAll = totalPdfs + quizzes.length + flashcardDecks.length;
 
   const chIdx = chapters.findIndex(c => c.id === chapterId);
   const prevCh = chapters[chIdx - 1] || null;
   const nextCh = chapters[chIdx + 1] || null;
 
-  document.title = `Ch ${chapter.number}: ${chapter.name} – ${subject.label} – ExamReady`;
-
-  /* ── Hero (subject-style) ── */
+  document.title = `Ch ${chapter.number}: ${chapter.name} - ${subject.label} - ExamReady`;
   document.getElementById('heroIcon').textContent = `Ch\u00A0${chapter.number}`;
   document.getElementById('heroName').textContent = chapter.name;
   document.getElementById('heroMeta').innerHTML = `
@@ -755,87 +729,74 @@ function renderPage() {
     <span class="hero-crumb">Chapter ${chapter.number} of ${chapters.length}</span>`;
   document.getElementById('heroStats').innerHTML = `
     <div class="hero-stat-pill"><strong>${totalPdfs}</strong><span>PDFs</span></div>
-    <div class="hero-stat-pill"><strong>${sols.length}</strong><span>Solutions</span></div>
     <div class="hero-stat-pill"><strong>${quizzes.length}</strong><span>Quizzes</span></div>
-    <div class="hero-stat-pill"><strong>${totalAll}</strong><span>Total</span></div>`;
+    <div class="hero-stat-pill"><strong>${flashcardDecks.length}</strong><span>Flashcards</span></div>
+    <div class="hero-stat-pill"><strong>${totalAll}</strong><span>Total</span></div>
+    <div class="hero-stat-pill"><strong>${chapter.number}</strong><span>Chapter</span></div>`;
 
-  /* ── Chapter nav bar ── */
   const navBar = document.getElementById('chNavBar');
   navBar.style.display = 'block';
   const prevBtn = document.getElementById('prevChBtn');
   const nextBtn = document.getElementById('nextChBtn');
+  prevBtn.classList.toggle('disabled', !prevCh);
+  nextBtn.classList.toggle('disabled', !nextCh);
   if (prevCh) {
     prevBtn.href = buildChUrl(cls,subjectKey,prevCh.id);
-    prevBtn.innerHTML = `← Ch ${prevCh.number}: ${prevCh.name.slice(0,20)}${prevCh.name.length>20?'…':''}`;
-    prevBtn.classList.remove('disabled');
+    prevBtn.innerHTML = `← Ch ${prevCh.number}: ${prevCh.name.slice(0,20)}${prevCh.name.length>20?'...':''}`;
   }
   if (nextCh) {
     nextBtn.href = buildChUrl(cls,subjectKey,nextCh.id);
-    nextBtn.innerHTML = `Ch ${nextCh.number}: ${nextCh.name.slice(0,20)}${nextCh.name.length>20?'…':''} →`;
-    nextBtn.classList.remove('disabled');
+    nextBtn.innerHTML = `Ch ${nextCh.number}: ${nextCh.name.slice(0,20)}${nextCh.name.length>20?'...':''} →`;
   }
   document.getElementById('chDots').innerHTML = chapters.map(ch =>
-    `<div class="ch-dot${ch.id===chapterId?' active':''}" title="Ch ${ch.number}: ${ch.name}" onclick="location.href='${buildChUrl(cls,subjectKey,ch.id)}'"></div>`
+    `<div class="ch-dot${ch.id===chapterId?' active':''}" title="Ch ${ch.number}: ${escapeHtml(ch.name)}" onclick="location.href='${buildChUrl(cls,subjectKey,ch.id)}'"></div>`
   ).join('');
 
-  /* ── Build panel content ── */
   function buildAllPanel() {
     const parts = [];
     PDF_TYPES.forEach(t => {
       if (!pdfMap[t.key].length) return;
       parts.push(`<div class="res-section-label">${t.label} (${pdfMap[t.key].length})</div>`);
       pdfMap[t.key].forEach(item => parts.push(resItemHtml(t.iconTxt, t.cls, t.label,
-        item.name, [item.year?`Year: ${item.year}`:'', item.size||''].filter(Boolean).join(' · '),
+        item.name, [item.year?`Year: ${item.year}`:'', item.size||''].filter(Boolean).join(' - '),
         buildPdfPreviewUrl(item), 'Preview PDF', ''
       )));
     });
-    if (allNotes.length) {
-      parts.push(`<div class="res-section-label">Notes (${allNotes.length})</div>`);
-      allNotes.forEach(note => parts.push(resItemHtml('NOTE','notes','Short Note',
-        note.title, buildNoteMeta(note),
-        typeof getNoteUrl==='function'?getNoteUrl(note):'#', 'Read Note', ''
-      )));
-    }
-    if (sols.length) {
-      parts.push(`<div class="res-section-label">Solution Articles (${sols.length})</div>`);
-      sols.forEach(s => parts.push(resItemHtml('SOL','sol','Solution Article', s.title, getSolutionExcerpt(s,90), getSolutionPostUrl(s),'Read Solution','sol-btn')));
-    }
     if (quizzes.length) {
       parts.push(`<div class="res-section-label">Quizzes (${quizzes.length})</div>`);
       quizzes.forEach(q => parts.push(resItemHtml('QUIZ','quiz','MCQ Quiz', q.title, `${(q.questions||[]).length} questions`, `quiz.html?id=${encodeURIComponent(q.id)}`,'Open Quiz','quiz-btn')));
     }
+    if (flashcardDecks.length) {
+      parts.push(`<div class="res-section-label">Flashcards (${flashcardDecks.length})</div>`);
+      flashcardDecks.forEach(deck => parts.push(resItemHtml('▣','fc','Flashcard Deck',deck.title,`${(deck.cards||[]).length} cards`,`flashcards.html?deck=${encodeURIComponent(deck.id)}`,'Study Deck','fc-btn')));
+    }
     return parts.length ? parts.join('') : null;
   }
 
-  /* ── Tabs (only non-empty) ── */
   const visibleTabs = [
-    { key:'all',  label:'All Resources', count:totalAll },
+    { key:'all', label:'All Resources', count:totalAll },
     ...PDF_TYPES.map(t => ({ key:t.key, label:t.label, count:pdfMap[t.key].length })).filter(t=>t.count>0),
-    ...(allNotes.length ? [{ key:'notes', label:'Notes',     count:allNotes.length }] : []),
-    ...(sols.length     ? [{ key:'sol',   label:'Solutions', count:sols.length     }] : []),
-    ...(quizzes.length  ? [{ key:'quiz',  label:'Quizzes',   count:quizzes.length  }] : []),
+    ...(quizzes.length ? [{ key:'quiz', label:'Quizzes', count:quizzes.length }] : []),
+    { key:'flashcards', label:'Flashcards', count:flashcardDecks.length },
   ];
   if (!visibleTabs.some(t=>t.key===activeResourceTab)) activeResourceTab='all';
-
   const tabsHtml = visibleTabs.map(t => `
     <button class="res-tab${t.key===activeResourceTab?' active':''}" data-tab="${t.key}" onclick="switchTab('${t.key}')">
       ${t.label}<span class="tab-count">${t.count}</span>
     </button>`).join('');
 
   function getPanelContent(key) {
-    if (key==='all')   return buildPanel(buildAllPanel(), `No resources assigned to Chapter ${chapter.number} yet.`);
-    if (key==='notes') return buildPanel(allNotes.map(n=>resItemHtml('NOTE','notes','Short Note',n.title,buildNoteMeta(n),typeof getNoteUrl==='function'?getNoteUrl(n):'#','Read Note','')).join('')||null,'No notes for this chapter.');
-    if (key==='sol')   return buildPanel(sols.map(s=>resItemHtml('SOL','sol','Solution Article',s.title,getSolutionExcerpt(s,90),getSolutionPostUrl(s),'Read Solution','sol-btn')).join('')||null,'No solutions for this chapter.');
-    if (key==='quiz')  return buildPanel(quizzes.map(q=>resItemHtml('QUIZ','quiz','MCQ Quiz',q.title,`${(q.questions||[]).length} questions`,`quiz.html?id=${encodeURIComponent(q.id)}`,'Open Quiz','quiz-btn')).join('')||null,'No quizzes for this chapter.');
+    if (key==='all') return buildPanel(buildAllPanel(), `No resources assigned to Chapter ${chapter.number} yet.`);
+    if (key==='quiz') return buildPanel(quizzes.map(q=>resItemHtml('QUIZ','quiz','MCQ Quiz',q.title,`${(q.questions||[]).length} questions`,`quiz.html?id=${encodeURIComponent(q.id)}`,'Open Quiz','quiz-btn')).join('')||null,'No quizzes for this chapter.');
+    if (key==='flashcards') return buildPanel(flashcardDecks.map(deck=>resItemHtml('▣','fc','Flashcard Deck',deck.title,`${(deck.cards||[]).length} cards`,`flashcards.html?deck=${encodeURIComponent(deck.id)}`,'Study Deck','fc-btn')).join('')||null,'No flashcard decks for this chapter.');
     const t = PDF_TYPES.find(x=>x.key===key);
-    return buildPanel(pdfMap[key].filter(item=>activeYear==='all'||String(item.year)===String(activeYear)).map(item=>resItemHtml(t.iconTxt,t.cls,t.label,item.name,[item.year?`Year: ${item.year}`:'',item.size||''].filter(Boolean).join(' · '),buildPdfPreviewUrl(item),'Preview PDF','')).join('')||null,`No ${t.label} for this chapter.`);
+    return buildPanel(pdfMap[key].filter(item=>activeYear==='all'||String(item.year)===String(activeYear)).map(item=>resItemHtml(t.iconTxt,t.cls,t.label,item.name,[item.year?`Year: ${item.year}`:'',item.size||''].filter(Boolean).join(' - '),buildPdfPreviewUrl(item),'Preview PDF','')).join('')||null,`No ${t.label} for this chapter.`);
   }
 
   const panelsHtml = visibleTabs.map(t =>
     `<div class="res-panel${t.key===activeResourceTab?' active':''}" data-panel="${t.key}">${getPanelContent(t.key)}</div>`
   ).join('');
 
-  /* ── Prev / Next cards ── */
   function navCard(ch, dir) {
     if (!ch) return `<div class="ch-nav-card disabled"><div class="ch-nav-card-label">${dir==='prev'?'← Previous':'Next →'}</div><div class="ch-nav-card-title">No ${dir==='prev'?'previous':'next'} chapter</div></div>`;
     return `<a class="ch-nav-card" href="${buildChUrl(cls,subjectKey,ch.id)}">
@@ -844,24 +805,20 @@ function renderPage() {
     </a>`;
   }
 
-  /* ── Sidebar chapter list ── */
   const chSidebarHtml = chapters.map(ch => {
-    const res = countChRes(allPdfs, allSols, allQuizzes, subjectNotes, cls, subjectKey, ch.id);
+    const res = countChRes(allPdfs, allQuizzes, cls, subjectKey, ch.id, allFlashcardDecks);
     return `<a class="ch-sidebar-item${ch.id===chapterId?' active-ch':''}" href="${buildChUrl(cls,subjectKey,ch.id)}">
       <span class="ch-sidebar-num">Ch ${ch.number}</span>
-      <div style="flex:1;min-width:0">
-        <div class="ch-sidebar-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(ch.name)}</div>
-        <div class="ch-sidebar-count">${res} resource${res!==1?'s':''}</div>
-      </div>
+      <span class="ch-sidebar-name">${escapeHtml(ch.name)}</span>
+      <span class="ch-sidebar-count">${res}</span>
     </a>`;
   }).join('');
 
-  /* ── Assemble ── */
   document.getElementById('pageBody').innerHTML = `
     <div class="main-content">
       <div class="resources-card">
         <div class="resources-card-head">
-          <div class="resources-card-kicker">Resources for Chapter ${chapter.number}: ${escapeHtml(chapter.name)}</div>
+          <div class="resources-card-kicker">Chapter Resources</div>
           <div class="res-tabs">${tabsHtml}</div>
           <div class="year-filter-wrap" id="yearFilterWrap">
             <div class="year-filter-label">Filter PDFs by Year</div>
@@ -870,11 +827,7 @@ function renderPage() {
         </div>
         <div class="res-panels">${panelsHtml}</div>
       </div>
-
-      <div class="chapter-nav-cards">
-        ${navCard(prevCh,'prev')}
-        ${navCard(nextCh,'next')}
-      </div>
+      <div class="chapter-nav-cards">${navCard(prevCh,'prev')}${navCard(nextCh,'next')}</div>
     </div>
 
     <aside class="sidebar">
@@ -883,35 +836,31 @@ function renderPage() {
         <div class="sidebar-body">
           <div class="info-row"><span>Class</span><span>${escapeHtml(classMeta.label)}</span></div>
           <div class="info-row"><span>Subject</span><span>${escapeHtml(subject.label)}</span></div>
-          <div class="info-row"><span>Chapter</span><span>${chapter.number} of ${chapters.length}</span></div>
-          <div class="info-row"><span>PDFs</span><span>${totalPdfs}</span></div>
-          <div class="info-row"><span>Notes</span><span>${allNotes.length}</span></div>
-          <div class="info-row"><span>Solutions</span><span>${sols.length}</span></div>
+          <div class="info-row"><span>Chapter</span><span>${escapeHtml(String(chapter.number))}</span></div>
+          <div class="info-row"><span>PDF Files</span><span>${totalPdfs}</span></div>
           <div class="info-row"><span>Quizzes</span><span>${quizzes.length}</span></div>
+          <div class="info-row"><span>Total</span><span>${totalAll}</span></div>
         </div>
       </div>
 
       <div class="sidebar-card">
         <div class="sidebar-card-head"><div class="sidebar-heading">All Chapters</div></div>
-        <div class="sidebar-body" style="padding:8px;">
-          <div class="ch-sidebar-list">${chSidebarHtml}</div>
-        </div>
+        <div class="sidebar-body"><div class="ch-sidebar-list">${chSidebarHtml}</div></div>
       </div>
 
       <div class="sidebar-card">
         <div class="sidebar-card-head"><div class="sidebar-heading">Quick Links</div></div>
         <div class="sidebar-body">
-          <a class="quick-link" href="${subjectUrl}">📚 All ${escapeHtml(subject.label)} Resources</a>
+          <a class="quick-link" href="${subjectUrl}">← Back to ${escapeHtml(subject.label)}</a>
           <a class="quick-link" href="quizzes.html">🎯 All Quizzes</a>
-          <a class="quick-link" href="solutions.html">📖 All Solutions</a>
-          <a class="quick-link" href="pyq.html">📄 All PYQ Papers</a>
+          <a class="quick-link" href="pyq.html">📄 PYQ Papers</a>
+          <a class="quick-link" href="flashcards.html">▣ Flashcards</a>
         </div>
       </div>
     </aside>`;
 
   buildYearFilters(availableYears);
   updateYearFilterVisibility();
-  initRP();
 }
 
 function switchTab(key) {
@@ -921,7 +870,10 @@ function switchTab(key) {
   updateYearFilterVisibility();
 }
 
-whenDataReady(renderPage);
+whenDataReady(function() {
+  initRP();
+  renderPage();
+});
 </script>
 </body>
 </html>

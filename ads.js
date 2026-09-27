@@ -171,24 +171,6 @@
       return;
     }
 
-    const articleFoot = document.querySelector('.article-foot');
-    if (!articleFoot) return;
-    const parent = articleFoot.closest('.article-card');
-    const el = buildSlot('results_banner', 'er-ad-wrap er-ad-wrap--results');
-    if (parent && el) insertAfter(parent, el);
-  }
-
-  function injectSolutionMid() {
-    if (PAGE !== 'solution-post.html' || alreadyInjected('solution_mid')) return;
-    const body = document.querySelector('.article-body');
-    if (!body) return;
-
-    const paras = body.querySelectorAll('p');
-    const midPara = paras[Math.floor(paras.length / 2)];
-    if (!midPara) return;
-
-    const el = buildSlot('solution_mid', 'er-ad-wrap er-ad-wrap--solution-mid');
-    if (el) insertBefore(midPara, el);
   }
 
   function injectQuizSidebar() {
@@ -286,7 +268,6 @@
     injectTopBanner();
     injectPreFooter();
     injectResultsBanner();
-    injectSolutionMid();
     injectQuizSidebar();
     injectPdfViewerBanner();
     injectStickyDesktop();

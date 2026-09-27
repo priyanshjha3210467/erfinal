@@ -447,13 +447,13 @@
       cards: [
         { icon: '📄', title: 'PYQ Solver',      sub: 'Solved past papers'   },
         { icon: '🎯', title: 'Mock Tests',       sub: 'Chapter-wise MCQs'   },
-        { icon: '📖', title: 'NCERT Solutions',  sub: 'Class 9–12 free PDF' },
+        { icon: '🃏', title: 'Flashcards',  sub: 'Spaced revision' },
       ]
     },
     top_banner: {
       type: 'strip',
       cards: [
-        { icon: '🔬', title: 'Science Notes',   sub: 'Quick revision'      },
+        { icon: '🔬', title: 'Science Quizzes',   sub: 'Quick revision'      },
         { icon: '📐', title: 'Maths Shortcuts', sub: 'Board exam tricks'   },
         { icon: '📝', title: 'Sample Papers',   sub: 'Latest CBSE format'  },
       ]
@@ -462,7 +462,7 @@
       type: 'inline',
       icon: '🎯', tag: 'Sponsored',
       title: 'Practice with 500+ CBSE chapter-wise MCQs',
-      desc:  'Timed mock tests, instant results, and detailed solutions for every question.',
+      desc:  'Timed mock tests, instant results, and explanations for every question.',
       cta:   'Try Free Quiz →'
     },
     inline_1: {
@@ -475,9 +475,9 @@
     inline_2: {
       type: 'inline',
       icon: '📖', tag: 'Sponsored',
-      title: 'NCERT solutions — chapter by chapter',
-      desc:  'Detailed, readable solutions for every chapter. Board-ready language.',
-      cta:   'Read Solutions →'
+      title: 'Revise faster with flashcards',
+      desc:  'Spaced-repetition cards that bring hard topics back sooner.',
+      cta:   'Try Flashcards →'
     },
     inline_3: {
       type: 'mini',
@@ -509,13 +509,6 @@
       desc:  'Solved previous year questions with detailed explanations — free for all CBSE classes.',
       cta:   'Get Free PYQs →'
     },
-    solution_mid: {
-      type: 'inline',
-      icon: '🧪', tag: 'Sponsored',
-      title: 'Struggling with this topic? Try a 5-min quiz',
-      desc:  'Instantly check your understanding with chapter-wise MCQs designed for CBSE boards.',
-      cta:   'Take Quiz Now →'
-    },
     quiz_sidebar: {
       type: 'inline',
       icon: '📚', tag: 'Sponsored',
@@ -526,7 +519,7 @@
     pdf_viewer: {
       type: 'mini',
       icon: '📄',
-      title: 'Find more PYQs, notes & solutions for this subject',
+      title: 'Find more PYQs, quizzes & flashcards for this subject',
       sub:   'Browse Class 9–12 resources — all free'
     },
     footer: {
@@ -534,21 +527,21 @@
       cards: [
         { icon: '📚', title: 'Question Banks', sub: 'Chapter-wise · Free'   },
         { icon: '🎯', title: 'Online Quizzes', sub: 'MCQ practice · Free'   },
-        { icon: '📖', title: 'CBSE Solutions', sub: 'Readable articles'     },
+        { icon: '🃏', title: 'Flashcards', sub: 'Spaced revision'     },
       ]
     },
     pre_footer: {
       type: 'strip',
       cards: [
         { icon: '📄', title: 'PYQ Papers',   sub: 'All years · All subjects' },
-        { icon: '🔬', title: 'Science Notes', sub: 'Board-ready summaries'  },
+        { icon: '🔬', title: 'Science Quizzes', sub: 'Board-ready practice'  },
         { icon: '✏️', title: 'Practice Quiz', sub: 'Instant results'        },
       ]
     },
     /* sticky / mobile use their own dedicated renderer */
     sticky: {
       icon: '🎯', tag: 'Partner Offer',
-      title: 'Premium CBSE mock tests & notes',
+      title: 'Premium CBSE mock tests & practice',
       desc:  'Structured practice with detailed answers. Thousands of CBSE students already use it.',
       cta:   'Explore Now →'
     },
@@ -727,25 +720,7 @@
         const el = wrapAndInject(buildNativeHtml(key), 'er-native-wrap-results', key);
         if (el) { resultCard.insertAdjacentElement('afterend', el); break; }
       }
-      /* solution article */
-      const articleFoot = document.querySelector('.article-foot, .article-card');
-      if (articleFoot) {
-        const el = wrapAndInject(buildNativeHtml(key), 'er-native-wrap-results', key);
-        if (el) { articleFoot.insertAdjacentElement('afterend', el); break; }
-      }
     }
-  }
-
-  /* ── Solution mid-article ── */
-  function injectSolutionMid() {
-    if (!PAGE.includes('solution-post') || !shouldShowNative('solution_mid') || alreadyPresent('solution_mid')) return;
-    const body = document.querySelector('.article-body');
-    if (!body) return;
-    const paras = body.querySelectorAll('p');
-    const midPara = paras[Math.floor(paras.length / 2)];
-    if (!midPara) return;
-    const el = wrapAndInject(buildNativeHtml('solution_mid'), 'er-native-wrap-inline', 'solution_mid');
-    if (el) midPara.insertAdjacentElement('beforebegin', el);
   }
 
   /* ── PDF viewer slot ── */
@@ -855,7 +830,6 @@
     injectInline();
     injectFooter();
     injectResults();
-    injectSolutionMid();
     injectPdfViewer();
     injectQuizSidebar();
 

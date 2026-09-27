@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>Ownership Notice - ExamReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --red:#e8211a; --black:#0d0d0d; --gray:#f4f4f4; --gray2:#e8e8e8; --text:#1a1a1a; --muted:#666; }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html, body { overflow-x:hidden; width:100%; }
+  body { font-family:'Nunito',sans-serif; background:#fff; color:var(--text); min-height:100vh; display:flex; flex-direction:column; }
+  header { background:var(--black); padding:0 24px; position:sticky; top:0; z-index:1000; display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .logo-wrap { display:flex; align-items:center; text-decoration:none; }
+  nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  nav a { color:#ccc; font-weight:700; font-size:14px; padding:8px 14px; border-radius:8px; text-decoration:none; }
+  nav a:hover, nav a.active { color:#fff; background:rgba(255,255,255,.1); }
+  .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:8px; }
+  .hamburger span { width:24px; height:2px; background:#fff; border-radius:2px; }
+  .hero { background:linear-gradient(135deg,#0d0d0d 0%,#1a1a1a 55%,#2a0a0a 100%); padding:42px 24px; }
+  .hero-inner, .main-inner { max-width:1100px; margin:0 auto; }
+  .breadcrumb { color:rgba(255,255,255,.45); font-size:13px; font-weight:700; margin-bottom:14px; }
+  .breadcrumb a { color:rgba(255,255,255,.45); text-decoration:none; }
+  .hero-badge { display:inline-block; background:var(--red); color:#fff; font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 14px; border-radius:20px; margin-bottom:18px; }
+  .hero h1 { font-family:'Bebas Neue'; font-size:clamp(38px,6vw,72px); color:#fff; letter-spacing:2px; line-height:1; margin-bottom:10px; }
+  .hero h1 span { color:var(--red); }
+  .hero p { color:#bbb; font-size:16px; line-height:1.7; max-width:780px; font-weight:600; }
+  .hero-meta { display:flex; gap:16px; margin-top:18px; flex-wrap:wrap; }
+  .hero-chip { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:7px 14px; font-size:12px; font-weight:800; color:#fff; }
+  main { flex:1; padding:34px 24px 56px; }
+  .main-inner { display:grid; grid-template-columns:minmax(0,2.2fr) 260px; gap:32px; align-items:start; }
+  .legal-card { background:#fff; border:1px solid var(--gray2); border-radius:24px; padding:32px; box-shadow:0 10px 30px rgba(0,0,0,.06); }
+  .legal-card section { padding:26px 0; border-bottom:1px solid var(--gray2); }
+  .legal-card section:first-child { padding-top:0; }
+  .legal-card section:last-child { border-bottom:none; padding-bottom:0; }
+  .section-num { font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--red); margin-bottom:6px; }
+  .legal-card h2 { font-size:20px; font-weight:900; margin-bottom:12px; }
+  .legal-card p { font-size:14px; line-height:1.85; color:var(--muted); font-weight:600; margin-bottom:10px; }
+  .legal-card p:last-child { margin-bottom:0; }
+  .legal-card ul { margin:10px 0 10px 20px; display:flex; flex-direction:column; gap:6px; }
+  .legal-card li { font-size:14px; line-height:1.7; color:var(--muted); font-weight:600; }
+  .legal-card a { color:#b51b16; font-weight:800; }
+  .notice { background:#fff8f8; border:1px solid #ffd8d5; border-radius:14px; padding:16px 18px; margin-top:12px; }
+  .notice p { color:#8f1d18; font-weight:800; margin-bottom:0; }
+  .sidebar { display:flex; flex-direction:column; gap:16px; position:sticky; top:84px; }
+  .toc-card { background:#fff; border:1px solid var(--gray2); border-radius:18px; padding:20px; box-shadow:0 4px 16px rgba(0,0,0,.04); }
+  .toc-card h3 { font-size:13px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:14px; }
+  .toc-list { display:flex; flex-direction:column; gap:4px; }
+  .toc-link { display:block; font-size:13px; font-weight:700; color:var(--muted); text-decoration:none; padding:7px 10px; border-radius:8px; }
+  .toc-link:hover { background:#fff0f0; color:var(--red); }
+  .contact-card { background:linear-gradient(135deg,#0d0d0d,#1a0505); border-radius:18px; padding:20px; color:#fff; }
+  .contact-card h3 { font-size:14px; font-weight:900; margin-bottom:8px; }
+  .contact-card p { font-size:12px; color:#aaa; line-height:1.6; font-weight:600; }
+  footer { background:var(--black); color:#aaa; padding:40px 24px 24px; margin-top:auto; }
+  @media(max-width:900px) { .main-inner { grid-template-columns:1fr; } .sidebar { position:static; } }
+  @media(max-width:768px) { nav { display:none; } .hamburger { display:flex; } main { padding:24px 16px 40px; } .hero { padding:34px 16px; } .legal-card { padding:22px; } }
+</style>
+<link rel="stylesheet" href="animations.css">
+</head>
+<body>
+<header>
+  <a class="logo-wrap" href="index.html"><img src="logo.png" alt="ExamReady" style="height:44px;"></a>
+  <nav id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="class9.html">Class 9</a>
+    <a href="class10.html">Class 10</a>
+    <a href="pyq.html">PYQs</a>
+    <a href="quizzes.html">Quizzes</a>
+    <a href="ownership.html" class="active">Ownership</a>
+  </nav>
+  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Ownership Notice</div>
+    <div class="hero-badge">Legal Document</div>
+    <h1>OWNERSHIP <span>NOTICE</span></h1>
+    <p>This page identifies the founders and authorized operators of ExamReady and explains how the site's original work and brand may be protected under applicable law.</p>
+    <div class="hero-meta">
+      <div class="hero-chip">Last Updated: September 2026</div>
+      <div class="hero-chip">India</div>
+      <div class="hero-chip">Class 9-10 Resources</div>
+    </div>
+  </div>
+</section>
+
+<main>
+  <div class="main-inner">
+    <article class="legal-card">
+      <section id="ownership">
+        <div class="section-num">Section 1</div>
+        <h2>ExamReady Ownership</h2>
+        <p><strong>ExamReady is solely made, run, and managed by Priyansh Jha and Aashish Rawat, co-founders of ExamReady.</strong></p>
+        <p>Unless a page expressly identifies a third-party owner, the ExamReady name, logo, original website code, user interface, visual design, original written copy, and original study features are owned or controlled by the co-founders. No person or organization may represent that they founded, own, operate, manage, authorize, or officially speak for ExamReady without written permission.</p>
+        <div class="notice"><p>Any false claim of ownership, management, affiliation, authorization, or official representation may lead to content removal, account or access restrictions, preservation of evidence, and civil or criminal legal action where the facts satisfy the requirements of applicable law.</p></div>
+      </section>
+
+      <section id="third-party-content">
+        <div class="section-num">Section 2</div>
+        <h2>Third-Party and Public-Domain Materials</h2>
+        <p>This ownership notice does not claim ownership of third-party materials. CBSE, NCERT, publisher materials, linked PDFs, trademarks, photographs, and other materials remain the property of their respective owners. ExamReady's ownership claim is limited to ExamReady's original contributions and authorized materials.</p>
+        <p>Nothing on this page replaces a copyright, trademark, licence, or other ownership determination by a competent authority or court.</p>
+      </section>
+
+      <section id="prohibited-conduct">
+        <div class="section-num">Section 3</div>
+        <h2>Unauthorized Claims and Use</h2>
+        <p>Without written permission, users must not:</p>
+        <ul>
+          <li>Claim to be an ExamReady founder, owner, operator, employee, representative, or authorized partner</li>
+          <li>Use the ExamReady name, logo, branding, or identity to create confusion about sponsorship, affiliation, or authorization</li>
+          <li>Copy, republish, sell, distribute, or adapt ExamReady's original code, design, branding, or original written materials</li>
+          <li>Publish knowingly false statements or impersonate ExamReady in a way that harms the reputation, goodwill, or interests of the site or its founders</li>
+        </ul>
+      </section>
+
+      <section id="legal-framework">
+        <div class="section-num">Section 4</div>
+        <h2>Applicable Legal Framework</h2>
+        <p>Subject to the facts, evidence, ownership status, registrations, intent, and other requirements of each case, conduct described above may engage remedies or offences under Indian law, including:</p>
+        <ul>
+          <li><strong>Copyright Act, 1957:</strong> Section 51 addresses infringement; Section 55 provides civil remedies such as injunctions and damages; Section 57 protects an author's right to claim authorship and certain rights against prejudicial distortion.</li>
+          <li><strong>Trade Marks Act, 1999:</strong> Section 27(2) preserves passing-off remedies, and Section 29 addresses infringement of a registered trade mark where its statutory requirements are met.</li>
+          <li><strong>Information Technology Act, 2000:</strong> Sections 66C and 66D may apply to electronic identity theft or cheating by personation where their legal elements are satisfied.</li>
+          <li><strong>Bharatiya Nyaya Sanhita, 2023:</strong> Section 356 addresses defamation, subject to its statutory requirements and exceptions. A false statement is not automatically defamation merely because ExamReady disputes it.</li>
+        </ul>
+        <p>These references are general notice only and are not a legal opinion. The appropriate claim, remedy, forum, and limitation period depend on the particular conduct and should be assessed by a qualified lawyer.</p>
+        <p>Official text: <a href="https://www.indiacode.nic.in/bitstream/123456789/15356/1/the_copyright_act%2C_1957.pdf" target="_blank" rel="noopener noreferrer">Copyright Act</a>, <a href="https://www.indiacode.nic.in/bitstream/123456789/1993/1/A1999-47.pdf" target="_blank" rel="noopener noreferrer">Trade Marks Act</a>, <a href="https://www.indiacode.nic.in/bitstream/123456789/15413/1/20_the_information_technology_act%2C_2000%283%29.pdf" target="_blank" rel="noopener noreferrer">Information Technology Act</a>, and <a href="https://www.indiacode.nic.in/bitstream/123456789/20062/1/a2023-45.pdf" target="_blank" rel="noopener noreferrer">Bharatiya Nyaya Sanhita</a>.</p>
+      </section>
+
+      <section id="reporting">
+        <div class="section-num">Section 5</div>
+        <h2>Reporting and Contact</h2>
+        <p>If you see a false ownership claim, impersonation, unauthorized use of ExamReady branding, or copied original material, preserve the URL, screenshots, date, and other relevant evidence and contact ExamReady through its official channels. Do not make knowingly false counterclaims or threaten users; reports should be factual and made in good faith.</p>
+        <p>Nothing on this page limits any right or remedy available to Priyansh Jha, Aashish Rawat, or ExamReady under applicable law.</p>
+      </section>
+    </article>
+
+    <aside class="sidebar">
+      <div class="toc-card">
+        <h3>Contents</h3>
+        <div class="toc-list">
+          <a href="#ownership" class="toc-link">1. ExamReady Ownership</a>
+          <a href="#third-party-content" class="toc-link">2. Third-Party Materials</a>
+          <a href="#prohibited-conduct" class="toc-link">3. Unauthorized Use</a>
+          <a href="#legal-framework" class="toc-link">4. Legal Framework</a>
+          <a href="#reporting" class="toc-link">5. Reporting and Contact</a>
+        </div>
+      </div>
+      <div class="contact-card">
+        <h3>Official Notice</h3>
+        <p>Use ExamReady's official channels for ownership or impersonation reports. This notice should be read with the Terms and Conditions and Disclaimer.</p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer><p>ExamReady - Ownership Notice</p></footer>
+
+<script src="examready-config.js"></script>
+<script src="student-storage.js"></script>
+<script src="shared.js?v=20260927-2"></script>
+<script src="animations.js"></script>
+<script>
+function toggleMenu() {
+  const nav = document.getElementById('mainNav');
+  if (nav.dataset.open === '1') {
+    nav.removeAttribute('style');
+    nav.dataset.open = '0';
+  } else {
+    nav.style.display = 'flex';
+    nav.style.flexDirection = 'column';
+    nav.style.position = 'absolute';
+    nav.style.top = '64px';
+    nav.style.left = '0';
+    nav.style.right = '0';
+    nav.style.background = '#111';
+    nav.style.padding = '16px';
+    nav.style.zIndex = '999';
+    nav.dataset.open = '1';
+  }
+}
+</script>
+</body>
+</html>

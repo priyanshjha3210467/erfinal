@@ -13,11 +13,11 @@ function _isAdminPageCheck() {
 
 // Keys to sync between localStorage and Firebase
 const SITE_DATA_KEYS = [
-  'examready_pdfs', 'examready_quizzes', 'examready_solution_posts', 'examready_notes',
+  'examready_pdfs', 'examready_quizzes', 'examready_flashcards', 'er_content_version',
   'er_subjects_map', 'er_site_config', 'er_nav', 'er_announcement',
   'er_features', 'er_ad_slots', 'er_ad_slots_overrides', 'er_chapters',
   'er_adsense_autoads', 'er_adsense_autoads_enabled',
-  'er_native_ad_config', 'er_content_ads', 'er_custom_pages',
+  'er_native_ad_config', 'er_custom_pages',
   'er_logo', 'er_footer_brand_logo'
 ];
 
@@ -76,7 +76,6 @@ function _hydrateSiteData() {
 
       // Invalidate caches after hydration
       if (typeof invalidateDataCache === 'function') invalidateDataCache();
-      if (typeof invalidateNotesCache === 'function') invalidateNotesCache();
       _subjectsMapCache = null;
       _subjectsMapRaw = null;
     })
@@ -143,41 +142,30 @@ const DEFAULTS = {
     "9-math-qb": [
       { id:"p3", name:"Class 9 Maths Question Bank Ch 1-5", url:"#", size:"3.2 MB" },
     ],
-    "9-math-sol": [
-      { id:"ps1", name:"Class 9 Maths NCERT Solutions - All Chapters", url:"#", size:"4.5 MB" },
-    ],
     "9-science-pyq": [
       { id:"p4", name:"Class 9 Science PYQ 2023", year:"2023", url:"#", size:"2.4 MB" },
     ],
     "9-science-qb": [
       { id:"p5", name:"Class 9 Science Question Bank", url:"#", size:"4.1 MB" },
     ],
-    "9-science-sol": [
-      { id:"ps2", name:"Class 9 Science NCERT Solutions - All Chapters", url:"#", size:"3.8 MB" },
-    ],
-    "9-english-sol": [], "9-sst-sol": [], "9-hindi-sol": [],
     "10-math-pyq": [
       { id:"p6", name:"Class 10 Maths PYQ 2023", year:"2023", url:"#", size:"2.3 MB" },
       { id:"p7", name:"Class 10 Maths PYQ 2022", year:"2022", url:"#", size:"2.0 MB" },
     ],
     "10-math-qb": [{ id:"p8", name:"Class 10 Maths Question Bank", url:"#", size:"3.8 MB" }],
-    "10-math-sol": [{ id:"ps3", name:"Class 10 Maths NCERT Solutions - All Chapters", url:"#", size:"5.1 MB" }],
     "10-science-pyq": [{ id:"p9", name:"Class 10 Science PYQ 2023", year:"2023", url:"#", size:"2.7 MB" }],
-    "10-science-qb": [], "10-science-sol": [{ id:"ps4", name:"Class 10 Science NCERT Solutions", url:"#", size:"4.2 MB" }],
-    "10-english-sol": [], "10-sst-sol": [], "10-hindi-sol": [],
+    "10-science-qb": [],
     "11-physics-pyq": [{ id:"p10", name:"Class 11 Physics PYQ 2023", year:"2023", url:"#", size:"3.1 MB" }],
-    "11-physics-qb": [], "11-physics-sol": [],
-    "11-chemistry-pyq": [], "11-chemistry-qb": [], "11-chemistry-sol": [],
-    "11-math-pyq": [], "11-math-qb": [], "11-math-sol": [],
-    "11-biology-sol": [], "11-cs-sol": [],
+    "11-physics-qb": [],
+    "11-chemistry-pyq": [], "11-chemistry-qb": [],
+    "11-math-pyq": [], "11-math-qb": [],
     "12-physics-pyq": [
       { id:"p11", name:"Class 12 Physics PYQ 2023", year:"2023", url:"#", size:"3.4 MB" },
       { id:"p12", name:"Class 12 Physics PYQ 2022", year:"2022", url:"#", size:"3.0 MB" },
     ],
-    "12-physics-qb": [], "12-physics-sol": [],
-    "12-chemistry-pyq": [], "12-chemistry-qb": [], "12-chemistry-sol": [],
-    "12-math-pyq": [], "12-math-qb": [], "12-math-sol": [],
-    "12-biology-sol": [], "12-cs-sol": [],
+    "12-physics-qb": [],
+    "12-chemistry-pyq": [], "12-chemistry-qb": [],
+    "12-math-pyq": [], "12-math-qb": [],
   },
   quizzes: {
     "9-math": [{
@@ -211,6 +199,44 @@ const DEFAULTS = {
       ]
     }],
     "12-chemistry": [], "12-math": [],
+  },
+  flashcards: {
+    decks: [
+      {
+        id: 'sample-math-number-systems', title: 'Number Systems Quick Review',
+        description: 'Core ideas for a confident Class 9 Maths revision session.',
+        class: '9', subject: 'math', subjectLabel: 'Mathematics', chapter: 'Number Systems', chapterId: 'number-systems', published: true,
+        cards: [
+          { id: 'sample-math-01', front: 'What is an irrational number?', back: 'A number that cannot be written as p/q, where p and q are integers and q is not zero.', hint: 'Think about decimal expansions.' },
+          { id: 'sample-math-02', front: 'Is every integer a rational number?', back: 'Yes. Any integer n can be written as n/1.', hint: '' },
+          { id: 'sample-math-03', front: 'What kind of decimal expansion does a rational number have?', back: 'A terminating or recurring decimal expansion.', hint: '' },
+          { id: 'sample-math-04', front: 'What is the value of sqrt(2) approximately?', back: '1.414...', hint: 'It is irrational.' },
+          { id: 'sample-math-05', front: 'Between which two integers does sqrt(50) lie?', back: 'Between 7 and 8, because 49 < 50 < 64.', hint: '' },
+          { id: 'sample-math-06', front: 'Is 0 a rational number?', back: 'Yes. 0 can be written as 0/1.', hint: '' },
+          { id: 'sample-math-07', front: 'What is the additive identity?', back: '0. Adding 0 leaves a number unchanged.', hint: '' },
+          { id: 'sample-math-08', front: 'What is the multiplicative identity?', back: '1. Multiplying by 1 leaves a number unchanged.', hint: '' },
+          { id: 'sample-math-09', front: 'Can a rational number have a non-terminating decimal?', back: 'Yes, if the decimal is recurring, such as 1/3 = 0.333...', hint: '' },
+          { id: 'sample-math-10', front: 'What is the result of multiplying two irrational numbers?', back: 'It can be rational or irrational, depending on the numbers.', hint: 'Example: sqrt(2) x sqrt(2) = 2.' }
+        ]
+      },
+      {
+        id: 'sample-science-matter', title: 'Matter Around Us',
+        description: 'Short recall cards for Class 9 Science: Matter in Our Surroundings.',
+        class: '9', subject: 'science', subjectLabel: 'Science', chapter: 'Matter in Our Surroundings', chapterId: 'matter-in-our-surroundings', published: true,
+        cards: [
+          { id: 'sample-science-01', front: 'What are the three common states of matter?', back: 'Solid, liquid, and gas.', hint: '' },
+          { id: 'sample-science-02', front: 'Which state has a fixed shape and fixed volume?', back: 'Solid.', hint: '' },
+          { id: 'sample-science-03', front: 'What happens to particles when a substance is heated?', back: 'They gain kinetic energy and move faster.', hint: '' },
+          { id: 'sample-science-04', front: 'What is diffusion?', back: 'The intermixing of particles of two different substances on their own.', hint: '' },
+          { id: 'sample-science-05', front: 'What is sublimation?', back: 'The direct change of a solid into a gas without becoming a liquid.', hint: '' },
+          { id: 'sample-science-06', front: 'Give one example of sublimation.', back: 'Camphor, ammonium chloride, or naphthalene.', hint: '' },
+          { id: 'sample-science-07', front: 'What is the SI unit of temperature?', back: 'Kelvin (K).', hint: '' },
+          { id: 'sample-science-08', front: 'What is evaporation?', back: 'The surface change of a liquid into vapour at temperatures below its boiling point.', hint: '' },
+          { id: 'sample-science-09', front: 'Name one factor that increases evaporation.', back: 'Higher surface area, higher temperature, or lower humidity.', hint: '' },
+          { id: 'sample-science-10', front: 'Why does evaporation cause cooling?', back: 'Higher-energy particles escape from the surface, lowering the average energy of the remaining liquid.', hint: '' }
+        ]
+      }
+    ]
   }
 };
 
@@ -238,6 +264,47 @@ function getData(key) {
   return fallback ? JSON.parse(JSON.stringify(fallback)) : null;
 }
 
+function getFlashcardDecks(options = {}) {
+  const store = getData('flashcards') || {};
+  const decks = Array.isArray(store) ? store : (Array.isArray(store.decks) ? store.decks : []);
+  const result = decks
+    .filter(deck => deck && typeof deck === 'object')
+    .filter(deck => options.publishedOnly ? deck.published === true : true)
+    .map(deck => ({
+      ...deck,
+      cards: Array.isArray(deck.cards) ? deck.cards.filter(card => card && card.id && card.front && card.back) : []
+    }));
+  if (options.includePersonal !== false && typeof ExamReadyStorage !== 'undefined' && ExamReadyStorage.getPersonalFlashcards) {
+    const personalCards = ExamReadyStorage.getPersonalFlashcards();
+    if (personalCards.length) {
+      result.push({
+        id: 'personal-flashcards',
+        title: 'My Mistake Flashcards',
+        description: 'Cards created from your Mistake Notebook.',
+        class: 'Personal',
+        subject: 'personal',
+        subjectLabel: 'Personal',
+        chapter: 'Mistakes',
+        published: true,
+        cards: personalCards
+      });
+    }
+  }
+  return result;
+}
+
+function getContentVersion() {
+  try { return Math.max(0, parseInt(localStorage.getItem('er_content_version') || '1', 10) || 1); } catch(e) { return 1; }
+}
+
+function bumpContentVersion() {
+  try {
+    const next = getContentVersion() + 1;
+    localStorage.setItem('er_content_version', String(next));
+    return next;
+  } catch(e) { return getContentVersion(); }
+}
+
 function setData(key, val) {
   // CSRF write-token check: on admin pages, if a session IS active (user logged in)
   // but the write token is missing, it means something bypassed startAdminSession()
@@ -254,6 +321,7 @@ function setData(key, val) {
   localStorage.setItem('examready_' + key, JSON.stringify(val));
   _dataCache[key] = val;
   _dataDirty.delete(key);
+  if (_isAdminPage() && ['pdfs', 'quizzes', 'flashcards'].includes(String(key))) bumpContentVersion();
 }
 
 function _isAdminPage() {
@@ -612,6 +680,7 @@ function addFooterLegalLinks() {
     legalCol.setAttribute('data-legal-links', 'true');
     legalCol.innerHTML = `
       <h4>Legal</h4>
+      <a href="ownership.html">Ownership</a>
       <a href="privacy.html">Privacy Policy</a>
       <a href="terms.html">Terms &amp; Conditions</a>
       <a href="disclaimer.html">Disclaimer</a>
@@ -625,7 +694,7 @@ function addFooterLegalLinks() {
     socialDiv.setAttribute('data-social-icons', 'true');
     socialDiv.style.cssText = 'display:flex;align-items:center;gap:12px;';
     socialDiv.innerHTML = `
-      <a href="https://www.instagram.com/examready.co/" target="_blank" rel="noopener noreferrer" title="Follow us on Instagram"
+<a href="https://www.instagram.com/examready.co.in/?hl=en" target="_blank" rel="noopener noreferrer" title="Follow us on Instagram"
         style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:#fff;text-decoration:none;">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
       </a>
@@ -811,30 +880,29 @@ const DEFAULT_NAV_ITEMS = [
   { label: 'Home',           url: 'index.html' },
   { label: 'Class 9',        url: 'class9.html' },
   { label: 'Class 10',       url: 'class10.html' },
-  { label: 'Class 11',       url: 'class11.html' },
-  { label: 'Class 12',       url: 'class12.html' },
-  { label: 'Solutions',      url: 'solutions.html' },
-  { label: 'Notes',          url: 'notes.html' },
   { label: 'PYQs',           url: 'pyq.html' },
   { label: 'Question Banks', url: 'questionbank.html' },
-  { label: 'Quizzes',        url: 'quizzes.html' }
+  { label: 'Quizzes',        url: 'quizzes.html' },
+  { label: 'Flashcards',     url: 'flashcards.html' },
+  { label: 'Mistakes',       url: 'mistakes.html' },
+  { label: 'Progress',       url: 'student.html' }
 ];
 
 const SHARED_FOOTER_LINKS = {
   classes: [
     { label: 'Class 9',  url: 'class9.html' },
     { label: 'Class 10', url: 'class10.html' },
-    { label: 'Class 11', url: 'class11.html' },
-    { label: 'Class 12', url: 'class12.html' }
   ],
   resources: [
-    { label: 'Solutions',      url: 'solutions.html' },
-    { label: 'Short Notes',    url: 'notes.html' },
     { label: 'PYQ Papers',     url: 'pyq.html' },
     { label: 'Question Banks', url: 'questionbank.html' },
-    { label: 'Quizzes',        url: 'quizzes.html' }
+    { label: 'Quizzes',        url: 'quizzes.html' },
+    { label: 'Flashcards',     url: 'flashcards.html' },
+    { label: 'Mistakes',  url: 'mistakes.html' },
+    { label: 'Progress',  url: 'student.html' }
   ],
   legal: [
+    { label: 'Ownership',         url: 'ownership.html' },
     { label: 'Privacy Policy',     url: 'privacy.html' },
     { label: 'Terms & Conditions', url: 'terms.html' },
     { label: 'Disclaimer',         url: 'disclaimer.html' }
@@ -851,7 +919,9 @@ function getDefaultNavItems() {
 
 function normalizeNavItems(items) {
   if (!Array.isArray(items)) return getDefaultNavItems();
+  const REMOVED_NAV = ['solutions.html', 'notes.html', 'note-post.html', 'solution-post.html', 'class11.html', 'class12.html'];
   const normalized = items
+    .filter(item => !REMOVED_NAV.includes(String(item?.url || '').trim().toLowerCase()))
     .map(item => ({
       label: String(item?.label || '').replace(/\s+/g, ' ').trim().slice(0, 60),
       url: sanitizeNavigationUrl(item?.url || '', '')
@@ -864,9 +934,7 @@ function resolveCurrentNavTarget() {
   const current = getCurrentPageName();
   const params = new URLSearchParams(window.location.search);
   const aliases = {
-    'note-post.html': 'notes.html',
-    'quiz.html': 'quizzes.html',
-    'solution-post.html': 'solutions.html'
+    'quiz.html': 'quizzes.html'
   };
 
   if (aliases[current]) return aliases[current];
@@ -899,7 +967,9 @@ function resolveCurrentNavTarget() {
 function getNavItems() {
   try {
     const raw = localStorage.getItem('er_nav');
-    return raw ? normalizeNavItems(JSON.parse(raw)) : getDefaultNavItems();
+    const items = raw ? normalizeNavItems(JSON.parse(raw)) : getDefaultNavItems();
+    const known = new Set(items.map(item => item.url));
+    return items.concat(DEFAULT_NAV_ITEMS.filter(item => !known.has(item.url) && ['mistakes.html', 'student.html'].includes(item.url)));
   } catch(e) { return getDefaultNavItems(); }
 }
 
@@ -907,6 +977,10 @@ function buildSharedHeaderMarkup() {
   const logo = sanitizeImageAssetUrl(localStorage.getItem('er_logo') || 'logo.png', 'logo.png');
   const navItems = getNavItems();
   const activeUrl = resolveCurrentNavTarget();
+  const activeProfile = typeof ExamReadyStorage !== 'undefined' ? ExamReadyStorage.getActiveProfile() : null;
+  const profileName = escapeHtml(activeProfile?.name || 'Student');
+  const streakSummary = typeof ExamReadyStorage !== 'undefined' && ExamReadyStorage.getStreakSummary
+    ? ExamReadyStorage.getStreakSummary() : { currentStreak: 0, todayDone: false };
   const navHtml = navItems.map(item => {
     const isActive = item.url === activeUrl;
     return `<a href="${escapeHtml(item.url)}"${isActive ? ' class="active"' : ''}>${escapeHtml(item.label)}</a>`;
@@ -919,10 +993,246 @@ function buildSharedHeaderMarkup() {
     <nav id="mainNav">
       ${navHtml}
     </nav>
+    <button class="er-profile-control" type="button" data-profile-trigger="true" onclick="openStudentProfileDialog()" aria-label="Open profile switcher">
+      <span class="er-profile-avatar" data-profile-avatar="true">${renderProfileAvatarContent(activeProfile?.avatar || '📚', 'er-profile-avatar-image')}</span>
+      <span class="er-profile-name" data-profile-name="true">${profileName}</span>
+    </button>
+    <a class="er-streak-control${streakSummary.todayDone ? ' is-complete' : ''}" data-streak-control="true" href="student.html" aria-label="${escapeHtml((typeof ExamReadyConfig !== 'undefined' && ExamReadyConfig.featureName) || 'Streak')} ${Number(streakSummary.currentStreak) || 0}">
+      <span aria-hidden="true">🔥</span><strong data-streak-number="true">${Number(streakSummary.currentStreak) || 0}</strong>
+    </a>
     <div class="hamburger" onclick="toggleMenu()" role="button" tabindex="0" aria-label="Open navigation menu">
       <span></span><span></span><span></span>
     </div>
   `;
+}
+
+function updateStudentProfileControl() {
+  if (typeof ExamReadyStorage === 'undefined') return;
+  const profile = ExamReadyStorage.getActiveProfile();
+  document.querySelectorAll('[data-profile-avatar="true"]').forEach(node => { node.innerHTML = renderProfileAvatarContent(profile?.avatar || '📚', 'er-profile-avatar-image'); });
+  document.querySelectorAll('[data-profile-name="true"]').forEach(node => { node.textContent = profile?.name || 'Student'; });
+  const summary = ExamReadyStorage.getStreakSummary ? ExamReadyStorage.getStreakSummary() : { currentStreak: 0, todayDone: false };
+  document.querySelectorAll('[data-streak-number="true"]').forEach(node => { node.textContent = String(Number(summary.currentStreak) || 0); });
+  document.querySelectorAll('[data-streak-control="true"]').forEach(node => {
+    node.classList.toggle('is-complete', !!summary.todayDone);
+    node.setAttribute('aria-label', `${(typeof ExamReadyConfig !== 'undefined' && ExamReadyConfig.featureName) || 'Streak'} ${Number(summary.currentStreak) || 0}`);
+  });
+}
+
+function renderProfileAvatarContent(value, className) {
+  const avatar = String(value || '📚');
+  const safeClass = className || 'er-profile-avatar-image';
+  if (/^data:image\/(?:png|jpeg|webp|gif);base64,[A-Za-z0-9+/=]+$/i.test(avatar) && avatar.length <= 700000) {
+    return `<img class="${escapeHtml(safeClass)}" src="${escapeHtml(avatar)}" alt="Profile picture">`;
+  }
+  return escapeHtml(avatar.slice(0, 12) || '📚');
+}
+
+function ensureStudentProfileStyles() {
+  if (document.getElementById('er-profile-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'er-profile-styles';
+  style.textContent = `
+    .er-profile-control { display:inline-flex; align-items:center; gap:7px; flex-shrink:0; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; border-radius:999px; padding:5px 10px 5px 6px; font:700 12px 'Nunito',sans-serif; cursor:pointer; }
+    .er-profile-control:hover, .er-profile-control:focus-visible { background:rgba(255,255,255,.16); outline:2px solid #fff; outline-offset:2px; }
+    .er-streak-control { display:inline-flex; align-items:center; gap:4px; flex-shrink:0; color:#8a8a8a; text-decoration:none; border:1px solid rgba(255,255,255,.16); border-radius:999px; padding:6px 9px; font:900 13px 'Nunito',sans-serif; }
+    .er-streak-control.is-complete { color:#ff9e3d; border-color:rgba(255,158,61,.55); }
+    .er-streak-control:hover, .er-streak-control:focus-visible { color:#fff; outline:2px solid #fff; outline-offset:2px; }
+    .er-profile-avatar { width:26px; height:26px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; background:#fff; color:#111; font-size:15px; }
+    .er-profile-avatar-image { width:100%; height:100%; border-radius:50%; object-fit:cover; display:block; }
+    .er-profile-name { max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .er-profile-backdrop { position:fixed; inset:0; z-index:3000; display:flex; align-items:flex-start; justify-content:center; padding:84px 16px 24px; background:rgba(13,13,13,.68); }
+    .er-profile-backdrop[hidden] { display:none; }
+    .er-profile-dialog { width:min(440px,100%); max-height:calc(100vh - 108px); overflow:auto; background:#fff; color:#1a1a1a; border-radius:14px; box-shadow:0 24px 70px rgba(0,0,0,.3); padding:22px; }
+    .er-profile-dialog-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; }
+    .er-profile-dialog h2 { margin:0; font:900 25px 'Nunito',sans-serif; }
+    .er-profile-dialog p { margin:5px 0 0; color:#666; font-size:13px; font-weight:600; }
+    .er-profile-close { border:0; background:#f2f2f2; color:#333; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:20px; line-height:1; }
+    .er-profile-list { display:grid; gap:8px; margin-bottom:20px; }
+    .er-profile-list[hidden], .er-profile-form[hidden] { display:none !important; }
+    .er-profile-option { display:flex; align-items:center; gap:11px; width:100%; text-align:left; border:1px solid #e5e5e5; border-radius:10px; background:#fff; padding:10px 12px; color:#1a1a1a; cursor:pointer; font:800 14px 'Nunito',sans-serif; }
+    .er-profile-option:hover, .er-profile-option.active { border-color:#e8211a; background:#fff5f4; }
+    .er-profile-option small { display:block; color:#777; font-size:11px; font-weight:700; margin-top:2px; }
+    .er-profile-option-avatar { width:32px; height:32px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; background:#f0f0f0; font-size:18px; flex-shrink:0; }
+    .er-profile-option-avatar-image { width:100%; height:100%; border-radius:50%; object-fit:cover; display:block; }
+    .er-profile-form { border-top:1px solid #eee; padding-top:18px; }
+    .er-profile-form label { display:block; color:#555; font-size:12px; font-weight:900; margin-bottom:6px; }
+    .er-profile-form input { width:100%; border:1px solid #d8d8d8; border-radius:8px; padding:10px 11px; font:700 14px 'Nunito',sans-serif; color:#1a1a1a; }
+    .er-profile-form input:focus { border-color:#e8211a; outline:2px solid rgba(232,33,26,.16); }
+    .er-profile-avatars { display:flex; flex-wrap:wrap; gap:7px; margin:8px 0 14px; }
+    .er-profile-avatar-choice { width:36px; height:36px; border:1px solid #ddd; background:#fff; border-radius:50%; cursor:pointer; font-size:18px; }
+    .er-profile-avatar-choice.selected { border:2px solid #e8211a; background:#fff5f4; }
+    .er-profile-custom-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .er-profile-preview { display:flex; align-items:center; gap:8px; min-height:42px; margin:8px 0 12px; color:#777; font-size:11px; font-weight:700; }
+    .er-profile-preview-avatar { width:38px; height:38px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; overflow:hidden; background:#f2f2f2; font-size:22px; }
+    .er-profile-preview-image { width:100%; height:100%; object-fit:cover; display:block; }
+    .er-profile-actions { display:flex; justify-content:flex-end; gap:8px; }
+    .er-profile-actions button { border:0; border-radius:8px; padding:10px 14px; cursor:pointer; font:900 13px 'Nunito',sans-serif; }
+    .er-profile-secondary { background:#f1f1f1; color:#333; }
+    .er-profile-primary { background:#e8211a; color:#fff; }
+    @media(max-width:700px) { .er-profile-name { display:none; } .er-profile-control { padding-right:6px; } }
+  `;
+  document.head.appendChild(style);
+}
+
+function initStudentProfileUi() {
+  if (typeof ExamReadyStorage === 'undefined') return;
+  ensureStudentProfileStyles();
+  if (!document.getElementById('er-profile-backdrop')) {
+    const backdrop = document.createElement('div');
+    backdrop.id = 'er-profile-backdrop';
+    backdrop.className = 'er-profile-backdrop';
+    backdrop.hidden = true;
+    backdrop.innerHTML = `
+      <div class="er-profile-dialog" role="dialog" aria-modal="true" aria-labelledby="er-profile-title">
+        <div class="er-profile-dialog-head">
+          <div><h2 id="er-profile-title">Personal details</h2><p>This student account stays on this device. Change your name or profile picture any time.</p></div>
+          <button class="er-profile-close" type="button" data-profile-close="true" aria-label="Close profile switcher">×</button>
+        </div>
+        <div class="er-profile-list" data-profile-list="true" hidden></div>
+        <form class="er-profile-form" data-profile-form="true" hidden>
+          <label for="er-profile-new-name">Add a profile</label>
+          <input id="er-profile-new-name" name="name" maxlength="40" placeholder="Profile name" autocomplete="off">
+          <div class="er-profile-avatars" data-profile-avatars="true" aria-label="Choose an avatar"></div>
+          <div class="er-profile-custom-row"><div><label for="er-profile-new-emoji">Your emoji</label><input id="er-profile-new-emoji" maxlength="12" placeholder="e.g. 🧠"></div><div><label for="er-profile-new-image">Your image</label><input id="er-profile-new-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif" style="padding:7px 4px;font-size:11px"></div></div>
+          <div class="er-profile-preview" data-profile-new-preview="true"><span class="er-profile-preview-avatar">📚</span><span>Pick an emoji, preset, or local image.</span></div>
+          <div class="er-profile-actions"><button class="er-profile-secondary" type="button" data-profile-close="true">Close</button><button class="er-profile-primary" type="submit">Add profile</button></div>
+        </form>
+        <form class="er-profile-form" data-profile-edit-form="true">
+          <label for="er-profile-edit-name">Student account</label>
+          <input id="er-profile-edit-name" maxlength="40" placeholder="Profile name" autocomplete="off">
+          <div class="er-profile-avatars" data-profile-edit-avatars="true" aria-label="Choose an avatar"></div>
+          <div class="er-profile-custom-row"><div><label for="er-profile-edit-emoji">Your emoji</label><input id="er-profile-edit-emoji" maxlength="12" placeholder="e.g. 🧠"></div><div><label for="er-profile-edit-image">Your image</label><input id="er-profile-edit-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif" style="padding:7px 4px;font-size:11px"></div></div>
+          <div class="er-profile-preview" data-profile-edit-preview="true"><span class="er-profile-preview-avatar">📚</span><span>Profile picture stays on this device.</span></div>
+          <div class="er-profile-actions"><button class="er-profile-primary" type="submit">Save profile</button></div>
+        </form>
+      </div>`;
+    document.body.appendChild(backdrop);
+    backdrop.addEventListener('click', event => { if (event.target === backdrop) closeStudentProfileDialog(); });
+    backdrop.querySelectorAll('[data-profile-close="true"]').forEach(button => { button.addEventListener('click', closeStudentProfileDialog); });
+      backdrop.querySelector('[data-profile-form="true"]').addEventListener('submit', event => {
+      event.preventDefault();
+      const nameInput = backdrop.querySelector('[name="name"]');
+      const selected = backdrop.querySelector('[data-profile-avatars="true"] .er-profile-avatar-choice.selected');
+      const customImage = backdrop.querySelector('#er-profile-new-image')?.dataset.avatarImage || '';
+      const customEmoji = backdrop.querySelector('#er-profile-new-emoji')?.value.trim() || '';
+      const profile = ExamReadyStorage.createProfile(nameInput.value, customImage || customEmoji || selected?.dataset.avatar);
+      if (!profile) { nameInput.setCustomValidity('You can use up to 6 profiles on this device.'); nameInput.reportValidity(); return; }
+      nameInput.setCustomValidity('');
+      nameInput.value = '';
+      closeStudentProfileDialog();
+      updateStudentProfileControl();
+    });
+    backdrop.querySelector('[data-profile-edit-form="true"]').addEventListener('submit', event => {
+      event.preventDefault();
+      const selected = backdrop.querySelector('[data-profile-edit-avatars="true"] .er-profile-avatar-choice.selected');
+      const customImage = backdrop.querySelector('#er-profile-edit-image')?.dataset.avatarImage || '';
+      const customEmoji = backdrop.querySelector('#er-profile-edit-emoji')?.value.trim() || '';
+      ExamReadyStorage.updateProfile({
+        name: backdrop.querySelector('#er-profile-edit-name')?.value || '',
+        avatar: customImage || customEmoji || selected?.dataset.avatar || '📚'
+      });
+      renderStudentProfileDialog();
+      updateStudentProfileControl();
+    });
+    ['new', 'edit'].forEach(prefix => {
+      const input = backdrop.querySelector('#er-profile-' + prefix + '-image');
+      if (!input) return;
+      input.addEventListener('change', () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        if (!/^image\/(?:png|jpeg|webp|gif)$/i.test(file.type) || file.size > 500 * 1024) {
+          showToast('Choose a PNG, JPG, WEBP, or GIF image under 500 KB.', 'error');
+          input.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = event => {
+          input.dataset.avatarImage = event.target.result;
+          const preview = backdrop.querySelector('[data-profile-' + prefix + '-preview="true"] .er-profile-preview-avatar');
+          if (preview) preview.innerHTML = renderProfileAvatarContent(event.target.result, 'er-profile-preview-image');
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+  }
+  renderStudentProfileDialog();
+  ExamReadyStorage.subscribe(updateStudentProfileControl);
+}
+
+function renderStudentProfileDialog() {
+  const backdrop = document.getElementById('er-profile-backdrop');
+  if (!backdrop || typeof ExamReadyStorage === 'undefined') return;
+  const profiles = ExamReadyStorage.getProfiles();
+  const config = ExamReadyStorage.getConfig();
+  const activeProfile = ExamReadyStorage.getActiveProfile();
+  const list = backdrop.querySelector('[data-profile-list="true"]');
+  list.innerHTML = profiles.map(profile => `
+    <button type="button" class="er-profile-option${profile.active ? ' active' : ''}" data-profile-id="${escapeHtml(profile.userId)}">
+      <span class="er-profile-option-avatar">${renderProfileAvatarContent(profile.avatar, 'er-profile-option-avatar-image')}</span>
+      <span>${escapeHtml(profile.name)}<small>${profile.active ? 'Active profile' : 'Switch to this profile'}</small></span>
+    </button>`).join('');
+  list.querySelectorAll('[data-profile-id]').forEach(button => {
+    button.addEventListener('click', () => {
+      ExamReadyStorage.setActiveProfile(button.dataset.profileId);
+      renderStudentProfileDialog();
+      updateStudentProfileControl();
+    });
+  });
+  const renderAvatarChoices = (avatarWrap, currentAvatar) => {
+    if (!avatarWrap) return;
+    avatarWrap.innerHTML = config.profileAvatars.map(avatar => `<button type="button" class="er-profile-avatar-choice${currentAvatar === avatar ? ' selected' : ''}" data-avatar="${escapeHtml(avatar)}" aria-label="Use ${escapeHtml(avatar)} avatar">${escapeHtml(avatar)}</button>`).join('');
+    avatarWrap.querySelectorAll('[data-avatar]').forEach(button => {
+      button.addEventListener('click', () => {
+        avatarWrap.querySelectorAll('[data-avatar]').forEach(item => item.classList.remove('selected'));
+        button.classList.add('selected');
+      });
+    });
+  };
+  renderAvatarChoices(backdrop.querySelector('[data-profile-avatars="true"]'), '📚');
+  renderAvatarChoices(backdrop.querySelector('[data-profile-edit-avatars="true"]'), activeProfile?.avatar || '📚');
+  [['new', backdrop.querySelector('[data-profile-avatars="true"]')], ['edit', backdrop.querySelector('[data-profile-edit-avatars="true"]')]].forEach(([prefix, avatarWrap]) => {
+    const imageInput = backdrop.querySelector('#er-profile-' + prefix + '-image');
+    const emojiInput = backdrop.querySelector('#er-profile-' + prefix + '-emoji');
+    avatarWrap?.querySelectorAll('[data-avatar]').forEach(button => button.addEventListener('click', () => {
+      if (imageInput) { delete imageInput.dataset.avatarImage; imageInput.value = ''; }
+      if (emojiInput) emojiInput.value = '';
+    }));
+    if (emojiInput && !emojiInput.dataset.avatarBound) {
+      emojiInput.dataset.avatarBound = 'true';
+      emojiInput.addEventListener('input', () => {
+        if (!emojiInput.value.trim() || !imageInput) return;
+        delete imageInput.dataset.avatarImage;
+        imageInput.value = '';
+      });
+    }
+  });
+  const editName = backdrop.querySelector('#er-profile-edit-name');
+  const editEmoji = backdrop.querySelector('#er-profile-edit-emoji');
+  const editImage = backdrop.querySelector('#er-profile-edit-image');
+  const editPreview = backdrop.querySelector('[data-profile-edit-preview="true"] .er-profile-preview-avatar');
+  if (editName) editName.value = activeProfile?.name || '';
+  if (editEmoji) editEmoji.value = activeProfile?.avatar && !/^data:image\//i.test(activeProfile.avatar) && config.profileAvatars.indexOf(activeProfile.avatar) === -1 ? activeProfile.avatar : '';
+  if (editImage && /^data:image\//i.test(activeProfile?.avatar || '')) {
+    editImage.dataset.avatarImage = activeProfile.avatar;
+    if (editPreview) editPreview.innerHTML = renderProfileAvatarContent(activeProfile.avatar, 'er-profile-preview-image');
+  } else if (editImage) {
+    delete editImage.dataset.avatarImage;
+    if (editPreview) editPreview.textContent = 'Profile picture stays on this device.';
+  }
+}
+
+function openStudentProfileDialog() {
+  const backdrop = document.getElementById('er-profile-backdrop');
+  if (!backdrop) return;
+  renderStudentProfileDialog();
+  backdrop.hidden = false;
+  backdrop.querySelector('#er-profile-edit-name')?.focus();
+}
+
+function closeStudentProfileDialog() {
+  const backdrop = document.getElementById('er-profile-backdrop');
+  if (backdrop) backdrop.hidden = true;
 }
 
 function buildFooterLinks(items) {
@@ -936,7 +1246,7 @@ function buildSharedFooterMarkup() {
   const config = getSiteConfig();
   const siteName = escapeHtml((config.siteName || 'ExamReady').trim() || 'ExamReady');
   const siteTagline = escapeHtml(
-    (config.siteTagline || 'Free study resources for CBSE students in Class 9 to 12. Notes, PYQs, question banks, quizzes, and solutions - all free.').trim()
+    (config.siteTagline || 'Free study resources for CBSE students in Class 9 to 10. PYQs, question banks, quizzes, and flashcards - all free.').trim()
   );
   const year = new Date().getFullYear();
 
@@ -965,9 +1275,9 @@ function buildSharedFooterMarkup() {
       <div class="footer-bottom">
         <p>&copy; ${year} ${siteName}. Made with <span>&hearts;</span> for students.</p>
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <p>CBSE Resources for Class 9-12</p>
+          <p>CBSE Resources for Class 9-10</p>
           <div data-social-icons="true" style="display:flex;align-items:center;gap:12px;">
-            <a href="https://www.instagram.com/examready.co/" target="_blank" rel="noopener noreferrer" title="Follow us on Instagram"
+<a href="https://www.instagram.com/examready.co.in/?hl=en" target="_blank" rel="noopener noreferrer" title="Follow us on Instagram"
               style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:#fff;text-decoration:none;">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
             </a>
@@ -980,6 +1290,28 @@ function buildSharedFooterMarkup() {
       </div>
     </div>
   `;
+}
+
+function ensureSharedFooterStyles() {
+  if (document.getElementById('er-shared-footer-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'er-shared-footer-styles';
+  style.textContent = `
+    footer[data-er-shared-footer] { background:var(--black,#0d0d0d); color:#aaa; padding:40px 24px 24px; margin-top:auto; }
+    footer[data-er-shared-footer] .footer-inner { max-width:1200px; margin:0 auto; }
+    footer[data-er-shared-footer] .footer-top { display:flex; gap:40px; flex-wrap:wrap; margin-bottom:32px; }
+    footer[data-er-shared-footer] .footer-brand { flex:1; min-width:220px; }
+    footer[data-er-shared-footer] .footer-brand p { max-width:none; margin:0; text-align:left; font-size:13px; line-height:1.7; color:#888; }
+    footer[data-er-shared-footer] .footer-links { flex:2; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:24px; }
+    footer[data-er-shared-footer] .footer-col h4 { color:#fff; font-size:14px; font-weight:800; margin:0 0 12px; text-transform:uppercase; letter-spacing:1px; }
+    footer[data-er-shared-footer] .footer-col a { display:block; color:#888; text-decoration:none; font-size:13px; font-weight:600; margin-bottom:8px; }
+    footer[data-er-shared-footer] .footer-col a:hover { color:#fff; }
+    footer[data-er-shared-footer] .footer-bottom { border-top:1px solid #222; padding-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+    footer[data-er-shared-footer] .footer-bottom p { max-width:none; margin:0; text-align:left; font-size:12px; color:#555; }
+    footer[data-er-shared-footer] .footer-bottom span { color:var(--red,#e8211a); }
+    @media(max-width:600px) { footer[data-er-shared-footer] { padding-left:16px; padding-right:16px; } }
+  `;
+  document.head.appendChild(style);
 }
 
 function syncSharedSiteChrome() {
@@ -1000,6 +1332,7 @@ function syncSharedSiteChrome() {
     footer.innerHTML = buildSharedFooterMarkup();
     footer.setAttribute('data-er-shared-footer', 'true');
   }
+  ensureSharedFooterStyles();
 }
 
 // ===== APPLY SITE CONFIG TO PAGE =====
@@ -1151,92 +1484,6 @@ function initSecurityHardeningObserver() {
   observer.observe(document.documentElement, { childList: true, subtree: true });
 }
 
-// ===== SOLUTION POSTS =====
-const DEFAULT_SOLUTION_POSTS = [
-  {
-    id: 'solpost_1',
-    title: 'Class 9 Mathematics: Number Systems Solutions',
-    classNum: '9', subjectKey: 'math',
-    summary: 'Step-by-step worked answers for important Number Systems questions with easy exam-ready language.',
-    content: `1. Rational numbers can be written in p/q form where q is not zero.
-
-2. Irrational numbers cannot be expressed in simple p/q form. Examples include sqrt(2) and pi.
-
-3. To compare irrational numbers in exams, first convert them into approximate decimal values and then arrange them carefully.
-
-- Revise the definitions once.
-- Write every step clearly.
-- Avoid skipping simplification in board-style answers.`,
-    author: 'ExamReady Team', updatedAt: '2026-04-03'
-  },
-  {
-    id: 'solpost_2',
-    title: 'Class 10 Science: Chemical Reactions and Equations Solutions',
-    classNum: '10', subjectKey: 'science',
-    summary: 'Balanced equations, explanation points, and answer-writing format for common textbook exercises.',
-    content: `1. A chemical reaction is identified through change in color, temperature, state, or formation of a new substance.
-
-2. While writing a balanced equation, make the number of atoms equal on both sides without changing the chemical formula.
-
-3. For CBSE-style answers, mention the observation first and then write the balanced reaction.
-
-- Use symbols only after naming the reactants.
-- Underline key terms in long answers.
-- Mention oxidation and reduction separately when asked.`,
-    author: 'ExamReady Team', updatedAt: '2026-04-03'
-  },
-  {
-    id: 'solpost_3',
-    title: 'Class 11 History: Writing and City Life Solutions',
-    classNum: '11', subjectKey: 'history',
-    summary: 'Short and long answer support for Mesopotamian civilization topics under Humanities.',
-    content: `1. Mesopotamian cities grew due to trade, irrigation, and organized administration.
-
-2. Writing helped rulers and traders maintain accounts, records, and legal communication.
-
-3. In descriptive answers, connect city growth with agriculture, surplus, and social organization for better marks.`,
-    author: 'ExamReady Team', updatedAt: '2026-04-03'
-  },
-  {
-    id: 'solpost_4',
-    title: 'Class 12 Accountancy: Partnership Fundamentals Solutions',
-    classNum: '12', subjectKey: 'accountancy',
-    summary: 'Clean journal formats, adjustments, and explanation notes for partnership basics.',
-    content: `1. A partnership firm is created through an agreement between two or more persons carrying on business together.
-
-2. The partnership deed should clearly define profit-sharing ratio, salary, interest on capital, and drawings.
-
-3. In numerical questions, write the format first and then pass journal entries in proper sequence.`,
-    author: 'ExamReady Team', updatedAt: '2026-04-03'
-  }
-];
-
-function getAllSolutionPosts() {
-  const stored = getData('solution_posts');
-  const posts = Array.isArray(stored) ? stored : DEFAULT_SOLUTION_POSTS;
-  return JSON.parse(JSON.stringify(posts)).sort((a, b) =>
-    new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime()
-  );
-}
-
-function saveAllSolutionPosts(posts) {
-  setData('solution_posts', Array.isArray(posts) ? posts : []);
-}
-
-function getSolutionPostsByClassAndSubject(cls, subjectKey) {
-  return getAllSolutionPosts().filter(p => p.classNum === cls && p.subjectKey === subjectKey);
-}
-
-function findSolutionPostById(postId) {
-  if (!postId) return null;
-  return getAllSolutionPosts().find(p => p.id === postId) || null;
-}
-
-function getSolutionPostUrl(postOrId) {
-  const id = typeof postOrId === 'string' ? postOrId : postOrId?.id;
-  return `solution-post.html?id=${encodeURIComponent(id || '')}`;
-}
-
 function escapeHtml(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -1244,12 +1491,6 @@ function escapeHtml(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
-}
-
-function getSolutionExcerpt(post, maxLength = 160) {
-  const raw = (post?.summary || post?.content || '').replace(/\s+/g, ' ').trim();
-  if (!raw) return '';
-  return raw.length > maxLength ? raw.slice(0, maxLength - 1) + '...' : raw;
 }
 
 function formatHumanDate(value) {
@@ -1261,22 +1502,9 @@ function formatHumanDate(value) {
   } catch(e) { return 'Recently updated'; }
 }
 
-function formatSolutionContent(content) {
-  const normalized = String(content || '').replace(/\r\n/g, '\n').trim();
-  if (!normalized) return '<p>Content will be added soon.</p>';
-  return normalized.split(/\n\s*\n/).map(block => {
-    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
-    if (!lines.length) return '';
-    if (lines.every(l => l.startsWith('- '))) {
-      return `<ul>${lines.map(l => `<li>${escapeHtml(l.slice(2))}</li>`).join('')}</ul>`;
-    }
-    return `<p>${lines.map(l => escapeHtml(l)).join('<br>')}</p>`;
-  }).join('');
-}
-
 // ===== AD SYSTEM — FIXED VERSION =====
 // Replaces the entire "AD SYSTEM" block in shared.js
-// All 17 admin slots are registered; injection key aliases are resolved.
+// Active admin slots are registered; injection key aliases are resolved.
 
 const AD_SLOT_REGISTRY = {
   // ── Global — All Pages ──
@@ -1294,9 +1522,8 @@ const AD_SLOT_REGISTRY = {
   between_sections: { label:'Between Sections (ads.js)',       enabled:true, adCode:'' },
 
   // ── High-Intent Pages ──
-  results:          { label:'Results / Post-Article (shared)', enabled:true, adCode:'' },
+  results:          { label:'Quiz Results (shared)',        enabled:true, adCode:'' },
   results_banner:   { label:'Results Banner (ads.js)',         enabled:true, adCode:'' },
-  solution_mid:     { label:'Mid-Article (ads.js)',            enabled:true, adCode:'' },
   quiz_sidebar:     { label:'Quiz Sidebar (ads.js)',           enabled:true, adCode:'' },
   pdf_viewer:       { label:'PDF Viewer Banner',               enabled:true, adCode:'' },
 
@@ -1312,10 +1539,6 @@ function getAdSlots() {
     const merged = {};
     Object.entries(AD_SLOT_REGISTRY).forEach(([k, defaults]) => {
       merged[k] = { ...defaults, ...(saved[k] || {}) };
-    });
-    // Include any extra slots admin may have added
-    Object.entries(saved).forEach(([k, v]) => {
-      if (!merged[k]) merged[k] = { enabled: true, adCode: '', label: k, ...v };
     });
     // ── Page override merge ──
     try {
@@ -1623,6 +1846,7 @@ if (typeof window !== 'undefined') {
         // Chrome + ads deferred so page renders before they execute
         _defer(function() {
           syncSharedSiteChrome();
+          initStudentProfileUi();
           applySiteConfig();
           initResponsiveNav();
           applyFooterBranding();
