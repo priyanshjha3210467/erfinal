@@ -1,7 +1,251 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moved - ExamReady</title>
-<meta http-equiv="refresh" content="0; url=flashcards.html">
-<link rel="canonical" href="flashcards.html"><meta name="robots" content="noindex">
-<script>location.replace('flashcards.html');</script></head>
-<body><p style="font-family:sans-serif;padding:24px">This page has moved. <a href="flashcards.html">Go to Flashcards</a>.</p></body></html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Read an ExamReady revision note.">
+  <title>Revision Note - ExamReady</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="animations.css">
+  <style>
+    :root { --red:#e8211a; --orange:#e67700; --coral:#ff7a50; --gold:#ffb347; --warm-gradient:linear-gradient(105deg,#e8211a 0%,#f05a36 52%,#ff9a45 100%); --black:#0d0d0d; --surface:#f4f5f7; --text:#1a1a1a; --muted:#6b7280; --border:#e2e4e8; --reader-font-size:16px; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    html, body { width:100%; overflow-x:hidden; }
+    body { min-height:100vh; margin:0; display:flex; flex-direction:column; background:var(--surface); color:var(--text); font-family:'Nunito',sans-serif; -webkit-font-smoothing:antialiased; }
+    main { flex:1; width:min(1160px,100%); margin:0 auto; padding:25px 24px 72px; }
+    .reader-tools { display:flex; align-items:center; justify-content:space-between; gap:15px; margin-bottom:15px; }
+    .back-link { display:inline-flex; align-items:center; gap:8px; min-height:38px; color:#a91c17; font-size:12px; font-weight:900; text-decoration:none; }
+    .back-link:hover { text-decoration:underline; }
+    .reader-actions { display:flex; align-items:center; gap:7px; }
+    .action-button { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:36px; padding:0 11px; border:1px solid var(--border); border-radius:6px; background:#fff; color:#34383d; font:800 11px 'Nunito',sans-serif; cursor:pointer; }
+    .action-button:hover { border-color:#e7aa7d; background:#fff8f2; color:#9f4815; }
+    .action-button:focus-visible, a:focus-visible, summary:focus-visible { outline:3px solid rgba(230,119,0,.3); outline-offset:2px; }
+    .type-control { display:inline-flex; overflow:hidden; border:1px solid var(--border); border-radius:6px; background:#fff; }
+    .type-control button { width:35px; height:34px; border:0; background:transparent; color:#34383d; font:900 12px 'Nunito',sans-serif; cursor:pointer; }
+    .type-control button + button { border-left:1px solid var(--border); }
+    .type-control button:hover { background:#f1f3f4; }
+    .reader-progress { display:flex; align-items:center; gap:12px; margin:0 0 16px; color:#626975; font-size:10px; font-weight:900; }
+    .reader-progress-label { flex:0 0 auto; }
+    .progress-track { height:5px; flex:1; overflow:hidden; border-radius:99px; background:#dedfe3; }
+    .progress-fill { width:0; height:100%; border-radius:inherit; background:var(--warm-gradient); transition:width .12s linear; }
+    .progress-value { width:32px; color:#34383d; text-align:right; font-variant-numeric:tabular-nums; }
+    .note-masthead { position:relative; overflow:hidden; margin-bottom:19px; padding:27px 32px 28px; border-radius:7px; background:linear-gradient(112deg,#0d0d0d 0%,#1b1513 58%,#3c1b0e 100%); color:#fff; }
+    .note-masthead::after { content:""; position:absolute; inset:auto 0 0; height:3px; background:var(--warm-gradient); pointer-events:none; }
+    .note-breadcrumbs, .note-meta { position:relative; z-index:1; display:flex; align-items:center; flex-wrap:wrap; gap:7px; color:#c1c1c1; font-size:10px; font-weight:900; }
+    .note-breadcrumbs { margin-bottom:17px; }
+    .note-breadcrumbs a { color:#d0d0d0; text-decoration:none; }
+    .note-breadcrumbs a:hover { color:#fff; text-decoration:underline; }
+    .crumb-sep { color:#757575; }
+    .note-meta { color:#ffbf91; text-transform:uppercase; }
+    .meta-dot { width:4px; height:4px; border-radius:50%; background:#777; }
+    .note-masthead h1 { position:relative; z-index:1; max-width:850px; margin:10px 0 9px; font-family:'Bebas Neue',sans-serif; font-size:46px; font-weight:400; line-height:1.06; overflow-wrap:anywhere; }
+    .note-summary { position:relative; z-index:1; max-width:790px; margin:0; color:#cdcdcd; font-size:14px; font-weight:700; line-height:1.65; }
+    .note-facts { position:relative; z-index:1; display:flex; flex-wrap:wrap; gap:8px 17px; margin-top:17px; color:#b6b6b6; font-size:10px; font-weight:800; }
+    .note-facts span { display:inline-flex; align-items:center; gap:6px; }
+    .reader-layout { display:grid; grid-template-columns:minmax(0,1fr) 228px; gap:25px; align-items:start; }
+    .reader-layout.no-outline { grid-template-columns:minmax(0,1fr); }
+    .note-content { min-width:0; padding:33px 38px 48px; border:1px solid var(--border); border-radius:7px; background:#fff; color:#353941; font-size:var(--reader-font-size); font-weight:600; line-height:1.9; overflow-wrap:anywhere; }
+    .note-content > :first-child { margin-top:0; }
+    .note-content > :last-child { margin-bottom:0; }
+    .note-content p { margin:0 0 1.25em; }
+    .note-content h2, .note-content h3, .note-content h4 { scroll-margin-top:82px; color:#17191d; font-weight:900; line-height:1.35; }
+    .note-content h2 { margin:1.75em 0 .55em; padding-bottom:8px; border-bottom:1px solid #e9ecef; font-size:24px; }
+    .note-content h3 { margin:1.5em 0 .5em; color:#a64e1b; font-size:19px; }
+    .note-content h4 { margin:1.35em 0 .5em; font-size:16px; }
+    .note-content ul, .note-content ol { margin:0 0 1.25em; padding-left:1.55em; }
+    .note-content li { margin:.38em 0; padding-left:.25em; }
+    .note-content li::marker { color:#e67700; font-weight:900; }
+    .note-content strong { color:#17191d; font-weight:900; }
+    .note-content em { color:#424750; }
+    .note-content code { padding:2px 5px; border-radius:4px; background:#fff1e5; color:#9f4815; font:700 .9em ui-monospace,SFMono-Regular,Consolas,monospace; }
+    .reader-aside { position:sticky; top:82px; display:flex; flex-direction:column; gap:20px; padding:4px 0 0 15px; border-left:2px solid #e0e3e6; }
+    .aside-section h2 { margin:0 0 11px; color:#282c32; font-size:11px; font-weight:900; text-transform:uppercase; }
+    .outline-list, .related-list { display:flex; flex-direction:column; gap:3px; }
+    .outline-list a, .related-list a { display:block; padding:6px 8px; border-radius:4px; color:#606772; font-size:11px; font-weight:800; line-height:1.45; text-decoration:none; overflow-wrap:anywhere; }
+    .outline-list a[data-level="3"] { padding-left:17px; font-weight:700; }
+    .outline-list a:hover, .outline-list a.is-current, .related-list a:hover { background:#fff2e6; color:#9f4815; }
+    .aside-resources { display:flex; flex-direction:column; gap:7px; }
+    .aside-resources a { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 9px; border:1px solid var(--border); border-radius:5px; background:#fff; color:#40464e; font-size:11px; font-weight:900; text-decoration:none; }
+    .aside-resources a:hover { border-color:#efb58f; color:#a64e1b; }
+    .aside-resources span { color:#c65c1b; }
+    .missing { padding:56px 24px; border:1px solid var(--border); border-radius:7px; background:#fff; text-align:center; }
+    .missing-mark { display:grid; width:44px; height:44px; place-items:center; margin:0 auto 14px; border-radius:50%; background:#fff0e4; color:#b54d19; font-weight:900; }
+    .missing h1 { margin:0 auto 8px; font-size:22px; font-weight:900; }
+    .missing p { margin:0 0 17px; color:var(--muted); font-size:13px; font-weight:600; }
+    .missing a { display:inline-flex; min-height:38px; align-items:center; padding:0 13px; border-radius:5px; background:var(--warm-gradient); color:#fff; font-size:12px; font-weight:900; text-decoration:none; }
+    .toast { position:fixed; right:20px; bottom:20px; z-index:1500; padding:10px 14px; border-radius:5px; background:#111; color:#fff; box-shadow:0 8px 24px rgba(0,0,0,.2); font-size:12px; font-weight:800; opacity:0; pointer-events:none; transform:translateY(8px); transition:opacity .18s,transform .18s; }
+    .toast.is-visible { opacity:1; transform:translateY(0); }
+    @media (max-width:760px) { main { padding:20px 16px 52px; } .reader-layout { grid-template-columns:1fr; gap:18px; } .reader-aside { position:static; grid-row:1; padding:0 0 13px; border:0; border-bottom:1px solid var(--border); } .reader-aside .aside-section:not(:first-child) { display:none; } .reader-aside details > summary { cursor:pointer; list-style:none; font-size:12px; font-weight:900; } .reader-aside details > summary::-webkit-details-marker { display:none; } .reader-aside details > summary::after { content:"+"; float:right; color:#c65c1b; } .reader-aside details[open] > summary::after { content:"-"; } .outline-list { padding-top:8px; } .note-content { padding:27px 25px 38px; } }
+    @media (max-width:500px) { main { padding:17px 12px 42px; } .reader-tools { align-items:flex-start; } .reader-actions { gap:5px; } .action-button { min-height:34px; padding:0 8px; font-size:10px; } .type-control button { width:31px; height:32px; } .reader-progress { gap:8px; font-size:9px; } .note-masthead { padding:23px 19px 22px; } .note-masthead h1 { font-size:38px; } .note-summary { font-size:12px; } .note-content { padding:24px 19px 32px; font-size:var(--reader-font-size); } .note-content h2 { font-size:21px; } .note-content h3 { font-size:18px; } .note-content h4 { font-size:15px; } }
+    @media print { body { display:block; background:#fff; } header, footer, .reader-tools, .reader-progress, .reader-aside, .toast { display:none !important; } main { width:100%; padding:0; } .note-masthead { margin:0 0 18px; padding:0 0 18px; border-radius:0; border-bottom:1px solid #bbb; background:#fff; color:#111; } .note-masthead::after { display:none; } .note-breadcrumbs, .note-meta, .note-summary, .note-facts { color:#444; } .note-breadcrumbs a { color:#333; } .note-masthead h1 { color:#111; } .reader-layout, .reader-layout.no-outline { display:block; } .note-content { padding:15px 0; border:0; font-size:12pt; line-height:1.6; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; } }
+  </style>
+  <link rel="icon" type="image/png" href="favicon.png" sizes="256x256">
+</head>
+<body>
+  <header>
+    <a class="logo-wrap" href="index.html"><img src="logo.png" alt="ExamReady" class="logo-img"></a>
+    <nav id="mainNav"></nav>
+    <button class="hamburger" type="button" aria-controls="mainNav" aria-expanded="false" aria-label="Open navigation menu"><span></span><span></span><span></span></button>
+  </header>
+  <main>
+    <div class="reader-tools" id="readerTools">
+      <a class="back-link" id="backToNotes" href="notes.html"><span aria-hidden="true">&larr;</span> All notes</a>
+      <div class="reader-actions">
+        <div class="type-control" role="group" aria-label="Reading text size"><button id="textSmaller" type="button" aria-label="Decrease text size" title="Decrease text size">A-</button><button id="textLarger" type="button" aria-label="Increase text size" title="Increase text size">A+</button></div>
+        <button class="action-button" id="copyNoteLink" type="button" title="Copy a link to this note"><span aria-hidden="true">&#128279;</span> Share</button>
+        <button class="action-button" id="printNote" type="button" title="Print this note"><span aria-hidden="true">&#128424;</span> Print</button>
+      </div>
+    </div>
+    <div class="reader-progress" id="readerProgress" aria-label="Reading progress">
+      <span class="reader-progress-label">READING PROGRESS</span>
+      <div class="progress-track" role="progressbar" aria-label="Note reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="progress-value" id="progressValue">0%</span>
+    </div>
+    <section class="missing" id="missingNote" hidden>
+      <div class="missing-mark" aria-hidden="true">!</div><h1>This note is not available</h1>
+      <p>It may be unpublished, or the link may no longer be current.</p><a href="notes.html">Browse all notes</a>
+    </section>
+    <div id="noteView" hidden>
+      <section class="note-masthead" id="noteMasthead" aria-labelledby="noteTitle"></section>
+      <div class="reader-layout" id="readerLayout">
+        <article class="note-content" id="noteContent" aria-live="polite"></article>
+        <aside class="reader-aside" id="readerAside" aria-label="Note navigation and related resources"></aside>
+      </div>
+    </div>
+  </main>
+  <footer></footer>
+  <div class="toast" id="copyToast" role="status" aria-live="polite">Link copied</div>
+  <script src="examready-config.js"></script>
+  <script src="student-storage.js"></script>
+  <script src="shared.js?v=20261003-notes-ui"></script>
+  <script src="animations.js"></script>
+  <script>
+    const escapeText = value => typeof escapeHtml === 'function' ? escapeHtml(value) : String(value || '');
+    const noteId = new URLSearchParams(window.location.search).get('id');
+    function inlineFormat(value) {
+      return escapeText(value)
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    }
+    function renderNoteContent(value) {
+      const lines = String(value || '').replace(/\r/g, '').split('\n');
+      const headings = [];
+      let output = '', paragraph = [], listType = '', listItems = [];
+      const flushParagraph = () => { if (paragraph.length) { output += '<p>' + inlineFormat(paragraph.join(' ')) + '</p>'; paragraph = []; } };
+      const flushList = () => { if (listItems.length) { output += '<' + listType + '>' + listItems.map(item => '<li>' + inlineFormat(item) + '</li>').join('') + '</' + listType + '>'; listItems = []; listType = ''; } };
+      lines.forEach(line => {
+        const text = line.trim();
+        if (!text) { flushParagraph(); flushList(); return; }
+        const heading = text.match(/^(#{1,3})\s+(.+)$/);
+        if (heading) {
+          flushParagraph(); flushList();
+          const level = heading[1].length + 1, index = headings.length, id = 'note-section-' + index;
+          headings.push({id, title:heading[2], level});
+          output += '<h' + level + ' id="' + id + '">' + inlineFormat(heading[2]) + '</h' + level + '>';
+          return;
+        }
+        const bullet = text.match(/^[-*]\s+(.+)$/), ordered = text.match(/^\d+[.)]\s+(.+)$/), item = bullet || ordered;
+        if (item) { flushParagraph(); const type = bullet ? 'ul' : 'ol'; if (listType && listType !== type) flushList(); listType = type; listItems.push(item[1]); return; }
+        flushList(); paragraph.push(text);
+      });
+      flushParagraph(); flushList();
+      return {html:output, headings};
+    }
+    function formatDate(value) { return typeof formatHumanDate === 'function' ? formatHumanDate(value) : 'Recently updated'; }
+    function getAllNotes() {
+      const raw = getData('notes') || {};
+      return Array.isArray(raw) ? raw : (Array.isArray(raw.notes) ? raw.notes : []);
+    }
+    function renderAside(note, related, headings) {
+      const outline = headings.length ? '<section class="aside-section"><h2>On this page</h2><nav class="outline-list" aria-label="On this page">' + headings.map(item => '<a href="#' + item.id + '" data-level="' + item.level + '">' + escapeText(item.title) + '</a>').join('') + '</nav></section>' : '';
+      const relatedHtml = related.length ? '<section class="aside-section"><h2>More in this chapter</h2><nav class="related-list" aria-label="Related notes">' + related.map(item => '<a href="note-post.html?id=' + encodeURIComponent(item.id) + '">' + escapeText(item.title) + '</a>').join('') + '</nav></section>' : '';
+      document.getElementById('readerAside').innerHTML = outline + relatedHtml + '<section class="aside-section"><h2>Keep studying</h2><div class="aside-resources"><a href="quizzes.html">Practice quizzes <span aria-hidden="true">&rarr;</span></a><a href="flashcards.html">Flashcards <span aria-hidden="true">&rarr;</span></a></div></section>';
+      document.getElementById('readerLayout').classList.toggle('no-outline', !headings.length && !related.length);
+      if (window.matchMedia('(max-width: 760px)').matches && headings.length) {
+        const section = document.querySelector('.aside-section');
+        section.innerHTML = '<details><summary>On this page (' + headings.length + ')</summary><nav class="outline-list" aria-label="On this page">' + headings.map(item => '<a href="#' + item.id + '" data-level="' + item.level + '">' + escapeText(item.title) + '</a>').join('') + '</nav></details>';
+      }
+      if (!headings.length && !related.length) document.getElementById('readerAside').hidden = true;
+    }
+    function renderNote() {
+      const note = getAllNotes().find(item => item && item.id === noteId && item.published !== false);
+      if (!note) {
+        document.getElementById('missingNote').hidden = false;
+        document.getElementById('readerTools').hidden = true;
+        document.getElementById('readerProgress').hidden = true;
+        document.title = 'Note not found - ExamReady';
+        return;
+      }
+      const noteClass = String(note.class || note.classNum || '');
+      const noteSubject = String(note.subject || note.subjectKey || '');
+      const subjectLabel = note.subjectLabel || (typeof getSubjectLabel === 'function' ? getSubjectLabel(noteClass, noteSubject) : noteSubject);
+      const chapterLabel = note.chapter || (note.chapterId && typeof getChapterLabel === 'function' ? getChapterLabel(noteClass, noteSubject, note.chapterId) : '');
+      const content = renderNoteContent(note.content);
+      const wordCount = String(note.content || '').trim().split(/\s+/).filter(Boolean).length;
+      const readTime = Math.max(1, Math.ceil(wordCount / 220));
+      const safeClass = ['9','10'].includes(noteClass) ? noteClass : '';
+      const subjectHref = safeClass && noteSubject ? 'subject.html?class=' + encodeURIComponent(safeClass) + '&subject=' + encodeURIComponent(noteSubject) + '&tab=notes' : '';
+      const crumbs = ['<a href="notes.html">Notes</a>'];
+      if (noteClass) crumbs.push('<a href="notes.html?class=' + encodeURIComponent(noteClass) + '">Class ' + escapeText(noteClass) + '</a>');
+      if (subjectLabel && subjectHref) crumbs.push('<a href="' + subjectHref + '">' + escapeText(subjectLabel) + '</a>');
+      if (chapterLabel && chapterLabel !== 'Uncategorized' && chapterLabel !== 'General revision') crumbs.push('<span>' + escapeText(chapterLabel) + '</span>');
+      const metaParts = [noteClass ? 'Class ' + escapeText(noteClass) : '', subjectLabel ? escapeText(subjectLabel) : '', chapterLabel && chapterLabel !== 'Uncategorized' && chapterLabel !== 'General revision' ? escapeText(chapterLabel) : ''].filter(Boolean);
+      const related = getAllNotes().filter(item => item && item.id !== note.id && item.published !== false && String(item.class || item.classNum || '') === noteClass && String(item.subject || item.subjectKey || '') === noteSubject && note.chapterId && String(item.chapterId || '') === String(note.chapterId)).slice(0,4);
+      document.getElementById('noteMasthead').innerHTML = '<nav class="note-breadcrumbs" aria-label="Breadcrumb">' + crumbs.join('<span class="crumb-sep" aria-hidden="true">/</span>') + '</nav><div class="note-meta">' + metaParts.join('<span class="meta-dot" aria-hidden="true"></span>') + '</div><h1 id="noteTitle">' + escapeText(note.title) + '</h1>' + (note.summary ? '<p class="note-summary">' + escapeText(note.summary) + '</p>' : '') + '<div class="note-facts"><span>' + readTime + ' min read</span><span>' + wordCount + ' words</span><span>Updated ' + escapeText(formatDate(note.updatedAt)) + '</span></div>';
+      document.getElementById('noteContent').innerHTML = content.html || '<p>This note does not have any readable content yet.</p>';
+      renderAside(note, related, content.headings);
+      if (subjectHref) document.getElementById('backToNotes').href = subjectHref;
+      document.getElementById('noteView').hidden = false;
+      document.title = String(note.title) + ' - ExamReady';
+      bindOutline(content.headings);
+      updateProgress();
+    }
+    function bindOutline(headings) {
+      if (!headings.length || !('IntersectionObserver' in window)) return;
+      const links = [...document.querySelectorAll('.outline-list a')];
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          links.forEach(link => link.classList.toggle('is-current', link.hash === '#' + entry.target.id));
+        });
+      }, {rootMargin:'-12% 0px -72% 0px'});
+      headings.forEach(item => { const node = document.getElementById(item.id); if (node) observer.observe(node); });
+    }
+    let progressFrame = 0;
+    function updateProgress() {
+      if (progressFrame) return;
+      progressFrame = window.requestAnimationFrame(() => {
+        progressFrame = 0;
+      const article = document.getElementById('noteContent');
+      if (!article || !article.offsetHeight) return;
+      const top = article.getBoundingClientRect().top + window.scrollY;
+      const span = Math.max(1, article.offsetHeight - window.innerHeight);
+      const progress = Math.max(0, Math.min(100, Math.round((window.scrollY - top + 100) / span * 100)));
+      document.getElementById('progressFill').style.width = progress + '%';
+      document.querySelector('.progress-track').setAttribute('aria-valuenow', String(progress));
+      document.getElementById('progressValue').textContent = progress + '%';
+      });
+    }
+    let fontSize = 16;
+    document.getElementById('textSmaller').addEventListener('click', () => { fontSize = Math.max(14, fontSize - 1); document.documentElement.style.setProperty('--reader-font-size', fontSize + 'px'); });
+    document.getElementById('textLarger').addEventListener('click', () => { fontSize = Math.min(21, fontSize + 1); document.documentElement.style.setProperty('--reader-font-size', fontSize + 'px'); });
+    document.getElementById('printNote').addEventListener('click', () => window.print());
+    document.getElementById('copyNoteLink').addEventListener('click', async () => {
+      const toast = document.getElementById('copyToast');
+      try {
+        if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(window.location.href);
+        else { const input = document.createElement('textarea'); input.value = window.location.href; input.style.position = 'fixed'; input.style.opacity = '0'; document.body.appendChild(input); input.select(); const copied = document.execCommand('copy'); input.remove(); if (!copied) throw new Error('Clipboard unavailable'); }
+        toast.textContent = 'Link copied';
+      } catch (error) { toast.textContent = 'Copy this page URL to share'; }
+      toast.classList.add('is-visible');
+      window.setTimeout(() => toast.classList.remove('is-visible'), 2200);
+    });
+    window.addEventListener('scroll', updateProgress, {passive:true});
+    window.addEventListener('resize', updateProgress);
+    whenDataReady(renderNote);
+  </script>
+</body>
+</html>

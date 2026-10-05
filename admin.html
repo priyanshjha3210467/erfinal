@@ -20,9 +20,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" href="favicon.png" sizes="256x256">
 <title>Admin Panel – ExamReady</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="animations.css">
 <style>
   :root {
     --red:#e8211a; --black:#0d0d0d; --gray:#f0f2f5; --gray2:#e8e8e8;
@@ -53,6 +54,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .auth-sub { font-size:13px; color:var(--muted); font-weight:600; margin-bottom:28px; line-height:1.6; }
   .auth-input-wrap { position:relative; margin-bottom:14px; }
   .auth-input { width:100%; padding:14px 48px 14px 16px; border:2px solid var(--gray2); border-radius:10px; font-family:'Nunito'; font-size:15px; font-weight:700; outline:none; transition:.2s; background:#fafafa; letter-spacing:1px; text-align:center; }
+  .auth-input[type="email"] { letter-spacing:0; text-align:left; padding-right:16px; }
   .auth-input:focus { border-color:var(--red); background:#fff; }
   .auth-input.error { border-color:var(--red); animation:shake .3s ease; }
   @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
@@ -304,11 +306,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="auth-tag">🔒 Team Only</div>
     <div class="auth-lock">🛡️</div>
     <div class="auth-title">Admin Access</div>
-    <div class="auth-sub">Enter your team password to access the admin panel.</div>
+    <div class="auth-sub">Sign in with the configured Firebase admin account.</div>
     <div class="lockout-bar" id="lockoutBar"></div>
     <div class="auth-error" id="authError">❌ Incorrect password. Try again.</div>
+    <div class="form-group" style="margin-bottom:10px"><input type="email" class="auth-input" id="authEmail" placeholder="Admin email" autocomplete="username" aria-label="Admin email"></div>
     <div class="auth-input-wrap">
-      <input type="password" class="auth-input" id="authPass" placeholder="Enter team password" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="current-password">
+      <input type="password" class="auth-input" id="authPass" placeholder="Firebase password" autocomplete="current-password">
       <button class="toggle-pw" onclick="togglePw()" type="button">👁</button>
     </div>
     <button class="auth-btn" id="authSubmitBtn" onclick="doLogin()">🔓 Access Admin Panel</button>
@@ -340,6 +343,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <button class="nav-item" onclick="showSection('quizzes')"><span class="nav-icon">🎯</span> All Quizzes</button>
   <button class="nav-item" onclick="showSection('create-quiz')"><span class="nav-icon">➕</span> Create Quiz</button>
   <button class="nav-item" onclick="showSection('flashcards')"><span class="nav-icon">▣</span> Flashcards</button>
+  <button class="nav-item" onclick="showSection('notes')"><span class="nav-icon">🗒</span> Notes</button>
 
   <div class="sidebar-section">Structure</div>
   <button class="nav-item" onclick="showSection('subjects')"><span class="nav-icon">📚</span> Subjects Manager</button>
@@ -375,7 +379,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="topbar-title" id="topbarTitle">Dashboard</div>
     </div>
     <div class="topbar-right">
-      <span id="firebaseSyncBadge" class="topbar-badge" style="background:#e6ffed;color:#2f9e44;cursor:pointer" onclick="firebasePushAll().then(function(){showToast('✅ All data synced to Firebase!')}).catch(function(){showToast('❌ Firebase sync failed — check rules','error')})" title="Click to force-sync all data to Firebase">🔄 Firebase Sync</span>
+      <span id="firebaseSyncBadge" class="topbar-badge" style="background:#fff8ed;color:#774500;cursor:pointer" onclick="pushFirebaseData()" title="Push changes using authenticated Firebase admin access">🔒 Firebase Sync</span>
       <span class="topbar-badge">✅ Team Access</span>
       <a href="index.html" class="back-link">← Main Site</a>
     </div>
@@ -398,7 +402,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <button class="dashboard-action" onclick="showSection('upload-pdf')">Upload new study file<span>Add PYQs, question banks, and papers fast.</span></button>
           <button class="dashboard-action" onclick="showSection('create-quiz')">Create a quiz<span>Build new MCQ practice in seconds.</span></button>
           <button class="dashboard-action" onclick="showSection('announcements')">Post an update<span>Push an announcement banner to students.</span></button>
-          <button class="dashboard-action" onclick="firebasePushAll().then(function(){showToast('✅ All data synced to Firebase!')}).catch(function(){showToast('❌ Sync failed','error')})" style="background:rgba(47,158,68,0.15);border-color:rgba(47,158,68,0.3)">🔄 Sync to Firebase<span>Push all admin changes live instantly.</span></button>
+          <button class="dashboard-action" onclick="pushFirebaseData()" style="background:rgba(230,119,0,0.12);border-color:rgba(230,119,0,0.3)">🔒 Sync to Firebase<span>Push changes with authenticated admin access.</span></button>
         </div>
       </div>
       <div class="stat-grid" id="dashStats"></div>
@@ -579,6 +583,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
 
+    <!-- ===== NOTES ===== -->
+    <div class="admin-section" id="sec-notes">
+      <div class="page-title">🗒 Revision Notes</div>
+      <div class="page-subtitle">Create class, subject, and chapter-wise notes. Publish them when they are ready for students.</div>
+      <div class="filter-bar">
+        <select class="filter-select" id="noteClassFilter" onchange="renderNotesTable()"><option value="">All Classes</option><option value="9">Class 9</option><option value="10">Class 10</option><option value="11">Class 11</option><option value="12">Class 12</option></select>
+        <input type="text" class="filter-select" id="noteSearch" placeholder="🔍 Search notes..." onkeyup="renderNotesTable()" style="min-width:220px">
+        <button class="btn btn-gray" type="button" onclick="clearNoteFilters()">✕ Clear</button>
+        <button class="btn btn-red" type="button" onclick="startNewNote()">➕ New Note</button>
+      </div>
+      <div class="table-card">
+        <div class="table-header"><h3>Notes Library</h3><span id="noteCount" style="font-size:12px;color:var(--muted);font-weight:700"></span></div>
+        <div style="overflow-x:auto"><table><thead><tr><th>Title</th><th>Class</th><th>Subject</th><th>Chapter</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead><tbody id="notesTableBody"></tbody></table></div>
+      </div>
+      <div class="form-card" style="max-width:860px;margin-top:20px">
+        <div class="table-header"><h3 id="noteFormTitle">➕ Create Revision Note</h3><span id="noteFormSubtitle" style="font-size:12px;color:var(--muted);font-weight:700">A clear, focused revision resource</span></div>
+        <div class="form-body">
+          <input type="hidden" id="editNoteId">
+          <div class="form-group"><label>Note Title *</label><input type="text" id="noteTitle" maxlength="140" placeholder="e.g. Number Systems Formula Sheet"></div>
+          <div class="form-group"><label>Short Description</label><textarea id="noteSummary" rows="2" maxlength="420" placeholder="What will this note help students revise?"></textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label>Class *</label><select id="noteClass" onchange="onNoteClassChange()"><option value="9">Class 9</option><option value="10">Class 10</option><option value="11">Class 11</option><option value="12">Class 12</option></select></div>
+            <div class="form-group"><label>Subject *</label><select id="noteSubject" onchange="onNoteSubjectChange()"></select></div>
+          </div>
+          <div class="form-group"><label>Chapter</label><select id="noteChapter"><option value="">— General revision —</option></select></div>
+          <div class="form-group"><label>Note Content *</label><textarea id="noteContent" rows="14" maxlength="16000" placeholder="Write the note here. Paragraphs and line breaks are preserved for students."></textarea></div>
+          <label style="display:flex;align-items:center;gap:9px;font-size:13px;font-weight:900;margin:6px 0 18px"><input type="checkbox" id="notePublished"> Published on the student site</label>
+          <div style="display:flex;gap:10px"><button class="btn btn-red btn-lg" type="button" onclick="saveNote()">💾 Save Note</button><button class="btn btn-gray btn-lg" type="button" onclick="resetNoteForm();showSection('notes')">Cancel</button></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== SUBJECTS MANAGER ===== -->
     <div class="admin-section" id="sec-subjects">
       <div class="page-title">📚 Subjects Manager</div>
@@ -713,12 +749,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="page-subtitle">Manage admin access, exports, and core site configuration.</div>
       <div class="settings-grid">
         <div class="settings-card">
-          <h4>🔐 Change Admin Password</h4>
+          <h4>🔐 Firebase Admin Password</h4>
+          <div class="form-hint" style="margin-bottom:14px">This updates the signed-in Firebase Authentication account password.</div>
           <div class="form-group"><label>Current Password</label><div class="password-field"><input type="password" id="currPass" placeholder="Current password" autocomplete="current-password"><button type="button" class="password-toggle-btn" onclick="toggleInputVisibility('currPass',this)">Show</button></div></div>
-          <div class="form-group"><label>New Password</label><div class="password-field"><input type="password" id="newPass" placeholder="Min 8 characters" oninput="updateStrengthMeter(this.value)" autocomplete="new-password"><button type="button" class="password-toggle-btn" onclick="toggleInputVisibility('newPass',this)">Show</button></div><div class="pw-strength" id="pwStrength"><div class="pw-strength-bar" id="ps1"></div><div class="pw-strength-bar" id="ps2"></div><div class="pw-strength-bar" id="ps3"></div><div class="pw-strength-bar" id="ps4"></div></div><div class="form-hint" id="pwStrengthLabel" style="margin-top:4px"></div></div>
+          <div class="form-group"><label>New Password</label><div class="password-field"><input type="password" id="newPass" placeholder="Min 12 characters" oninput="updateStrengthMeter(this.value)" autocomplete="new-password"><button type="button" class="password-toggle-btn" onclick="toggleInputVisibility('newPass',this)">Show</button></div><div class="pw-strength" id="pwStrength"><div class="pw-strength-bar" id="ps1"></div><div class="pw-strength-bar" id="ps2"></div><div class="pw-strength-bar" id="ps3"></div><div class="pw-strength-bar" id="ps4"></div></div><div class="form-hint" id="pwStrengthLabel" style="margin-top:4px"></div></div>
           <div class="form-group"><label>Confirm New Password</label><div class="password-field"><input type="password" id="confirmPass" placeholder="Repeat new password" autocomplete="new-password"><button type="button" class="password-toggle-btn" onclick="toggleInputVisibility('confirmPass',this)">Show</button></div></div>
           <button class="btn btn-red" onclick="changePassword()">🔐 Update Password</button>
-          <div class="password-display"><div class="password-display-label">Current active admin password</div><div class="password-display-value" id="adminPasswordDisplay">••••••••</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><button class="btn btn-gray" onclick="toggleCurrentPassword(this)">Show Password</button><button class="btn btn-edit" onclick="copyAdminPassword()">Copy Password</button></div><div class="password-display-hint">Visible only inside this admin session.</div></div>
         </div>
         <div class="settings-card">
           <h4>📊 Site Feature Toggles</h4>
@@ -729,16 +765,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
         <div class="settings-card">
           <h4>🔥 Firebase Live Sync</h4>
-          <div style="background:#f0fff4;border:2px solid #b3e6c0;border-radius:12px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.8;color:#1a6a2a;font-weight:600">
-            <strong>How it works now:</strong><br>
-            ✅ Every save you make in admin <strong>auto-syncs to Firebase</strong> in real-time<br>
-            ✅ All visitors on <strong>any browser/device</strong> see the latest data instantly<br>
-            ✅ No manual export or git push needed for content changes
+          <div style="background:#fff8ed;border:2px solid #ffd4a3;border-radius:12px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.8;color:#774500;font-weight:600">
+            <strong>Protected sync:</strong><br>
+            Firebase writes require an authenticated admin account and matching Realtime Database rules.<br>
+            Public study pages only read published site data. Configure the Firebase API key and admin UID before enabling live sync.
           </div>
           <div id="firebaseStatus" style="padding:12px 16px;background:#fafafa;border:1px solid var(--gray2);border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700;color:var(--muted)">Checking Firebase connection…</div>
           <div style="display:flex;flex-direction:column;gap:10px">
-            <button class="btn btn-red btn-lg" onclick="firebasePushAll().then(function(){showToast('✅ All data pushed to Firebase!');document.getElementById('firebaseStatus').innerHTML='<span style=color:#2f9e44>✅ Connected — All data synced</span>'}).catch(function(e){showToast('❌ Firebase error: '+e.message,'error');document.getElementById('firebaseStatus').innerHTML='<span style=color:var(--red)>❌ Failed — Check Firebase rules</span>'})" style="font-size:15px;padding:14px 24px">🔄 Push All Data to Firebase Now</button>
-            <div style="font-size:11px;color:var(--muted);font-weight:700;text-align:center">Use this for first-time setup or to force a full re-sync</div>
+            <button class="btn btn-red btn-lg" onclick="pushFirebaseData()" style="font-size:15px;padding:14px 24px">🔒 Push All Data to Firebase</button>
+            <div style="font-size:11px;color:var(--muted);font-weight:700;text-align:center">Writes are authorized by Firebase rules; use this for a full re-sync after setup.</div>
           </div>
         </div>
         <div class="settings-card">
@@ -948,7 +983,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </div>
 
-<script src="shared.js?v=20260927-2"></script>
+<script src="examready-config.js"></script>
+<script src="shared.js?v=20261002-2"></script>
+<script src="firebase-auth.js"></script>
 <script>
 // ============================================================
 // UTILITIES
@@ -980,19 +1017,13 @@ function safeImageAsset(value, fallback='') {
 // ============================================================
 // AUTH
 // ============================================================
-const DEFAULT_ADMIN_PASSWORD = 'ExamReady@Admin25';
-const ADMIN_HASH_KEY = 'er_admin_pass_hash';
-const LEGACY_ADMIN_PASS_KEY = 'er_admin_pass';
 const ADMIN_SESSION_KEY = 'er_admin_auth';
 const ADMIN_SESSION_EXP_KEY = 'er_admin_auth_exp';
 const ADMIN_FAIL_KEY = 'er_admin_fail_count';
 const ADMIN_LOCKOUT_KEY = 'er_admin_lockout_until';
-const ADMIN_HASH_SALT = 'examready-admin-v1';
-const ADMIN_HASH_ITERATIONS = 150000;
 const ADMIN_SESSION_TTL_MS = 30 * 60 * 1000;
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_SECONDS = 30;
-let adminHashReady = null;
 let lockoutTimer = null;
 
 function getAuthButton() { return document.getElementById('authSubmitBtn'); }
@@ -1001,106 +1032,10 @@ function setLockoutUntil(value) { value > 0 ? localStorage.setItem(ADMIN_LOCKOUT
 function getFailCount() { return Math.max(0, parseInt(localStorage.getItem(ADMIN_FAIL_KEY) || '0', 10) || 0); }
 function setFailCount(value) { value > 0 ? localStorage.setItem(ADMIN_FAIL_KEY, String(value)) : localStorage.removeItem(ADMIN_FAIL_KEY); }
 
-function bytesToHex(buffer) {
-  return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-// ── PBKDF2 via Web Worker (with main-thread fallback) ──
-let _pbkdf2Worker = null;
-let _pbkdf2Counter = 0;
-const _pbkdf2Pending = {};
-
-function _initPbkdf2Worker() {
-  if (_pbkdf2Worker) return _pbkdf2Worker;
-  try {
-    _pbkdf2Worker = new Worker('pbkdf2-worker.js');
-    _pbkdf2Worker.addEventListener('message', function(e) {
-      const { id, hash, error } = e.data;
-      if (_pbkdf2Pending[id]) {
-        if (error) _pbkdf2Pending[id].reject(new Error(error));
-        else _pbkdf2Pending[id].resolve(hash);
-        delete _pbkdf2Pending[id];
-      }
-    });
-    _pbkdf2Worker.addEventListener('error', function() {
-      // Worker failed to load — nullify so future calls use fallback
-      _pbkdf2Worker = null;
-    });
-  } catch (e) {
-    _pbkdf2Worker = null;
-  }
-  return _pbkdf2Worker;
-}
-
-async function _deriveOnMainThread(password) {
-  const enc = new TextEncoder();
-  const key = await window.crypto.subtle.importKey('raw', enc.encode(String(password)), { name: 'PBKDF2' }, false, ['deriveBits']);
-  const bits = await window.crypto.subtle.deriveBits({
-    name: 'PBKDF2',
-    salt: enc.encode(ADMIN_HASH_SALT),
-    iterations: ADMIN_HASH_ITERATIONS,
-    hash: 'SHA-256'
-  }, key, 256);
-  return bytesToHex(bits);
-}
-
-async function deriveAdminPasswordHash(password) {
-  if (!window.crypto?.subtle) throw new Error('Secure hashing is not available in this browser.');
-  const worker = _initPbkdf2Worker();
-  if (worker) {
-    // Use worker — non-blocking
-    return new Promise(function(resolve, reject) {
-      const id = ++_pbkdf2Counter;
-      _pbkdf2Pending[id] = { resolve: resolve, reject: reject };
-      worker.postMessage({ id: id, password: String(password), salt: ADMIN_HASH_SALT, iterations: ADMIN_HASH_ITERATIONS });
-      // Timeout fallback in case worker never responds
-      setTimeout(function() {
-        if (_pbkdf2Pending[id]) {
-          delete _pbkdf2Pending[id];
-          _deriveOnMainThread(password).then(resolve).catch(reject);
-        }
-      }, 10000);
-    });
-  }
-  // Fallback to main thread
-  return _deriveOnMainThread(password);
-}
-
-async function ensureAdminPasswordHash() {
-  if (adminHashReady) return adminHashReady;
-  adminHashReady = (async () => {
-    const storedHash = localStorage.getItem(ADMIN_HASH_KEY);
-    if (/^[a-f0-9]{64}$/i.test(storedHash || '')) {
-      return storedHash.toLowerCase();
-    }
-    const legacyPassword = localStorage.getItem(LEGACY_ADMIN_PASS_KEY) || DEFAULT_ADMIN_PASSWORD;
-    const hash = await deriveAdminPasswordHash(legacyPassword);
-    localStorage.setItem(ADMIN_HASH_KEY, hash);
-    localStorage.removeItem(LEGACY_ADMIN_PASS_KEY);
-    return hash;
-  })();
-  return adminHashReady;
-}
-
-async function verifyAdminPassword(password) {
-  const storedHash = await ensureAdminPasswordHash();
-  return (await deriveAdminPasswordHash(password)) === storedHash;
-}
-
-async function warnIfUsingDefaultAdminPassword() {
-  try {
-    const currentHash = await ensureAdminPasswordHash();
-    const defaultHash = await deriveAdminPasswordHash(DEFAULT_ADMIN_PASSWORD);
-    if (currentHash === defaultHash) {
-      showToast('Change the default admin password in Settings for better security.','warn');
-    }
-  } catch(e) {}
-}
-
 function clearAdminSession() {
   sessionStorage.removeItem(ADMIN_SESSION_KEY);
   sessionStorage.removeItem(ADMIN_SESSION_EXP_KEY);
-  sessionStorage.removeItem('er_write_token');
+  if (typeof ExamReadyFirebaseAuth !== 'undefined') ExamReadyFirebaseAuth.signOut();
 }
 
 function touchAdminSession() {
@@ -1112,14 +1047,6 @@ function touchAdminSession() {
 function startAdminSession() {
   sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
   touchAdminSession();
-  // Generate CSRF-equivalent write token for this session
-  const tokenArr = crypto.getRandomValues(new Uint8Array(32));
-  const writeToken = btoa(String.fromCharCode(...tokenArr)).replace(/[+/=]/g, '');
-  sessionStorage.setItem('er_write_token', writeToken);
-}
-
-function getWriteToken() {
-  return sessionStorage.getItem('er_write_token') || '';
 }
 
 function hasValidAdminSession() {
@@ -1204,41 +1131,41 @@ function startLockoutCountdown() {
 }
 
 async function doLogin() {
-  try {
-    await ensureAdminPasswordHash();
-  } catch (error) {
-    showLockoutBar('Secure login is unavailable in this browser.');
-    return;
-  }
-
   if (syncLockoutState()) {
     showLockoutBar('🔒 Try again in ' + Math.ceil((getLockoutUntil() - Date.now()) / 1000) + 's.');
     return;
   }
 
   const input = document.getElementById('authPass');
-  const val = input.value;
-  if (await verifyAdminPassword(val)) {
+  const email = document.getElementById('authEmail').value.trim();
+  const button = getAuthButton();
+  if (button) button.disabled = true;
+  try {
+    await ExamReadyFirebaseAuth.signIn(email, input.value);
+    input.value = '';
     resetAuthFailures();
     startAdminSession();
     document.getElementById('authGate').style.display = 'none';
     initAdmin();
-    return;
-  }
-
-  const failCount = getFailCount() + 1;
-  setFailCount(failCount);
-  document.getElementById('authError').style.display = 'block';
-  input.classList.add('error');
-  setTimeout(() => input.classList.remove('error'), 400);
-  input.value = '';
-
-  if (failCount >= MAX_ATTEMPTS) {
-    setLockoutUntil(Date.now() + LOCKOUT_SECONDS * 1000);
-    showLockoutBar('🔒 Locked for ' + LOCKOUT_SECONDS + 's.');
-    startLockoutCountdown();
-  } else {
-    document.getElementById('attemptsNote').textContent = '⚠ ' + failCount + ' failed. ' + (MAX_ATTEMPTS - failCount) + ' remaining.';
+  } catch (error) {
+    ExamReadyFirebaseAuth.signOut();
+    const failCount = getFailCount() + 1;
+    setFailCount(failCount);
+    const errorBox = document.getElementById('authError');
+    errorBox.textContent = 'Sign-in failed. Check the account and password, then try again.';
+    errorBox.style.display = 'block';
+    input.classList.add('error');
+    setTimeout(() => input.classList.remove('error'), 400);
+    input.value = '';
+    if (failCount >= MAX_ATTEMPTS) {
+      setLockoutUntil(Date.now() + LOCKOUT_SECONDS * 1000);
+      showLockoutBar('🔒 Locked for ' + LOCKOUT_SECONDS + 's.');
+      startLockoutCountdown();
+    } else {
+      document.getElementById('attemptsNote').textContent = '⚠ ' + failCount + ' failed. ' + (MAX_ATTEMPTS - failCount) + ' remaining.';
+    }
+  } finally {
+    if (button && !syncLockoutState()) button.disabled = false;
   }
 }
 
@@ -1293,7 +1220,7 @@ function showSection(id) {
   if (sec) sec.classList.add('active');
   const titles = {
     dashboard:'Dashboard', pdfs:'PDFs & Papers', 'upload-pdf':'Upload PDF',
-    quizzes:'All Quizzes', 'create-quiz':'Quiz Builder', flashcards:'Flashcards',
+    quizzes:'All Quizzes', 'create-quiz':'Quiz Builder', flashcards:'Flashcards', notes:'Revision Notes',
     subjects:'Subjects Manager', 'new-subject':'New Subject Page',
     chapters:'Chapters Manager',
     'site-editor':'Site Editor', 'nav-editor':'Navigation',
@@ -1312,6 +1239,7 @@ function showSection(id) {
   if (id==='pdfs')          renderPDFTable();
   if (id==='quizzes')       { populateQuizSubjectFilter(); renderQuizTable(); }
   if (id==='flashcards')    { initFlashcardsSection(); renderFlashcardTable(); }
+  if (id==='notes')         { initNotesSection(); renderNotesTable(); }
   if (id==='upload-pdf')    { updateSubjectOptions('pdfSubject','pdfClass'); setTimeout(() => refreshChapterDropdown('pdfChapter','pdfClass','pdfSubject'), 40); }
   if (id==='subjects')      switchSubjectClass(currentSubjClass);
   if (id==='chapters')      initChaptersSection();
@@ -1606,6 +1534,48 @@ function toggleFlashcardPublish(id) { const store=getFlashcardStoreAdmin(), deck
 function deleteFlashcardDeck(id) { if(!confirm('Delete this flashcard deck and its cards?'))return; const store=getFlashcardStoreAdmin(); store.decks=store.decks.filter(deck=>deck.id!==id); saveFlashcardStoreAdmin(store); renderFlashcardTable(); showToast('Flashcard deck deleted.'); }
 
 // ============================================================
+// NOTES
+// ============================================================
+function getNotesStoreAdmin() {
+  const raw=getData('notes')||{};
+  const notes=Array.isArray(raw)?raw:(Array.isArray(raw.notes)?raw.notes:[]);
+  return {version:Number(raw.version)||1,notes:notes.filter(note=>note&&typeof note==='object').map(note=>{
+    const cls=String(note.class||note.classNum||''), subject=String(note.subject||note.subjectKey||'');
+    const chapter=note.chapter||(note.chapterId?getChapterLabel(cls,subject,note.chapterId):'General revision');
+    return {...note,class:cls,subject,subjectLabel:note.subjectLabel||getSubjectLabel(cls,subject),chapter,published:note.published!==false};
+  })};
+}
+function saveNotesStoreAdmin(store) { setData('notes',{version:Number(store.version)||1,notes:store.notes||[]}); }
+function initNotesSection() { updateSubjectOptions('noteSubject','noteClass'); setTimeout(()=>refreshChapterDropdown('noteChapter','noteClass','noteSubject'),40); }
+function onNoteClassChange() { updateSubjectOptions('noteSubject','noteClass'); setTimeout(()=>refreshChapterDropdown('noteChapter','noteClass','noteSubject'),30); }
+function onNoteSubjectChange() { refreshChapterDropdown('noteChapter','noteClass','noteSubject'); }
+function clearNoteFilters() { document.getElementById('noteClassFilter').value=''; document.getElementById('noteSearch').value=''; renderNotesTable(); }
+function renderNotesTable() {
+  const body=document.getElementById('notesTableBody'); if(!body)return;
+  const cls=document.getElementById('noteClassFilter')?.value||'';
+  const search=(document.getElementById('noteSearch')?.value||'').toLowerCase().trim();
+  const notes=getNotesStoreAdmin().notes.filter(note=>(!cls||String(note.class)===cls)&&(!search||[note.title,note.summary,note.subjectLabel,note.chapter].join(' ').toLowerCase().includes(search))).sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));
+  document.getElementById('noteCount').textContent=notes.length+' note'+(notes.length===1?'':'s');
+  if(!notes.length){body.innerHTML='<tr><td colspan="7"><div class="empty-state"><div class="emoji">🗒</div><p>No notes match these filters.</p></div></td></tr>';return;}
+  body.innerHTML=notes.map(note=>'<tr><td><strong>'+safeHtml(note.title||'Untitled note')+'</strong><div style="font-size:11px;color:var(--muted);margin-top:3px">'+safeHtml(note.summary||'')+'</div></td><td>Class '+safeHtml(note.class||'')+'</td><td>'+safeHtml(note.subjectLabel||note.subject||'')+'</td><td>'+safeHtml(note.chapter||'General revision')+'</td><td><span class="badge '+(note.published?'badge-green':'badge-gray')+'">'+(note.published?'Published':'Draft')+'</span></td><td>'+safeHtml(formatHumanDate(note.updatedAt))+'</td><td><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-edit" style="font-size:11px" data-id="'+safeHtml(note.id)+'" onclick="editNote(this.dataset.id)">✏ Edit</button><button class="btn btn-gray" style="font-size:11px" data-id="'+safeHtml(note.id)+'" onclick="toggleNotePublish(this.dataset.id)">'+(note.published?'Unpublish':'Publish')+'</button><button class="btn btn-danger" style="font-size:11px" data-id="'+safeHtml(note.id)+'" onclick="deleteNote(this.dataset.id)">🗑</button></div></td></tr>').join('');
+}
+function resetNoteForm() { document.getElementById('editNoteId').value=''; document.getElementById('noteFormTitle').textContent='➕ Create Revision Note'; document.getElementById('noteFormSubtitle').textContent='A clear, focused revision resource'; document.getElementById('noteTitle').value=''; document.getElementById('noteSummary').value=''; document.getElementById('noteContent').value=''; document.getElementById('noteClass').value='9'; document.getElementById('notePublished').checked=false; updateSubjectOptions('noteSubject','noteClass'); setTimeout(()=>refreshChapterDropdown('noteChapter','noteClass','noteSubject'),40); }
+function startNewNote() { resetNoteForm(); showSection('notes'); }
+function saveNote() {
+  const title=document.getElementById('noteTitle').value.trim(), summary=document.getElementById('noteSummary').value.trim(), content=document.getElementById('noteContent').value.trim(), cls=document.getElementById('noteClass').value, subject=document.getElementById('noteSubject').value, chapterId=document.getElementById('noteChapter').value||'';
+  if(!title){showToast('Note title is required.','error');return;} if(!subject){showToast('Please select a subject.','error');return;} if(!content){showToast('Add note content before saving.','error');return;}
+  const store=getNotesStoreAdmin(), id=document.getElementById('editNoteId').value||genId(), existing=store.notes.find(note=>note.id===id), timestamp=new Date().toISOString();
+  const payload={id,title,summary,content,class:cls,subject,subjectLabel:getSubjectLabel(cls,subject),chapterId,chapter:chapterId?(getChapterLabel(cls,subject,chapterId)||'General revision'):'General revision',published:document.getElementById('notePublished').checked,createdAt:existing?.createdAt||timestamp,updatedAt:timestamp};
+  const index=store.notes.findIndex(note=>note.id===id); if(index>-1)store.notes[index]=payload;else store.notes.push(payload); saveNotesStoreAdmin(store); showToast('Revision note saved!'); resetNoteForm(); renderNotesTable();
+}
+function editNote(id) {
+  const note=getNotesStoreAdmin().notes.find(item=>item.id===id); if(!note)return;
+  document.getElementById('editNoteId').value=note.id; document.getElementById('noteFormTitle').textContent='✏ Edit Revision Note'; document.getElementById('noteFormSubtitle').textContent='Update the student-facing note'; document.getElementById('noteTitle').value=note.title||''; document.getElementById('noteSummary').value=note.summary||''; document.getElementById('noteContent').value=note.content||''; document.getElementById('noteClass').value=note.class||'9'; document.getElementById('notePublished').checked=note.published===true; updateSubjectOptions('noteSubject','noteClass'); document.getElementById('noteSubject').value=note.subject||''; refreshChapterDropdown('noteChapter','noteClass','noteSubject'); document.getElementById('noteChapter').value=note.chapterId||''; showSection('notes');
+}
+function toggleNotePublish(id) { const store=getNotesStoreAdmin(),note=store.notes.find(item=>item.id===id);if(!note)return;note.published=!note.published;note.updatedAt=new Date().toISOString();saveNotesStoreAdmin(store);renderNotesTable();showToast(note.published?'Note published!':'Note unpublished.'); }
+function deleteNote(id) { if(!confirm('Delete this revision note?'))return;const store=getNotesStoreAdmin();store.notes=store.notes.filter(note=>note.id!==id);saveNotesStoreAdmin(store);renderNotesTable();showToast('Revision note deleted.'); }
+
+// ============================================================
 // SUBJECTS MANAGER
 // ============================================================
 let currentSubjClass = '9';
@@ -1743,8 +1713,8 @@ function handleLogoUpload(input) {
 // ============================================================
 // NAVIGATION EDITOR
 // ============================================================
-const DEFAULT_NAV=[{label:'Home',url:'index.html'},{label:'Class 9',url:'class9.html'},{label:'Class 10',url:'class10.html'},{label:'Class 11',url:'class11.html'},{label:'Class 12',url:'class12.html'},{label:'PYQs',url:'pyq.html'},{label:'Question Banks',url:'questionbank.html'},{label:'Quizzes',url:'quizzes.html'},{label:'Flashcards',url:'flashcards.html'}];
-function getNavItemsAdmin() { const RM=['solutions.html','notes.html','note-post.html','solution-post.html']; try{const s=localStorage.getItem('er_nav');return (s?JSON.parse(s):[...DEFAULT_NAV]).filter(i=>!RM.includes(String((i&&i.url)||'').trim().toLowerCase()));}catch(e){return[...DEFAULT_NAV];} }
+const DEFAULT_NAV=[{label:'Home',url:'index.html'},{label:'Class 9',url:'class9.html'},{label:'Class 10',url:'class10.html'},{label:'Class 11',url:'class11.html'},{label:'Class 12',url:'class12.html'},{label:'PYQs',url:'pyq.html'},{label:'Question Banks',url:'questionbank.html'},{label:'Quizzes',url:'quizzes.html'},{label:'Flashcards',url:'flashcards.html'},{label:'Notes',url:'notes.html'}];
+function getNavItemsAdmin() { const RM=['solutions.html','solution-post.html']; try{const s=localStorage.getItem('er_nav');const items=(s?JSON.parse(s):[...DEFAULT_NAV]).filter(i=>!RM.includes(String((i&&i.url)||'').trim().toLowerCase()));return items.some(i=>String((i&&i.url)||'').toLowerCase()==='notes.html')?items:items.concat({label:'Notes',url:'notes.html'});}catch(e){return[...DEFAULT_NAV];} }
 function renderNavEditor() { const items=getNavItemsAdmin(); document.getElementById('navItemsList').innerHTML=items.map(item=>'<div class="nav-builder-item"><span class="drag-handle">⋮⋮</span><input type="text" value="'+safeHtml(item.label)+'" class="nav-label-input" placeholder="Label" style="flex:1;padding:7px 10px;border:1.5px solid var(--gray2);border-radius:7px;font-family:\'Nunito\';font-size:13px;font-weight:700"><input type="text" value="'+safeHtml(item.url)+'" class="nav-url-input" placeholder="URL" style="flex:2;padding:7px 10px;border:1.5px solid var(--gray2);border-radius:7px;font-family:\'Nunito\';font-size:12px"><button class="btn btn-danger" style="padding:6px 10px;font-size:11px" onclick="this.closest(\'.nav-builder-item\').remove()">✕</button></div>').join(''); }
 function addNavItem() { const list=document.getElementById('navItemsList'); const div=document.createElement('div'); div.className='nav-builder-item'; div.innerHTML='<span class="drag-handle">⋮⋮</span><input type="text" class="nav-label-input" placeholder="Label" style="flex:1;padding:7px 10px;border:1.5px solid var(--gray2);border-radius:7px;font-family:\'Nunito\';font-size:13px;font-weight:700"><input type="text" class="nav-url-input" placeholder="page.html" style="flex:2;padding:7px 10px;border:1.5px solid var(--gray2);border-radius:7px;font-family:\'Nunito\';font-size:12px"><button class="btn btn-danger" style="padding:6px 10px;font-size:11px" onclick="this.closest(\'.nav-builder-item\').remove()">✕</button>'; list.appendChild(div); div.querySelector('.nav-label-input').focus(); }
 function saveNavigation() {
@@ -1801,37 +1771,32 @@ function loadSettings() {
   ].map(s=>'<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gray2);font-size:13px"><span style="font-weight:700;color:var(--muted)">'+s.label+'</span><span style="font-weight:900">'+s.val+'</span></div>').join('');
   const features=(()=>{try{return JSON.parse(localStorage.getItem('er_features')||'{}');}catch(e){return{};}})();
   ['quizzes','pyqs','qbs'].forEach(f=>{const btn=document.getElementById('toggle'+f.charAt(0).toUpperCase()+f.slice(1));if(btn)btn.className='toggle'+(features[f]!==false?' on':'');});
-  const display=document.getElementById('adminPasswordDisplay'); if(display){display.dataset.revealed='0';display.textContent=maskPassword();}
 }
-function maskPassword(){return 'Stored securely as a hash';}
 function getPasswordStrengthScore(val){let s=0;if(val.length>=12)s++;if(/[a-z]/.test(val)&&/[A-Z]/.test(val))s++;if(/\d/.test(val))s++;if(/[^A-Za-z0-9]/.test(val))s++;return s;}
 function updateStrengthMeter(val){const s=getPasswordStrengthScore(val);['ps1','ps2','ps3','ps4'].forEach((id,i)=>{const el=document.getElementById(id);if(!el)return;el.className='pw-strength-bar'+(i<s?(' '+(['weak','ok','good','good'][i])):'');});const lbl=document.getElementById('pwStrengthLabel');if(lbl)lbl.textContent=val.length>0?(['','Weak','Fair','Strong','Very Strong'][s]+(val.length<12?' - use 12+ chars':'')):'';}
 function toggleInputVisibility(id,btn){const input=document.getElementById(id);if(!input)return;const hide=input.type==='password';input.type=hide?'text':'password';if(btn)btn.textContent=hide?'Hide':'Show';}
-function toggleCurrentPassword(btn){const display=document.getElementById('adminPasswordDisplay');if(display){display.dataset.revealed='0';display.textContent=maskPassword();}if(btn)btn.textContent='Show Password';showToast('For security, the saved admin password is not viewable in the browser.','warn');}
-function copyAdminPassword(){showToast('Copying the saved admin password is disabled for security.','warn');}
 function toggleFeature(btn){btn.classList.toggle('on');}
 function saveFeatureToggles(){const features={};['quizzes','pyqs','qbs'].forEach(f=>{const btn=document.getElementById('toggle'+f.charAt(0).toUpperCase()+f.slice(1));features[f]=!!(btn?.classList.contains('on'));});localStorage.setItem('er_features',JSON.stringify(features));showToast('Feature toggles saved!');}
 async function changePassword(){
   const curr=document.getElementById('currPass').value,newP=document.getElementById('newPass').value,conf=document.getElementById('confirmPass').value;
-  if(!(await verifyAdminPassword(curr))){showToast('Current password is wrong.','error');return;}
   if(newP!==conf){showToast('Passwords do not match.','error');return;}
   if(newP===curr){showToast('New password must be different.','warn');return;}
   if(newP.length<12 || !/[a-z]/.test(newP) || !/[A-Z]/.test(newP) || !/\d/.test(newP) || !/[^A-Za-z0-9]/.test(newP)){showToast('Use 12+ characters with uppercase, lowercase, number, and symbol.','error');return;}
-  const newHash=await deriveAdminPasswordHash(newP);
-  localStorage.setItem(ADMIN_HASH_KEY,newHash);
-  localStorage.removeItem(LEGACY_ADMIN_PASS_KEY);
-  adminHashReady=Promise.resolve(newHash);
-  ['currPass','newPass','confirmPass'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  const display=document.getElementById('adminPasswordDisplay');if(display){display.dataset.revealed='0';display.textContent=maskPassword();}
-  updateStrengthMeter('');
-  touchAdminSession();
-  showToast('Password updated and stored securely!');
+  try {
+    await ExamReadyFirebaseAuth.changePassword(curr,newP);
+    ['currPass','newPass','confirmPass'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    updateStrengthMeter('');
+    touchAdminSession();
+    showToast('Firebase admin password updated.');
+  } catch(error) {
+    showToast('Password update failed. Verify your current password and Firebase Auth settings.','error');
+  }
 }
 
 // ============================================================
 // DATA MANAGEMENT
 // ============================================================
-const ALLOWED_EXPORT_KEYS=['examready_pdfs','examready_quizzes','examready_flashcards','er_content_version','er_subjects_map','er_site_config','er_nav','er_announcement','er_features','er_custom_pages','er_ad_slots','er_ad_slots_overrides','er_chapters','er_adsense_autoads','er_adsense_autoads_enabled','er_native_ad_config','er_logo','er_footer_brand_logo'];
+const ALLOWED_EXPORT_KEYS=['examready_pdfs','examready_quizzes','examready_flashcards','examready_notes','er_content_version','er_subjects_map','er_site_config','er_nav','er_announcement','er_features','er_custom_pages','er_ad_slots','er_ad_slots_overrides','er_chapters','er_adsense_autoads','er_adsense_autoads_enabled','er_native_ad_config','er_logo','er_footer_brand_logo'];
 function exportData(){const data={};let n=0;ALLOWED_EXPORT_KEYS.forEach(key=>{const raw=localStorage.getItem(key);if(raw){try{data[key]=JSON.parse(raw);n++;}catch(e){data[key]=raw;n++;}}});const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='examready-backup-'+new Date().toISOString().slice(0,10)+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),3000);showToast('Exported '+n+' data entries!');}
 function importData(input){const f=input.files[0];if(!f)return;const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(typeof data!=='object'||Array.isArray(data)){showToast('Invalid backup format.','error');return;}let n=0;Object.entries(data).forEach(([k,v])=>{if(ALLOWED_EXPORT_KEYS.includes(k)){localStorage.setItem(k,JSON.stringify(v));n++;}});showToast('Imported '+n+' entries! Reloading…');setTimeout(()=>window.location.reload(),1500);}catch(err){showToast('Invalid or corrupted JSON file.','error');}};reader.onerror=()=>showToast('Could not read the file.','error');reader.readAsText(f);input.value='';}
 function resetAllData(){if(!confirm('⚠ This will DELETE all your content and reset to factory defaults.\n\nThis cannot be undone. Continue?'))return;if(!confirm('Last warning: ALL custom PDFs, quizzes, and settings will be lost.\n\nProceed?'))return;ALLOWED_EXPORT_KEYS.forEach(key=>localStorage.removeItem(key));showToast('Data reset. Reloading…');setTimeout(()=>window.location.reload(),1500);}
@@ -1841,7 +1806,7 @@ function resetAllData(){if(!confirm('⚠ This will DELETE all your content and r
 // ============================================================
 function exportSiteDataJson() {
   const DEPLOY_KEYS = [
-    'examready_pdfs', 'examready_quizzes',
+    'examready_pdfs', 'examready_quizzes', 'examready_flashcards', 'examready_notes',
     'er_subjects_map', 'er_site_config', 'er_nav', 'er_announcement',
     'er_features', 'er_ad_slots', 'er_ad_slots_overrides', 'er_chapters',
     'er_adsense_autoads', 'er_adsense_autoads_enabled',
@@ -1858,7 +1823,7 @@ function exportSiteDataJson() {
       if (key === 'examready_pdfs' || key === 'er_chapters' || key === 'er_features' ||
           key === 'er_ad_slots' || key === 'er_subjects_map' || key === 'er_site_config') {
         data[key] = {};
-      } else if (key === 'examready_quizzes') {
+      } else if (key === 'examready_quizzes' || key === 'examready_flashcards' || key === 'examready_notes') {
         data[key] = {};
       } else {
         data[key] = null;
@@ -2499,7 +2464,6 @@ window.renderAdManager = renderAdManager;
 function initAdmin() {
   bindAdminSessionRefresh();
   touchAdminSession();
-  warnIfUsingDefaultAdminPassword();
   updateSubjectOptions('pdfSubject','pdfClass');
   updateSubjectOptions('quizSubject','quizClass');
   populateQuizSubjectFilter();
@@ -2511,17 +2475,19 @@ function initAdmin() {
   document.getElementById('announcementEnabled')?.addEventListener('change',updateAnnouncementPreview);
   setupDragDrop();
 
-  // Check Firebase connection
+  // Public reads and authenticated writes are reported separately.
   _firebaseGet().then(function(data) {
     var badge = document.getElementById('firebaseSyncBadge');
     var status = document.getElementById('firebaseStatus');
-    if (badge) { badge.textContent = '🟢 Firebase Live'; badge.style.background = '#e6ffed'; badge.style.color = '#2f9e44'; }
-    if (status) status.innerHTML = '<span style="color:#2f9e44">✅ Connected to Firebase — auto-sync active</span>';
+    if (badge) { badge.textContent = '🔒 Firebase Auth'; badge.style.background = '#fff8ed'; badge.style.color = '#774500'; }
+    if (status) status.textContent = data && typeof data === 'object'
+      ? 'Public Firebase read is available. Admin writes require matching Realtime Database rules.'
+      : 'Firebase is reachable, but no site data is published yet.';
   }).catch(function() {
     var badge = document.getElementById('firebaseSyncBadge');
     var status = document.getElementById('firebaseStatus');
     if (badge) { badge.textContent = '🔴 Firebase Off'; badge.style.background = '#fff0f0'; badge.style.color = '#e8211a'; }
-    if (status) status.innerHTML = '<span style="color:var(--red)">❌ Cannot connect — update Firebase rules to allow read/write</span>';
+    if (status) status.textContent = 'Public Firebase read failed. Check the database URL and read rules.';
   });
 
   // Background hydration every 15 seconds to prevent concurrent write loss
@@ -2537,27 +2503,53 @@ function initAdmin() {
   }
 }
 
+async function pushFirebaseData() {
+  const status = document.getElementById('firebaseStatus');
+  if (!ExamReadyFirebaseAuth.isConfigured()) {
+    if (status) status.textContent = 'Sync is locked. Set firebase.apiKey and firebase.adminUid in examready-config.js, then deploy database.rules.json.';
+    showToast('Firebase admin authentication is not configured.','error');
+    return;
+  }
+  if (status) status.textContent = 'Pushing site data with Firebase admin authorization…';
+  try {
+    await firebasePushAll();
+    if (status) status.textContent = 'Sync completed. Firebase rules accepted the authenticated admin write.';
+    showToast('All site data synced to Firebase.');
+  } catch (error) {
+    if (status) status.textContent = 'Sync denied or unavailable: ' + String(error.message || 'Check Firebase Auth and database rules.');
+    showToast('Firebase sync failed. Check Firebase Auth and database rules.','error');
+  }
+}
+
 // ============================================================
 // BOOT
 // ============================================================
 window.addEventListener('DOMContentLoaded', async () => {
-  try { await ensureAdminPasswordHash(); }
-  catch (error) {
-    showLockoutBar('Secure admin login is unavailable in this browser.');
+  localStorage.removeItem('er_admin_pass_hash');
+  localStorage.removeItem('er_admin_pass');
+  if (!ExamReadyFirebaseAuth.isConfigured()) {
+    showLockoutBar('Admin sign-in is disabled until firebase.apiKey and firebase.adminUid are configured in examready-config.js.');
     const btn = document.getElementById('authSubmitBtn');
     if (btn) btn.disabled = true;
     return;
   }
-
   syncLockoutState();
   if (hasValidAdminSession()) {
-    document.getElementById('authGate').style.display = 'none';
-    initAdmin();
+    try {
+      await ExamReadyFirebaseAuth.getIdToken();
+      document.getElementById('authGate').style.display = 'none';
+      initAdmin();
+    } catch (_) {
+      clearAdminSession();
+      showLockoutBar('Admin session expired. Sign in again.');
+    }
   }
   document.getElementById('authPass')?.addEventListener('keydown', e => { if(e.key==='Enter')doLogin(); });
+  document.getElementById('authEmail')?.addEventListener('keydown', e => { if(e.key==='Enter')doLogin(); });
 });
 </script>
   <script src="adfix_patch.js"></script>
   <script src="admin-extensions.js"></script>
+  <script src="animations.js"></script>
 </body>
 </html>

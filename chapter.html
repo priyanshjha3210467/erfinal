@@ -20,7 +20,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" href="favicon.png" sizes="256x256">
 <title>Chapter – ExamReady</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -351,6 +351,7 @@ nav a:hover,nav a.active{color:#fff;background:rgba(255,255,255,0.09);}
 .res-type-icon.ip   { background: #fff8f0; color: #e67700; }
 .res-type-icon.quiz { background: #fffbf0; color: #c97a00; }
 .res-type-icon.fc { background: #fff4ed; color: #e8590c; }
+.res-type-icon.note { background: #eef8f7; color: #177b73; }
 .res-item-body { min-width: 0; flex: 1; }
 .res-item-badge { font-size: 9.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); margin-bottom: 4px; }
 .res-item-title { font-size: 15px; font-weight: 900; line-height: 1.35; color: var(--text); margin-bottom: 4px; }
@@ -374,6 +375,8 @@ nav a:hover,nav a.active{color:#fff;background:rgba(255,255,255,0.09);}
 .res-action.quiz-btn:hover { background: #a06200; }
 .res-action.fc-btn { background: #e8590c; }
 .res-action.fc-btn:hover { background: #c2410c; }
+.res-action.note-btn { background: #177b73; }
+.res-action.note-btn:hover { background: #12645e; }
 
 /* Section label inside "All" panel */
 .res-section-label {
@@ -588,7 +591,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <script src="examready-config.js"></script>
 <script src="student-storage.js"></script>
-<script src="shared.js?v=20260927-2"></script>
+<script src="shared.js?v=20261003-notes"></script>
 <script src="animations.js"></script>
 <script>
 function toggleMenu() {
@@ -669,10 +672,11 @@ function buildPanel(itemsHtml, emptyLabel) {
   if (!itemsHtml) return `<div class="empty-res"><div class="e-icon">📭</div><strong>Nothing here yet</strong><p>${escapeHtml(emptyLabel)}</p></div>`;
   return itemsHtml;
 }
-function countChRes(allPdfs, quizzes, cls, subjectKey, chId, flashcardDecks) {
+function countChRes(allPdfs, quizzes, cls, subjectKey, chId, flashcardDecks, notes, chapterName) {
   return PDF_TYPES.reduce((a,t) => a + (allPdfs[`${cls}-${subjectKey}-${t.key}`]||[]).filter(p=>(p.chapterId||'')=== chId).length, 0)
     + quizzes.filter(q=>(q.chapterId||'')=== chId).length
-    + (flashcardDecks || []).filter(deck => String(deck.chapterId || '') === String(chId)).length;
+    + (flashcardDecks || []).filter(deck => String(deck.chapterId || '') === String(chId)).length
+    + (notes || []).filter(note => String(note.chapterId || '') === String(chId) || (!note.chapterId && String(note.chapter || '').toLowerCase() === String(chapterName || '').toLowerCase())).length;
 }
 function renderNotFound(msg) {
   document.getElementById('heroIcon').textContent = '❌';
@@ -698,6 +702,8 @@ function renderPage() {
   const allPdfs = getData('pdfs') || {};
   const allQuizzes = (getData('quizzes')||{})[`${cls}-${subjectKey}`] || [];
   const allFlashcardDecks = typeof getFlashcardDecks === 'function' ? getFlashcardDecks({ publishedOnly: true, includePersonal: false }) : [];
+  const allSubjectNotes = getPublishedNotes({ class: cls, subject: subjectKey, subjectLabel: subject.label });
+  const notes = getPublishedNotes({ class: cls, subject: subjectKey, subjectLabel: subject.label, chapterId, chapter: chapter.name });
 
   const pdfMap = {};
   PDF_TYPES.forEach(t => {
@@ -712,7 +718,7 @@ function renderPage() {
   if (activeYear !== 'all' && !availableYears.includes(String(activeYear))) activeYear = 'all';
 
   const totalPdfs = PDF_TYPES.reduce((a,t) => a + pdfMap[t.key].length, 0);
-  const totalAll = totalPdfs + quizzes.length + flashcardDecks.length;
+  const totalAll = totalPdfs + quizzes.length + flashcardDecks.length + notes.length;
 
   const chIdx = chapters.findIndex(c => c.id === chapterId);
   const prevCh = chapters[chIdx - 1] || null;
@@ -731,6 +737,7 @@ function renderPage() {
     <div class="hero-stat-pill"><strong>${totalPdfs}</strong><span>PDFs</span></div>
     <div class="hero-stat-pill"><strong>${quizzes.length}</strong><span>Quizzes</span></div>
     <div class="hero-stat-pill"><strong>${flashcardDecks.length}</strong><span>Flashcards</span></div>
+    <div class="hero-stat-pill"><strong>${notes.length}</strong><span>Notes</span></div>
     <div class="hero-stat-pill"><strong>${totalAll}</strong><span>Total</span></div>
     <div class="hero-stat-pill"><strong>${chapter.number}</strong><span>Chapter</span></div>`;
 
@@ -770,6 +777,10 @@ function renderPage() {
       parts.push(`<div class="res-section-label">Flashcards (${flashcardDecks.length})</div>`);
       flashcardDecks.forEach(deck => parts.push(resItemHtml('▣','fc','Flashcard Deck',deck.title,`${(deck.cards||[]).length} cards`,`flashcards.html?deck=${encodeURIComponent(deck.id)}`,'Study Deck','fc-btn')));
     }
+    if (notes.length) {
+      parts.push(`<div class="res-section-label">Notes (${notes.length})</div>`);
+      notes.forEach(note => parts.push(resItemHtml('NOTE','note','Revision Note',note.title,note.summary || 'Open this note for the full revision guide.',`note-post.html?id=${encodeURIComponent(note.id)}`,'Read Note','note-btn',note.chapterId ? getChapterLabel(cls,subjectKey,note.chapterId) : (note.chapter !== 'General revision' ? note.chapter : ''))));
+    }
     return parts.length ? parts.join('') : null;
   }
 
@@ -778,7 +789,9 @@ function renderPage() {
     ...PDF_TYPES.map(t => ({ key:t.key, label:t.label, count:pdfMap[t.key].length })).filter(t=>t.count>0),
     ...(quizzes.length ? [{ key:'quiz', label:'Quizzes', count:quizzes.length }] : []),
     { key:'flashcards', label:'Flashcards', count:flashcardDecks.length },
+    { key:'notes', label:'Notes', count:notes.length },
   ];
+  if (p.get('tab') === 'notes') activeResourceTab = 'notes';
   if (!visibleTabs.some(t=>t.key===activeResourceTab)) activeResourceTab='all';
   const tabsHtml = visibleTabs.map(t => `
     <button class="res-tab${t.key===activeResourceTab?' active':''}" data-tab="${t.key}" onclick="switchTab('${t.key}')">
@@ -789,6 +802,7 @@ function renderPage() {
     if (key==='all') return buildPanel(buildAllPanel(), `No resources assigned to Chapter ${chapter.number} yet.`);
     if (key==='quiz') return buildPanel(quizzes.map(q=>resItemHtml('QUIZ','quiz','MCQ Quiz',q.title,`${(q.questions||[]).length} questions`,`quiz.html?id=${encodeURIComponent(q.id)}`,'Open Quiz','quiz-btn')).join('')||null,'No quizzes for this chapter.');
     if (key==='flashcards') return buildPanel(flashcardDecks.map(deck=>resItemHtml('▣','fc','Flashcard Deck',deck.title,`${(deck.cards||[]).length} cards`,`flashcards.html?deck=${encodeURIComponent(deck.id)}`,'Study Deck','fc-btn')).join('')||null,'No flashcard decks for this chapter.');
+    if (key==='notes') return buildPanel(notes.map(note=>resItemHtml('NOTE','note','Revision Note',note.title,note.summary || 'Open this note for the full revision guide.',`note-post.html?id=${encodeURIComponent(note.id)}`,'Read Note','note-btn',note.chapterId ? getChapterLabel(cls,subjectKey,note.chapterId) : (note.chapter !== 'General revision' ? note.chapter : ''))).join('')||null,`No published notes for Chapter ${chapter.number} yet.`);
     const t = PDF_TYPES.find(x=>x.key===key);
     return buildPanel(pdfMap[key].filter(item=>activeYear==='all'||String(item.year)===String(activeYear)).map(item=>resItemHtml(t.iconTxt,t.cls,t.label,item.name,[item.year?`Year: ${item.year}`:'',item.size||''].filter(Boolean).join(' - '),buildPdfPreviewUrl(item),'Preview PDF','')).join('')||null,`No ${t.label} for this chapter.`);
   }
@@ -806,7 +820,7 @@ function renderPage() {
   }
 
   const chSidebarHtml = chapters.map(ch => {
-    const res = countChRes(allPdfs, allQuizzes, cls, subjectKey, ch.id, allFlashcardDecks);
+    const res = countChRes(allPdfs, allQuizzes, cls, subjectKey, ch.id, allFlashcardDecks, allSubjectNotes, ch.name);
     return `<a class="ch-sidebar-item${ch.id===chapterId?' active-ch':''}" href="${buildChUrl(cls,subjectKey,ch.id)}">
       <span class="ch-sidebar-num">Ch ${ch.number}</span>
       <span class="ch-sidebar-name">${escapeHtml(ch.name)}</span>
@@ -839,6 +853,7 @@ function renderPage() {
           <div class="info-row"><span>Chapter</span><span>${escapeHtml(String(chapter.number))}</span></div>
           <div class="info-row"><span>PDF Files</span><span>${totalPdfs}</span></div>
           <div class="info-row"><span>Quizzes</span><span>${quizzes.length}</span></div>
+          <div class="info-row"><span>Notes</span><span>${notes.length}</span></div>
           <div class="info-row"><span>Total</span><span>${totalAll}</span></div>
         </div>
       </div>
@@ -855,6 +870,7 @@ function renderPage() {
           <a class="quick-link" href="quizzes.html">🎯 All Quizzes</a>
           <a class="quick-link" href="pyq.html">📄 PYQ Papers</a>
           <a class="quick-link" href="flashcards.html">▣ Flashcards</a>
+          <a class="quick-link" href="${subjectUrl}&tab=notes">📝 Subject Notes</a>
         </div>
       </div>
     </aside>`;

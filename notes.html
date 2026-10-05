@@ -1,7 +1,242 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moved - ExamReady</title>
-<meta http-equiv="refresh" content="0; url=flashcards.html">
-<link rel="canonical" href="flashcards.html"><meta name="robots" content="noindex">
-<script>location.replace('flashcards.html');</script></head>
-<body><p style="font-family:sans-serif;padding:24px">This page has moved. <a href="flashcards.html">Go to Flashcards</a>.</p></body></html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse ExamReady revision notes by class, subject, and chapter.">
+  <title>Revision Notes - ExamReady</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="animations.css">
+  <style>
+    :root { --red:#e8211a; --orange:#e67700; --coral:#ff7a50; --gold:#ffb347; --warm-gradient:linear-gradient(105deg,#e8211a 0%,#f05a36 52%,#ff9a45 100%); --black:#0d0d0d; --surface:#f4f5f7; --text:#1a1a1a; --muted:#6b7280; --border:#e2e4e8; }
+    * { box-sizing:border-box; }
+    html, body { width:100%; overflow-x:hidden; }
+    body { min-height:100vh; margin:0; display:flex; flex-direction:column; background:var(--surface); color:var(--text); font-family:'Nunito',sans-serif; -webkit-font-smoothing:antialiased; }
+    main { flex:1; }
+    .notes-hero { position:relative; overflow:hidden; background:linear-gradient(112deg,#0d0d0d 0%,#1b1513 58%,#3c1b0e 100%); color:#fff; }
+    .notes-hero::after { content:""; position:absolute; inset:auto 0 0; height:3px; background:var(--warm-gradient); pointer-events:none; }
+    .notes-hero-inner, .library { width:min(1180px,100%); margin:0 auto; padding-left:26px; padding-right:26px; }
+    .notes-hero-inner { position:relative; z-index:1; padding-top:40px; padding-bottom:38px; }
+    .hero-kicker, .section-kicker { display:flex; align-items:center; gap:9px; margin:0 0 11px; color:#ffbf91; font-size:11px; font-weight:900; text-transform:uppercase; }
+    .hero-kicker::before, .section-kicker::before { content:""; width:18px; height:3px; background:var(--warm-gradient); }
+    .hero-layout { display:flex; align-items:flex-end; justify-content:space-between; gap:34px; }
+    h1 { max-width:720px; margin:0; font-family:'Bebas Neue',sans-serif; font-size:52px; font-weight:400; line-height:1; }
+    .hero-copy { max-width:650px; margin:12px 0 0; color:#c8c8c8; font-size:15px; font-weight:700; line-height:1.65; }
+    .hero-stats { display:flex; gap:24px; flex-shrink:0; padding:0 0 3px; }
+    .hero-stat { min-width:74px; display:flex; flex-direction:column; gap:3px; }
+    .hero-stat strong { font-size:22px; line-height:1; }
+    .hero-stat span { color:#aaa; font-size:10px; font-weight:900; }
+    .library { padding-top:30px; padding-bottom:72px; }
+    .library-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:22px; margin:0 0 17px; }
+    .section-kicker { margin-bottom:6px; color:#b74c17; }
+    .library-heading h2 { margin:0; font-size:21px; font-weight:900; line-height:1.3; }
+    .class-shortcuts { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:6px; }
+    .class-shortcuts button { min-height:34px; padding:0 12px; border:1px solid var(--border); border-radius:6px; background:#fff; color:#505660; font:800 12px 'Nunito',sans-serif; cursor:pointer; }
+    .class-shortcuts button:hover, .class-shortcuts button[aria-pressed="true"] { border-color:#e67700; background:var(--warm-gradient); color:#fff; }
+    .class-shortcuts button:focus-visible, button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible { outline:3px solid rgba(230,119,0,.3); outline-offset:2px; }
+    .library-layout { display:grid; grid-template-columns:246px minmax(0,1fr); gap:26px; align-items:start; }
+    .filter-rail { position:sticky; top:82px; padding:18px; border:1px solid var(--border); border-radius:8px; background:#fff; }
+    .filter-title { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:15px; }
+    .filter-title h3 { margin:0; font-size:14px; font-weight:900; }
+    .filter-title span { color:var(--muted); font-size:11px; font-weight:800; }
+    .search-wrap { position:relative; display:block; margin-bottom:16px; }
+    .search-wrap::before { content:"Search"; position:absolute; top:50%; left:12px; color:#828792; font-size:11px; transform:translateY(-50%); pointer-events:none; }
+    .search-input, .filter-field select { width:100%; min-width:0; height:42px; border:1px solid var(--border); border-radius:6px; background:#fff; color:var(--text); font:700 12px 'Nunito',sans-serif; transition:border-color .18s,box-shadow .18s; }
+    .search-input { padding:0 11px 0 57px; }
+    .search-input:focus, .filter-field select:focus { border-color:#e67700; box-shadow:0 0 0 3px rgba(230,119,0,.13); outline:0; }
+    .filter-field { display:flex; flex-direction:column; gap:6px; margin-top:12px; }
+    .filter-field span { color:#5c626c; font-size:11px; font-weight:900; }
+    .filter-field select { padding:0 10px; }
+    .filter-actions { display:flex; align-items:center; gap:12px; margin-top:15px; padding-top:13px; border-top:1px solid #edf0f2; }
+    .clear-button { min-height:34px; padding:0 10px; border:1px solid #efb58f; border-radius:6px; background:#fff; color:#a34d1b; font:900 11px 'Nunito',sans-serif; cursor:pointer; transition:background .18s,border-color .18s,color .18s; }
+    .clear-button:hover { border-color:#e67700; background:#fff2e6; color:#843a12; }
+    .filter-hint { margin:0; color:var(--muted); font-size:10px; font-weight:700; line-height:1.45; }
+    .results-head { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:44px; margin:0 0 12px; }
+    .results-title { margin:0; font-size:15px; font-weight:900; }
+    .results-hint { margin:3px 0 0; color:var(--muted); font-size:11px; font-weight:700; }
+    .active-filters { display:flex; flex-wrap:wrap; gap:6px; margin:-2px 0 12px; }
+    .filter-chip { display:inline-flex; align-items:center; gap:6px; min-height:26px; padding:3px 8px; border:1px solid #f2c7a6; border-radius:5px; background:#fff4e9; color:#8b4317; font-size:10px; font-weight:900; }
+    .filter-chip button { padding:0; border:0; background:transparent; color:inherit; font:900 13px 'Nunito',sans-serif; line-height:1; cursor:pointer; }
+    .filter-chip button:hover { color:#e45a25; }
+    .notes-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .note-card { position:relative; display:flex; flex-direction:column; min-width:0; min-height:224px; padding:17px 18px 15px; overflow:hidden; border:1px solid var(--border); border-radius:7px; background:#fff; color:inherit; text-decoration:none; transition:border-color .18s,box-shadow .18s,transform .18s; }
+    .note-card::before { content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--warm-gradient); transform:scaleY(.24); transform-origin:center; transition:transform .2s ease; }
+    .note-card:hover { border-color:#efb58f; box-shadow:0 8px 24px rgba(116,61,29,.12); transform:translateY(-2px); }
+    .note-card:hover::before { transform:scaleY(1); }
+    .note-meta { display:flex; align-items:center; flex-wrap:wrap; gap:6px; color:#53616b; font-size:10px; font-weight:900; line-height:1.5; }
+    .class-tag { padding:3px 7px; border-radius:4px; background:#f0f1f3; color:#34383d; }
+    .meta-dot { width:4px; height:4px; border-radius:50%; background:#a8adb5; flex:0 0 auto; }
+    .note-subject { color:#a34d1b; }
+    .note-card h3 { margin:11px 0 6px; font-size:16px; font-weight:900; line-height:1.35; overflow-wrap:anywhere; }
+    .note-preview { display:-webkit-box; overflow:hidden; margin:0; color:#646b75; font-size:12px; font-weight:600; line-height:1.6; -webkit-box-orient:vertical; -webkit-line-clamp:3; }
+    .note-footer { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:auto; padding-top:13px; }
+    .note-details { display:flex; flex-wrap:wrap; gap:4px 10px; color:var(--muted); font-size:10px; font-weight:800; }
+    .read-link { display:inline-flex; align-items:center; gap:5px; color:#b54d19; font-size:11px; font-weight:900; white-space:nowrap; transition:gap .18s ease,color .18s ease; }
+    .note-card:hover .read-link { gap:8px; color:#e45a25; }
+    .empty-state { grid-column:1/-1; padding:50px 22px; border:1px dashed #c8cdd3; border-radius:7px; background:#fff; text-align:center; }
+    .empty-mark { display:grid; width:42px; height:42px; place-items:center; margin:0 auto 13px; border-radius:50%; background:#fff0e4; color:#b54d19; font-size:20px; font-weight:900; }
+    .empty-state h3 { margin:0 0 7px; font-size:17px; font-weight:900; }
+    .empty-state p { max-width:390px; margin:0 auto; color:var(--muted); font-size:12px; font-weight:600; line-height:1.6; }
+    @media (max-width:900px) { .library-layout { grid-template-columns:210px minmax(0,1fr); gap:18px; } .notes-grid { grid-template-columns:1fr; } }
+    @media (max-width:700px) { .notes-hero-inner, .library { padding-left:16px; padding-right:16px; } .notes-hero-inner { padding-top:32px; padding-bottom:29px; } h1 { font-size:44px; } .hero-layout { align-items:flex-start; flex-direction:column; gap:19px; } .hero-stats { gap:25px; } .library { padding-top:24px; padding-bottom:52px; } .library-heading { align-items:flex-start; flex-direction:column; gap:13px; } .class-shortcuts { justify-content:flex-start; } .library-layout { grid-template-columns:1fr; gap:18px; } .filter-rail { position:static; padding:15px; } .filter-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 10px; } .filter-field:last-child { grid-column:1/-1; } .search-wrap { margin-bottom:10px; } .notes-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:480px) { h1 { font-size:40px; } .hero-copy { font-size:13px; } .filter-fields { grid-template-columns:1fr; } .filter-field:last-child { grid-column:auto; } .notes-grid { grid-template-columns:1fr; } .note-card { min-height:205px; } .results-head { align-items:flex-start; flex-direction:column; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; } }
+  </style>
+  <link rel="icon" type="image/png" href="favicon.png" sizes="256x256">
+</head>
+<body>
+  <header>
+    <a class="logo-wrap" href="index.html"><img src="logo.png" alt="ExamReady" class="logo-img"></a>
+    <nav id="mainNav"></nav>
+    <button class="hamburger" type="button" aria-controls="mainNav" aria-expanded="false" aria-label="Open navigation menu"><span></span><span></span><span></span></button>
+  </header>
+  <main>
+    <section class="notes-hero">
+      <div class="notes-hero-inner">
+        <p class="hero-kicker">Study library / Notes</p>
+        <div class="hero-layout">
+          <div>
+            <h1>Revision Notes</h1>
+            <p class="hero-copy">A clear place to revisit the ideas that matter. Browse by class, subject, or chapter, then settle into a focused read.</p>
+          </div>
+          <div class="hero-stats" aria-label="Notes library totals">
+            <div class="hero-stat"><strong id="heroNoteCount">0</strong><span>NOTES</span></div>
+            <div class="hero-stat"><strong id="heroSubjectCount">0</strong><span>SUBJECTS</span></div>
+            <div class="hero-stat"><strong id="heroClassCount">0</strong><span>CLASSES</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="library" aria-label="Revision notes library">
+      <div class="library-heading">
+        <div><p class="section-kicker">Find a topic</p><h2>Browse the notes</h2></div>
+        <div class="class-shortcuts" id="classShortcuts" role="group" aria-label="Quick filter by class"></div>
+      </div>
+      <div class="library-layout">
+        <aside class="filter-rail" aria-label="Filter revision notes">
+          <div class="filter-title"><h3>Filters</h3><span id="filterCount">All notes</span></div>
+          <label class="search-wrap"><span class="sr-only" hidden>Search</span><input class="search-input" id="noteSearch" type="search" autocomplete="off" placeholder="Topics or keywords" aria-label="Search notes, topics, or keywords"></label>
+          <div class="filter-fields">
+            <label class="filter-field"><span>Class</span><select id="classFilter" aria-label="Filter notes by class"><option value="">All classes</option></select></label>
+            <label class="filter-field"><span>Subject</span><select id="subjectFilter" aria-label="Filter notes by subject"><option value="">All subjects</option></select></label>
+            <label class="filter-field"><span>Chapter</span><select id="chapterFilter" aria-label="Filter notes by chapter"><option value="">All chapters</option></select></label>
+            <label class="filter-field"><span>Sort by</span><select id="sortFilter" aria-label="Sort notes"><option value="recent">Recently updated</option><option value="title">Title A to Z</option></select></label>
+          </div>
+          <div class="filter-actions"><button class="clear-button" id="clearFilters" type="button">Clear all</button><p class="filter-hint">Choose a class, subject, or chapter to narrow your list.</p></div>
+        </aside>
+        <div class="results-area">
+          <div class="results-head"><div><h2 class="results-title" id="notesCount" aria-live="polite">Loading notes...</h2><p class="results-hint">Select a note to open the full revision guide.</p></div></div>
+          <div class="active-filters" id="activeFilters" aria-label="Active filters"></div>
+          <div class="notes-grid" id="notesGrid" aria-live="polite" aria-busy="true"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer></footer>
+  <script src="examready-config.js"></script>
+  <script src="student-storage.js"></script>
+  <script src="shared.js?v=20261003-notes-ui"></script>
+  <script src="animations.js"></script>
+  <script>
+    let notes = [];
+    const escapeText = value => typeof escapeHtml === 'function' ? escapeHtml(value) : String(value || '');
+    const getNotes = () => {
+      const raw = getData('notes') || {};
+      const list = Array.isArray(raw) ? raw : (Array.isArray(raw.notes) ? raw.notes : []);
+      return list.filter(note => note && note.published !== false && note.id && note.title && note.content).map(note => {
+        const cls = String(note.class || note.classNum || '');
+        const subject = String(note.subject || note.subjectKey || '');
+        const chapterLabel = note.chapter || (note.chapterId && typeof getChapterLabel === 'function' ? getChapterLabel(cls, subject, note.chapterId) : '');
+        return { ...note, class:cls, subject, subjectLabel:note.subjectLabel || (typeof getSubjectLabel === 'function' ? getSubjectLabel(cls, subject) : subject), chapter:chapterLabel && chapterLabel !== 'Uncategorized' ? chapterLabel : 'General revision' };
+      });
+    };
+    const optionsFor = (values, label) => '<option value="">' + label + '</option>' + values.map(item => '<option value="' + escapeText(item.value) + '">' + escapeText(item.label) + '</option>').join('');
+    const readMinutes = note => Math.max(1, Math.ceil(String(note.content || '').trim().split(/\s+/).filter(Boolean).length / 220));
+    const classSelect = document.getElementById('classFilter');
+    const subjectSelect = document.getElementById('subjectFilter');
+    const chapterSelect = document.getElementById('chapterFilter');
+    const searchInput = document.getElementById('noteSearch');
+    const activeFilters = document.getElementById('activeFilters');
+    const quickClasses = document.getElementById('classShortcuts');
+    function populateFilters() {
+      const classes = [...new Set(notes.map(note => String(note.class || '')))].filter(Boolean).sort((a,b) => Number(a) - Number(b));
+      const subjects = [...new Map(notes.map(note => [String(note.subject || note.subjectLabel || ''), { value:String(note.subject || note.subjectLabel || ''), label:String(note.subjectLabel || note.subject || '') }])).values()].filter(item => item.value).sort((a,b) => a.label.localeCompare(b.label));
+      const chapters = [...new Map(notes.map(note => [String(note.chapterId || note.chapter || ''), { value:String(note.chapterId || note.chapter || ''), label:String(note.chapter || 'General revision') }])).values()].filter(item => item.value).sort((a,b) => a.label.localeCompare(b.label));
+      document.getElementById('heroNoteCount').textContent = String(notes.length);
+      document.getElementById('heroSubjectCount').textContent = String(subjects.length);
+      document.getElementById('heroClassCount').textContent = String(classes.length);
+      classSelect.innerHTML = optionsFor(classes.map(value => ({value, label:'Class ' + value})), 'All classes');
+      subjectSelect.innerHTML = optionsFor(subjects, 'All subjects');
+      chapterSelect.innerHTML = optionsFor(chapters, 'All chapters');
+      quickClasses.innerHTML = '<button type="button" data-class="" aria-pressed="true">All classes</button>' + classes.map(value => '<button type="button" data-class="' + escapeText(value) + '" aria-pressed="false">Class ' + escapeText(value) + '</button>').join('');
+    }
+    function getFilteredNotes() {
+      const cls = classSelect.value, subject = subjectSelect.value, chapter = chapterSelect.value;
+      const query = searchInput.value.trim().toLowerCase();
+      const sort = document.getElementById('sortFilter').value;
+      const filtered = notes.filter(note => {
+        const searchable = [note.title, note.summary, note.content, note.subjectLabel, note.subject, note.chapter].join(' ').toLowerCase();
+        return (!cls || String(note.class) === cls) && (!subject || String(note.subject || note.subjectLabel) === subject) && (!chapter || String(note.chapterId || note.chapter) === chapter) && (!query || searchable.includes(query));
+      });
+      filtered.sort((a,b) => sort === 'title' ? String(a.title || '').localeCompare(String(b.title || '')) : String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
+      return filtered;
+    }
+    function renderActiveFilters() {
+      const chips = [];
+      if (classSelect.value) chips.push({key:'class', label:'Class ' + classSelect.value});
+      if (subjectSelect.value) chips.push({key:'subject', label:subjectSelect.options[subjectSelect.selectedIndex].text});
+      if (chapterSelect.value) chips.push({key:'chapter', label:chapterSelect.options[chapterSelect.selectedIndex].text});
+      if (searchInput.value.trim()) chips.push({key:'search', label:'Search: ' + searchInput.value.trim()});
+      activeFilters.innerHTML = chips.map(chip => '<span class="filter-chip">' + escapeText(chip.label) + '<button type="button" data-clear-filter="' + chip.key + '" aria-label="Remove ' + escapeText(chip.label) + ' filter">&times;</button></span>').join('');
+      document.getElementById('filterCount').textContent = chips.length ? chips.length + ' active' : 'All notes';
+      quickClasses.querySelectorAll('button[data-class]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.class === classSelect.value)));
+    }
+    function renderNotes() {
+      const filtered = getFilteredNotes();
+      const grid = document.getElementById('notesGrid');
+      const hasFilters = classSelect.value || subjectSelect.value || chapterSelect.value || searchInput.value.trim();
+      document.getElementById('notesCount').textContent = filtered.length + ' note' + (filtered.length === 1 ? '' : 's') + (hasFilters ? ' found' : ' in the library');
+      grid.setAttribute('aria-busy', 'false');
+      renderActiveFilters();
+      if (!filtered.length) {
+        grid.innerHTML = '<div class="empty-state"><div class="empty-mark" aria-hidden="true">' + (hasFilters ? '0' : 'N') + '</div><h3>' + (hasFilters ? 'No notes match those filters' : 'Notes are being prepared') + '</h3><p>' + (hasFilters ? 'Try another keyword or remove a filter to broaden your results.' : 'Published revision notes will appear here as they are added.') + '</p></div>';
+        return;
+      }
+      grid.innerHTML = filtered.map(note => {
+        const subjectName = note.subjectLabel || note.subject || 'Subject';
+        const previewText = note.summary || String(note.content || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 210);
+        const updated = typeof formatHumanDate === 'function' ? formatHumanDate(note.updatedAt) : 'Recently updated';
+        const meta = '<span class="class-tag">Class ' + escapeText(note.class || '') + '</span><span class="meta-dot"></span><span class="note-subject">' + escapeText(subjectName) + '</span>';
+        return '<a class="note-card" href="note-post.html?id=' + encodeURIComponent(note.id) + '"><div class="note-meta">' + meta + '</div><h3>' + escapeText(note.title) + '</h3><p class="note-preview">' + escapeText(previewText || 'A focused revision note for this topic.') + '</p><div class="note-footer"><div class="note-details"><span>' + readMinutes(note) + ' min read</span><span>' + escapeText(note.chapter || 'General revision') + '</span></div><span class="read-link">Read note <span aria-hidden="true">&rarr;</span></span></div></a>';
+      }).join('');
+    }
+    [classSelect, subjectSelect, chapterSelect, document.getElementById('sortFilter')].forEach(select => select.addEventListener('change', renderNotes));
+    searchInput.addEventListener('input', renderNotes);
+    quickClasses.addEventListener('click', event => {
+      const button = event.target.closest('button[data-class]');
+      if (!button) return;
+      classSelect.value = button.dataset.class;
+      renderNotes();
+    });
+    activeFilters.addEventListener('click', event => {
+      const button = event.target.closest('button[data-clear-filter]');
+      if (!button) return;
+      ({class:classSelect, subject:subjectSelect, chapter:chapterSelect, search:searchInput})[button.dataset.clearFilter].value = '';
+      renderNotes();
+    });
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      classSelect.value = ''; subjectSelect.value = ''; chapterSelect.value = ''; searchInput.value = '';
+      document.getElementById('sortFilter').value = 'recent'; renderNotes();
+    });
+    whenDataReady(() => {
+      notes = getNotes();
+      populateFilters();
+      const params = new URLSearchParams(window.location.search);
+      if ([...classSelect.options].some(option => option.value === params.get('class'))) classSelect.value = params.get('class') || '';
+      if ([...subjectSelect.options].some(option => option.value === params.get('subject'))) subjectSelect.value = params.get('subject') || '';
+      if ([...chapterSelect.options].some(option => option.value === params.get('chapter'))) chapterSelect.value = params.get('chapter') || '';
+      renderNotes();
+    });
+  </script>
+</body>
+</html>

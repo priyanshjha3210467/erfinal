@@ -1,0 +1,10 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "siteData": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'REPLACE_WITH_FIREBASE_ADMIN_UID'"
+    }
+  }
+}

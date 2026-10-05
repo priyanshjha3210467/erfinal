@@ -13,7 +13,7 @@ function _isAdminPageCheck() {
 
 // Keys to sync between localStorage and Firebase
 const SITE_DATA_KEYS = [
-  'examready_pdfs', 'examready_quizzes', 'examready_flashcards', 'er_content_version',
+  'examready_pdfs', 'examready_quizzes', 'examready_flashcards', 'examready_notes', 'er_content_version',
   'er_subjects_map', 'er_site_config', 'er_nav', 'er_announcement',
   'er_features', 'er_ad_slots', 'er_ad_slots_overrides', 'er_chapters',
   'er_adsense_autoads', 'er_adsense_autoads_enabled',
@@ -31,27 +31,29 @@ function _firebaseGet() {
 }
 
 function _firebasePut(key, value) {
-  return fetch(FIREBASE_DB_URL + FIREBASE_DATA_PATH + '/' + key + '.json', {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(value)
-  })
-  .then(function(res) {
-    if (!res.ok) {
-      var msg = 'Firebase sync failed for key "' + key + '": ' + res.status;
-      console.error(msg);
-      if (typeof showToast === 'function') showToast('❌ ' + msg, 'error');
-    }
-  })
-  .catch(function(err) {
-    console.error('Firebase network error for key "' + key + '":', err);
-    if (typeof showToast === 'function') showToast('❌ Network error syncing to Firebase', 'error');
+  if (typeof ExamReadyFirebaseAuth === 'undefined') {
+    return Promise.reject(new Error('Firebase admin authentication is unavailable.'));
+  }
+  return ExamReadyFirebaseAuth.getIdToken().then(function(token) {
+    return fetch(FIREBASE_DB_URL + FIREBASE_DATA_PATH + '/' + encodeURIComponent(key) + '.json?auth=' + encodeURIComponent(token), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(value)
+    });
+  }).then(function(res) {
+    if (!res.ok) throw new Error('Firebase write failed for "' + key + '": ' + res.status);
+    return res.json();
+  }).catch(function(err) {
+    console.error('Firebase sync failed for key "' + key + '":', err);
+    throw err;
   });
 }
 
-function _firebasePutAll(data) {
-  return fetch(FIREBASE_DB_URL + FIREBASE_DATA_PATH + '.json', {
-    method: 'PUT',
+async function _firebasePutAll(data) {
+  if (typeof ExamReadyFirebaseAuth === 'undefined') throw new Error('Firebase admin authentication is unavailable.');
+  var token = await ExamReadyFirebaseAuth.getIdToken();
+  return fetch(FIREBASE_DB_URL + FIREBASE_DATA_PATH + '.json?auth=' + encodeURIComponent(token), {
+    method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   });
@@ -100,7 +102,7 @@ if (_isAdminPageCheck()) {
       _fbSyncTimers[key] = setTimeout(function() {
         var parsed;
         try { parsed = JSON.parse(value); } catch(e) { parsed = value; }
-        _firebasePut(key, parsed);
+        _firebasePut(key, parsed).catch(function() {});
       }, 500);
     }
   };
@@ -111,7 +113,7 @@ function firebasePushAll() {
   var payload = {};
   SITE_DATA_KEYS.forEach(function(key) {
     var raw = localStorage.getItem(key);
-    if (raw) {
+    if (raw !== null) {
       try { payload[key] = JSON.parse(raw); } catch(e) { payload[key] = raw; }
     }
   });
@@ -293,6 +295,30 @@ function getFlashcardDecks(options = {}) {
   return result;
 }
 
+function getPublishedNotes(options = {}) {
+  const store = getData('notes') || {};
+  const notes = Array.isArray(store) ? store : (Array.isArray(store.notes) ? store.notes : []);
+  const cls = options.class == null ? '' : String(options.class);
+  const subject = options.subject == null ? '' : String(options.subject);
+  const subjectLabel = String(options.subjectLabel || '').toLowerCase();
+  const chapterId = options.chapterId == null ? '' : String(options.chapterId);
+  const chapter = String(options.chapter || '').toLowerCase();
+
+  return notes.filter(note => note && note.published !== false && note.id && note.title && note.content)
+    .filter(note => !cls || String(note.class || note.classNum || '') === cls)
+    .filter(note => {
+      if (!subject) return true;
+      const noteSubject = String(note.subject || note.subjectKey || '').toLowerCase();
+      const noteLabel = String(note.subjectLabel || '').toLowerCase();
+      return noteSubject === subject.toLowerCase() || (subjectLabel && (noteSubject === subjectLabel || noteLabel === subjectLabel)) || noteLabel === subject.toLowerCase();
+    })
+    .filter(note => {
+      if (!chapterId && !chapter) return true;
+      const noteChapterId = String(note.chapterId || '');
+      return (chapterId && noteChapterId === chapterId) || (!noteChapterId && chapter && String(note.chapter || '').toLowerCase() === chapter);
+    });
+}
+
 function getContentVersion() {
   try { return Math.max(0, parseInt(localStorage.getItem('er_content_version') || '1', 10) || 1); } catch(e) { return 1; }
 }
@@ -306,22 +332,11 @@ function bumpContentVersion() {
 }
 
 function setData(key, val) {
-  // CSRF write-token check: on admin pages, if a session IS active (user logged in)
-  // but the write token is missing, it means something bypassed startAdminSession()
-  // — likely an XSS-injected script. Block the write.
-  // Note: Before login (no session), writes are allowed for defaults/initialization.
-  if (_isAdminPage()) {
-    const hasSession = sessionStorage.getItem('er_admin_auth') === '1';
-    const hasToken = !!sessionStorage.getItem('er_write_token');
-    if (hasSession && !hasToken) {
-      if (typeof erSec !== 'undefined') erSec.log('error', 'setData blocked: missing write token', { key: key });
-      return;
-    }
-  }
+  // Client storage is a local draft; Firebase Realtime Database rules authorize cloud writes.
   localStorage.setItem('examready_' + key, JSON.stringify(val));
   _dataCache[key] = val;
   _dataDirty.delete(key);
-  if (_isAdminPage() && ['pdfs', 'quizzes', 'flashcards'].includes(String(key))) bumpContentVersion();
+  if (_isAdminPage() && ['pdfs', 'quizzes', 'flashcards', 'notes'].includes(String(key))) bumpContentVersion();
 }
 
 function _isAdminPage() {
@@ -738,50 +753,145 @@ function initResponsiveNav() {
     const style = document.createElement('style');
     style.id = 'sharedNavStyles';
     style.textContent = `
-      header {
+      header[data-er-shared-header] {
         position: fixed !important;
-        top: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        z-index: 1400;
+        inset: 0 0 auto !important;
+        width: 100% !important;
+        height: 64px !important;
+        min-height: 64px !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 12px !important;
+        padding: 0 24px !important;
+        background: var(--black, #0d0d0d) !important;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+        box-shadow: 0 4px 18px rgba(0,0,0,.12);
+        z-index: 1400 !important;
       }
-      @media (min-width: 769px) {
-        #mainNav {
-          display: flex !important;
-          flex-wrap: nowrap;
-          margin-left: auto;
-          overflow-x: auto;
-          overflow-y: hidden;
-          scrollbar-width: none;
-          -ms-overflow-style: none;
+      header[data-er-shared-header] .logo-wrap {
+        display: flex !important;
+        align-items: center !important;
+        flex: 0 0 auto !important;
+      }
+      header[data-er-shared-header] .logo-img {
+        display: block !important;
+        width: auto !important;
+        height: 44px !important;
+        max-width: 156px !important;
+        object-fit: contain !important;
+      }
+      header[data-er-shared-header] #mainNav {
+        display: flex !important;
+        flex: 1 1 auto !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        flex-wrap: nowrap !important;
+        gap: 2px !important;
+        min-width: 0 !important;
+        margin: 0 4px 0 auto !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      header[data-er-shared-header] #mainNav::-webkit-scrollbar { display: none; }
+      header[data-er-shared-header] #mainNav a {
+        display: inline-flex !important;
+        flex: 0 0 auto !important;
+        align-items: center !important;
+        min-height: 36px !important;
+        padding: 8px 9px !important;
+        border-radius: 7px !important;
+        color: rgba(255,255,255,.72) !important;
+        font: 800 12.5px/1.2 'Nunito', sans-serif !important;
+        text-decoration: none !important;
+        white-space: nowrap !important;
+        transition: color .18s ease, background .18s ease;
+      }
+      header[data-er-shared-header] #mainNav a:hover,
+      header[data-er-shared-header] #mainNav a:focus-visible {
+        color: #fff !important;
+        background: rgba(255,255,255,.1) !important;
+        outline: none;
+      }
+      header[data-er-shared-header] #mainNav a.active {
+        color: #fff !important;
+        background: rgba(232,33,26,.2) !important;
+      }
+      header[data-er-shared-header] .hamburger {
+        display: none !important;
+        flex: 0 0 40px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-direction: column !important;
+        gap: 5px !important;
+        width: 40px !important;
+        height: 40px !important;
+        padding: 8px !important;
+        border: 1px solid rgba(255,255,255,.14) !important;
+        border-radius: 8px !important;
+        background: transparent !important;
+        color: #fff !important;
+        cursor: pointer !important;
+      }
+      header[data-er-shared-header] .hamburger:hover,
+      header[data-er-shared-header] .hamburger:focus-visible {
+        background: rgba(255,255,255,.1) !important;
+        outline: 2px solid rgba(255,255,255,.75) !important;
+        outline-offset: 2px !important;
+      }
+      header[data-er-shared-header] .hamburger span {
+        display: block !important;
+        width: 20px !important;
+        height: 2px !important;
+        border-radius: 2px !important;
+        background: currentColor !important;
+      }
+      @media (max-width: 1100px) {
+        header[data-er-shared-header] {
+          gap: 9px !important;
+          padding: 0 18px !important;
+          overflow: visible !important;
         }
-        #mainNav::-webkit-scrollbar { display: none; }
-      }
-      @media (max-width: 768px) {
-        header { overflow: visible !important; }
-        #mainNav {
+        header[data-er-shared-header] #mainNav {
           display: none !important;
         }
-        #mainNav.nav-open {
+        header[data-er-shared-header] #mainNav.nav-open {
           display: flex !important;
           flex-direction: column;
-          gap: 10px;
+          align-items: stretch !important;
+          justify-content: flex-start !important;
+          gap: 2px !important;
           position: absolute;
           top: calc(100% + 8px);
           left: 12px;
           right: 12px;
-          padding: 14px;
-          border-radius: 18px;
-          background: rgba(13, 13, 13, 0.98);
-          border: 1px solid rgba(255,255,255,0.1);
-          box-shadow: 0 20px 48px rgba(0,0,0,0.45);
+          max-height: calc(100vh - 84px);
+          margin: 0 !important;
+          padding: 8px !important;
+          overflow-y: auto !important;
+          border: 1px solid rgba(255,255,255,.12);
+          border-radius: 10px;
+          background: #111 !important;
+          box-shadow: 0 16px 38px rgba(0,0,0,.36);
           z-index: 999;
         }
-        #mainNav.nav-open a {
-          width: 100%;
-          justify-content: flex-start;
+        header[data-er-shared-header] #mainNav.nav-open a {
+          width: 100% !important;
+          min-height: 40px !important;
+          padding: 10px 12px !important;
+          justify-content: flex-start !important;
         }
+        header[data-er-shared-header] .hamburger {
+          display: flex !important;
+        }
+      }
+      @media (max-width: 390px) {
+        header[data-er-shared-header] { padding: 0 12px !important; }
+        header[data-er-shared-header] .logo-img { max-width: 128px !important; }
+        header[data-er-shared-header] .er-profile-name { display: none !important; }
       }
     `;
     document.head.appendChild(style);
@@ -794,41 +904,48 @@ function initResponsiveNav() {
   const closeNav = () => {
     nav.classList.remove('nav-open');
     nav.dataset.open = '0';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Open navigation menu');
   };
 
   const openNav = () => {
     nav.classList.add('nav-open');
     nav.dataset.open = '1';
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.setAttribute('aria-label', 'Close navigation menu');
   };
 
   window.toggleMenu = function toggleMenuShared() {
-    if (window.innerWidth > 768) return;
+    if (window.innerWidth > 1100) return;
     if (nav.classList.contains('nav-open')) closeNav();
     else openNav();
   };
 
   toggle.removeAttribute('onclick');
   toggle.onclick = window.toggleMenu;
-  toggle.onkeydown = event => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      window.toggleMenu();
-    }
-  };
+  toggle.setAttribute('aria-controls', 'mainNav');
+  toggle.setAttribute('aria-expanded', 'false');
 
   nav.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', closeNav);
   });
 
   document.addEventListener('click', event => {
-    if (window.innerWidth > 768) return;
+    if (window.innerWidth > 1100) return;
     if (!nav.classList.contains('nav-open')) return;
     if (header.contains(event.target)) return;
     closeNav();
   });
 
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && nav.classList.contains('nav-open')) {
+      closeNav();
+      toggle.focus();
+    }
+  });
+
   window.addEventListener('resize', () => {
-    if (window.innerWidth > 768) closeNav();
+    if (window.innerWidth > 1100) closeNav();
     syncHeaderOffset();
   });
 
@@ -884,6 +1001,7 @@ const DEFAULT_NAV_ITEMS = [
   { label: 'Question Banks', url: 'questionbank.html' },
   { label: 'Quizzes',        url: 'quizzes.html' },
   { label: 'Flashcards',     url: 'flashcards.html' },
+  { label: 'Notes',          url: 'notes.html' },
   { label: 'Mistakes',       url: 'mistakes.html' },
   { label: 'Progress',       url: 'student.html' }
 ];
@@ -898,6 +1016,7 @@ const SHARED_FOOTER_LINKS = {
     { label: 'Question Banks', url: 'questionbank.html' },
     { label: 'Quizzes',        url: 'quizzes.html' },
     { label: 'Flashcards',     url: 'flashcards.html' },
+    { label: 'Notes',          url: 'notes.html' },
     { label: 'Mistakes',  url: 'mistakes.html' },
     { label: 'Progress',  url: 'student.html' }
   ],
@@ -919,7 +1038,7 @@ function getDefaultNavItems() {
 
 function normalizeNavItems(items) {
   if (!Array.isArray(items)) return getDefaultNavItems();
-  const REMOVED_NAV = ['solutions.html', 'notes.html', 'note-post.html', 'solution-post.html', 'class11.html', 'class12.html'];
+  const REMOVED_NAV = ['solutions.html', 'solution-post.html', 'class11.html', 'class12.html'];
   const normalized = items
     .filter(item => !REMOVED_NAV.includes(String(item?.url || '').trim().toLowerCase()))
     .map(item => ({
@@ -969,7 +1088,7 @@ function getNavItems() {
     const raw = localStorage.getItem('er_nav');
     const items = raw ? normalizeNavItems(JSON.parse(raw)) : getDefaultNavItems();
     const known = new Set(items.map(item => item.url));
-    return items.concat(DEFAULT_NAV_ITEMS.filter(item => !known.has(item.url) && ['mistakes.html', 'student.html'].includes(item.url)));
+    return items.concat(DEFAULT_NAV_ITEMS.filter(item => !known.has(item.url) && ['notes.html', 'mistakes.html', 'student.html'].includes(item.url)));
   } catch(e) { return getDefaultNavItems(); }
 }
 
@@ -983,7 +1102,7 @@ function buildSharedHeaderMarkup() {
     ? ExamReadyStorage.getStreakSummary() : { currentStreak: 0, todayDone: false };
   const navHtml = navItems.map(item => {
     const isActive = item.url === activeUrl;
-    return `<a href="${escapeHtml(item.url)}"${isActive ? ' class="active"' : ''}>${escapeHtml(item.label)}</a>`;
+    return `<a href="${escapeHtml(item.url)}"${isActive ? ' class="active" aria-current="page"' : ''}>${escapeHtml(item.label)}</a>`;
   }).join('');
 
   return `
@@ -1000,9 +1119,9 @@ function buildSharedHeaderMarkup() {
     <a class="er-streak-control${streakSummary.todayDone ? ' is-complete' : ''}" data-streak-control="true" href="student.html" aria-label="${escapeHtml((typeof ExamReadyConfig !== 'undefined' && ExamReadyConfig.featureName) || 'Streak')} ${Number(streakSummary.currentStreak) || 0}">
       <span aria-hidden="true">🔥</span><strong data-streak-number="true">${Number(streakSummary.currentStreak) || 0}</strong>
     </a>
-    <div class="hamburger" onclick="toggleMenu()" role="button" tabindex="0" aria-label="Open navigation menu">
+    <button class="hamburger" type="button" aria-controls="mainNav" aria-expanded="false" aria-label="Open navigation menu">
       <span></span><span></span><span></span>
-    </div>
+    </button>
   `;
 }
 
@@ -1354,7 +1473,7 @@ function applySiteConfig() {
       const current = resolveCurrentNavTarget();
       nav.innerHTML = navItems.map(item => {
         const isActive = item.url === current;
-        return `<a href="${escapeHtml(item.url)}"${isActive ? ' class="active"' : ''}>${escapeHtml(item.label)}</a>`;
+        return `<a href="${escapeHtml(item.url)}"${isActive ? ' class="active" aria-current="page"' : ''}>${escapeHtml(item.label)}</a>`;
       }).join('');
     }
   }

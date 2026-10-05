@@ -20,7 +20,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" href="favicon.png" sizes="256x256">
 <title>Class 10 Resources - ExamReady</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="animations.css">
@@ -68,6 +68,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .subject-card-emoji { font-size:38px; line-height:1; }
   .subject-card-name { font-size:13px; font-weight:900; line-height:1.3; }
   .subject-card-count { font-size:11px; font-weight:800; color:var(--red); background:#fff0f0; padding:3px 10px; border-radius:20px; }
+  .subject-card-note-count { color:#177b73; font-size:11px; font-weight:900; }
 
   .no-subjects { text-align:center; padding:48px 24px; background:var(--gray); border-radius:20px; color:var(--muted); grid-column:1/-1; }
   .no-subjects h3 { font-size:20px; font-weight:900; color:var(--text); margin-bottom:8px; }
@@ -156,7 +157,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <script src="examready-config.js"></script>
 <script src="student-storage.js"></script>
-<script src="shared.js?v=20260927-2"></script>
+<script src="shared.js?v=20261003-notes"></script>
 <script src="animations.js"></script>
 <script>
 const CLASS = '10';
@@ -180,12 +181,14 @@ function renderGrid() {
 
   const TYPES = ['pyq','qb','spq','ip'];
   grid.innerHTML = subjects.map(subject => {
+    const noteCount = getPublishedNotes({ class: CLASS, subject: subject.key, subjectLabel: subject.label }).length;
     const total = TYPES.reduce((sum, t) => sum + ((allPdfs[`${CLASS}-${subject.key}-${t}`] || []).length), 0)
-      + ((allQuizzes[`${CLASS}-${subject.key}`] || []).length);
-    return `<a class="subject-card" href="${buildSubjectPageUrl(CLASS, subject.key)}" aria-label="Open ${escapeHtml(subject.label)} resources">
+      + ((allQuizzes[`${CLASS}-${subject.key}`] || []).length) + noteCount;
+    return `<a class="subject-card" href="${buildSubjectPageUrl(CLASS, subject.key)}&tab=notes" aria-label="Open ${escapeHtml(subject.label)} resources and notes">
       <div class="subject-card-emoji">${subject.icon || '📚'}</div>
       <div class="subject-card-name">${escapeHtml(subject.label)}</div>
       <div class="subject-card-count">${total} resource${total !== 1 ? 's' : ''}</div>
+      <div class="subject-card-note-count">📝 ${noteCount} note${noteCount !== 1 ? 's' : ''} · Open Notes</div>
     </a>`;
   }).join('');
 }

@@ -4,6 +4,10 @@
 
   global.ExamReadyConfig = Object.freeze({
     storageKey: 'examready_student_progress_v1',
+    firebase: Object.freeze({
+      apiKey: '',
+      adminUid: ''
+    }),
     schemaVersion: 1,
     featureName: 'Streak',
     defaultProfileName: 'Student',

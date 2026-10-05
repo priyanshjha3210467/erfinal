@@ -249,6 +249,10 @@
     "12-chemistry": [],
     "12-math": []
   },
+  "examready_notes": {
+    "version": 1,
+    "notes": []
+  },
   "er_subjects_map": {},
   "er_site_config": {},
   "er_nav": null,

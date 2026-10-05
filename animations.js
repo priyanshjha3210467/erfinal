@@ -8,6 +8,7 @@
   'use strict';
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let loaderFailsafe = null;
 
   /* ─── 1. LOADING SCREEN ──────────────────── */
   function createLoader() {
@@ -40,30 +41,45 @@
   function dismissLoader(overlay) {
     if (!overlay || overlay.dataset.dismissed === '1') return;
     overlay.dataset.dismissed = '1';
+    if (loaderFailsafe) clearTimeout(loaderFailsafe);
     overlay.classList.add('er-loader--exit');
     setTimeout(() => {
       if (overlay.isConnected) overlay.remove();
       document.body.style.overflow = '';
-    }, 800);
+    }, 480);
   }
 
   // Skip loader entirely if body opts out via data-no-loader
-  const skipLoader = document.body.hasAttribute('data-no-loader');
+  const skipLoader = document.body.hasAttribute('data-no-loader') || reduceMotion;
 
   if (!skipLoader) {
     document.body.style.overflow = 'hidden';
   }
   const loaderEl = skipLoader ? null : createLoader();
-  const dismissDelay = reduceMotion ? 0 : 1600;
+  const loaderStartedAt = performance.now();
+  const minimumLoaderTime = reduceMotion ? 0 : 720;
+  let loaderDismissStarted = false;
+  loaderFailsafe = skipLoader ? null : setTimeout(() => dismissLoader(loaderEl), 3200);
+  const dismissWhenReady = () => {
+    if (loaderDismissStarted || skipLoader) return;
+    loaderDismissStarted = true;
+    const dataReady = typeof _erSiteDataReady !== 'undefined'
+      ? Promise.resolve(_erSiteDataReady).catch(() => {})
+      : Promise.resolve();
+    let dataTimeoutId;
+    const dataTimeout = new Promise(resolve => { dataTimeoutId = setTimeout(resolve, 1700); });
+    Promise.race([dataReady, dataTimeout]).then(() => {
+      clearTimeout(dataTimeoutId);
+      const remaining = Math.max(0, minimumLoaderTime - (performance.now() - loaderStartedAt));
+      setTimeout(() => dismissLoader(loaderEl), remaining);
+    });
+  };
 
   if (!skipLoader) {
     if (document.readyState === 'complete') {
-      setTimeout(() => dismissLoader(loaderEl), dismissDelay);
+      dismissWhenReady();
     } else {
-      window.addEventListener('load', function () {
-        setTimeout(() => dismissLoader(loaderEl), dismissDelay);
-      });
-      setTimeout(() => dismissLoader(loaderEl), 3000);
+      window.addEventListener('load', dismissWhenReady, { once: true });
     }
   }
 
@@ -528,14 +544,22 @@
 
     document.querySelectorAll('a[href]').forEach(link => {
       const href = link.getAttribute('href');
-      if (!href || href.startsWith('#') || href.startsWith('javascript') || href.startsWith('http') || link.target === '_blank') return;
+      if (!href || href.startsWith('#') || link.hasAttribute('download') || link.relList.contains('external')) return;
 
       link.addEventListener('click', (e) => {
-        if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        if (link.target && link.target.toLowerCase() !== '_self') return;
+
+        let destination;
+        try { destination = new URL(href, window.location.href); }
+        catch (_) { return; }
+        if (destination.origin !== window.location.origin || !['http:', 'https:', 'file:'].includes(destination.protocol)) return;
+        if (destination.pathname === window.location.pathname && destination.search === window.location.search && destination.hash) return;
+
         e.preventDefault();
         document.body.style.transition = 'opacity 0.22s ease';
         document.body.style.opacity = '0';
-        setTimeout(() => { window.location.href = href; }, 220);
+        setTimeout(() => { window.location.assign(destination.href); }, 220);
       });
     });
   }

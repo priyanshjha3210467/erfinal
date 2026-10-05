@@ -20,6 +20,7 @@
   footer { background:var(--black); color:#aaa; padding:28px 24px; } footer p { margin:0; text-align:center; font-size:12px; }
   @media(max-width:1000px) { .stats { grid-template-columns:repeat(3,1fr); } } @media(max-width:850px) { nav { display:none; } .layout { grid-template-columns:1fr; } } @media(max-width:580px) { main { padding:28px 16px 50px; } .stats { grid-template-columns:repeat(2,1fr); } .goal-banner { grid-template-columns:1fr auto; } .subject-row { grid-template-columns:90px 1fr 38px; } }
 </style>
+<link rel="icon" type="image/png" href="favicon.png" sizes="256x256">
 </head>
 <body>
 <header><a class="logo-wrap" href="index.html"><img src="logo.png" alt="ExamReady"></a><nav id="mainNav"></nav><div class="hamburger" aria-label="Open navigation menu"><span></span><span></span><span></span></div></header>
@@ -32,7 +33,7 @@
   </div>
 </main>
 <footer><p>ExamReady · Your progress, your pace</p></footer>
-<script src="examready-config.js"></script><script src="student-storage.js"></script><script src="shared.js?v=20260927-2"></script><script src="animations.js"></script>
+<script src="examready-config.js"></script><script src="student-storage.js"></script><script src="shared.js?v=20261002-2"></script><script src="animations.js"></script>
 <script>
   const esc = value => typeof escapeHtml === 'function' ? escapeHtml(value == null ? '' : String(value)) : String(value || '');
   function avatarMarkup(avatar) { return /^data:image\//i.test(String(avatar || '')) ? `<img src="${esc(avatar)}" alt="Student profile image">` : esc(avatar || '📚'); }
