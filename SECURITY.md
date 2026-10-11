@@ -4,17 +4,17 @@
 
 The public site reads study content from Firebase Realtime Database. Admin writes now require a Firebase Authentication ID token, and the included database rules deny writes except for one configured Firebase UID. The old browser-only default password is no longer used. Browser storage, HTML, and JavaScript are user-controlled and must never be treated as an authorization boundary.
 
-This repository does not contain Firebase credentials or a deployed ruleset. Live admin sync remains disabled until the setup below is completed and the rules are deployed. Do not enable public database writes to make sync work.
+The admin page accepts one shared password and checks it against each allowlisted Firebase team account. Live admin sync requires Email/Password auth and deployed database rules. Do not enable public database writes to make sync work.
 
 ## Firebase setup required before launch
 
-1. In Firebase Authentication, enable Email/Password and create the admin account.
-2. In `examready-config.js`, set `firebase.apiKey` to the Firebase Web API key and `firebase.adminUid` to that account's UID. The Web API key identifies the Firebase project; it is not the admin password. Restrict the key to the Firebase APIs and domains used by the site.
-3. Replace `REPLACE_WITH_FIREBASE_ADMIN_UID` in `database.rules.json` with the same UID.
+1. In Firebase Authentication, enable Email/Password and create one account for each authorized admin listed in `examready-config.js`.
+2. Set the same strong password on all listed accounts. The admin page checks that shared password with Firebase. The Web API key identifies the Firebase project; it is not the admin password. Restrict the key to the Firebase APIs and domains used by the site.
+3. The account UID allowlist in `database.rules.json` must match `firebase.adminAccounts` exactly.
 4. Select the intended Firebase project with `firebase use --add` or pass `--project <YOUR_FIREBASE_PROJECT_ID>`, then deploy with `firebase deploy --only database`. The included `firebase.json` points the CLI at this rules file. Verify in Firebase Console that the deployed rules match it.
 5. Serve the site over HTTPS. Test a public read, a valid admin write, a signed-in non-admin write, and an unauthenticated write. Only the first two should succeed.
 
-The rule set grants public reads only below `/siteData`; all other paths are denied. Writes to `/siteData` require the configured UID. Do not replace this with `.write: true`.
+The rule set grants public reads only below `/siteData`; all other paths are denied. Writes to `/siteData` require one of the configured admin UIDs. Do not replace this with `.write: true`.
 
 ## Hosting protections
 

@@ -5,8 +5,12 @@
   global.ExamReadyConfig = Object.freeze({
     storageKey: 'examready_student_progress_v1',
     firebase: Object.freeze({
-      apiKey: '',
-      adminUid: ''
+      apiKey: 'AIzaSyCBUyyfSnI4KFz_hZ0uxJeg7HaaKf5kAxg',
+      adminAccounts: Object.freeze([
+        Object.freeze({ email: 'sanatandharameditz@gmail.com', uid: '0ivcFODXcXPzstYTRy9Qu3Iiny23' }),
+        Object.freeze({ email: 'priyansh.jha3210@gmail.com', uid: 'RgBpjfynA3b7ytF1kMJmAK5KIn2' }),
+        Object.freeze({ email: 'duelzone.official@gmail.com', uid: 'tQKPPknZq7Xa0rNe9XPlqZwtmtp2' })
+      ])
     }),
     schemaVersion: 1,
     featureName: 'Streak',

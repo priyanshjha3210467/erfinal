@@ -4,7 +4,7 @@
     ".write": false,
     "siteData": {
       ".read": true,
-      ".write": "auth != null && auth.uid === 'REPLACE_WITH_FIREBASE_ADMIN_UID'"
+      ".write": "auth != null && (auth.uid === '0ivcFODXcXPzstYTRy9Qu3Iiny23' || auth.uid === 'RgBpjfynA3b7ytF1kMJmAK5KIn2' || auth.uid === 'tQKPPknZq7Xa0rNe9XPlqZwtmtp2')"
     }
   }
 }

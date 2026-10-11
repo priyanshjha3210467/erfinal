@@ -13,8 +13,12 @@
   function isConfigured() {
     const value = config();
     return typeof value.apiKey === 'string' && value.apiKey.length > 0 &&
-      typeof value.adminUid === 'string' && value.adminUid.length > 0 &&
-      !value.adminUid.includes('REPLACE_');
+      Array.isArray(value.adminAccounts) && value.adminAccounts.length > 0 &&
+      value.adminAccounts.every(account => account && account.email && account.email.includes('@') && account.uid && !account.uid.includes('REPLACE_'));
+  }
+
+  function configuredAccount(uid) {
+    return (config().adminAccounts || []).find(account => account.uid === uid) || null;
   }
 
   function readSession() {
@@ -32,9 +36,9 @@
       refreshToken: response.refreshToken || response.refresh_token,
       expiresAt: Date.now() + Math.max(0, Number(response.expiresIn || response.expires_in) || 0) * 1000,
       uid: response.localId || response.user_id,
-      email: response.email || (readSession() || {}).email || ''
+      email: response.email || (configuredAccount(response.localId || response.user_id) || {}).email || (readSession() || {}).email || ''
     };
-    if (!value.idToken || !value.refreshToken || value.uid !== config().adminUid) {
+    if (!value.idToken || !value.refreshToken || !configuredAccount(value.uid)) {
       throw new Error('Firebase did not authorize the configured admin account.');
     }
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(value));
@@ -59,18 +63,21 @@
     return result;
   }
 
-  async function signIn(email, password) {
+  async function signIn(password) {
     if (!isConfigured()) throw new Error('Firebase admin authentication is not configured.');
-    const result = await request(AUTH_URL + ':signInWithPassword?key=' + encodeURIComponent(config().apiKey), {
-      email: String(email || '').trim(),
-      password: String(password || ''),
-      returnSecureToken: true
-    });
-    if (result.localId !== config().adminUid) {
-      throw new Error('This Firebase account is not authorized as the site admin.');
+    for (const account of config().adminAccounts) {
+      try {
+        const result = await request(AUTH_URL + ':signInWithPassword?key=' + encodeURIComponent(config().apiKey), {
+          email: account.email,
+          password: String(password || ''),
+          returnSecureToken: true
+        });
+        if (result.localId === account.uid) return saveSession(result);
+      } catch (_) {
+        // Check the next configured team account and report one generic failure.
+      }
     }
-    result.email = String(email || '').trim();
-    return saveSession(result);
+    throw new Error('Team sign-in failed. Check the shared password.');
   }
 
   async function getIdToken() {
@@ -83,7 +90,7 @@
       throw new Error('Admin session expired. Sign in again.');
     }
     const current = readSession();
-    if (!current || current.uid !== config().adminUid || !current.refreshToken) {
+    if (!current || !configuredAccount(current.uid) || !current.refreshToken) {
       throw new Error('Sign in with the configured Firebase admin account first.');
     }
     if (current.idToken && current.expiresAt > Date.now() + 60000) return current.idToken;
@@ -96,17 +103,25 @@
   }
 
   async function changePassword(currentPassword, newPassword) {
-    const current = readSession();
-    if (!current || !current.email) throw new Error('Sign in again before changing the password.');
-    await signIn(current.email, currentPassword);
-    const idToken = await getIdToken();
-    const result = await request(AUTH_URL + ':update?key=' + encodeURIComponent(config().apiKey), {
-      idToken,
-      password: String(newPassword || ''),
-      returnSecureToken: true
-    });
-    result.email = current.email;
-    saveSession(result);
+    if (!isConfigured()) throw new Error('Firebase admin authentication is not configured.');
+    let changed = 0;
+    for (const account of config().adminAccounts) {
+      const signedIn = await request(AUTH_URL + ':signInWithPassword?key=' + encodeURIComponent(config().apiKey), {
+        email: account.email,
+        password: String(currentPassword || ''),
+        returnSecureToken: true
+      });
+      if (signedIn.localId !== account.uid) throw new Error('Configured team account UID did not match.');
+      const updated = await request(AUTH_URL + ':update?key=' + encodeURIComponent(config().apiKey), {
+        idToken: signedIn.idToken,
+        password: String(newPassword || ''),
+        returnSecureToken: true
+      });
+      updated.email = account.email;
+      saveSession(updated);
+      changed += 1;
+    }
+    return changed;
   }
 
   function signOut() {

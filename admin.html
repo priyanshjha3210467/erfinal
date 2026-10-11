@@ -306,12 +306,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="auth-tag">🔒 Team Only</div>
     <div class="auth-lock">🛡️</div>
     <div class="auth-title">Admin Access</div>
-    <div class="auth-sub">Sign in with the configured Firebase admin account.</div>
+    <div class="auth-sub">Enter the shared management team password.</div>
     <div class="lockout-bar" id="lockoutBar"></div>
     <div class="auth-error" id="authError">❌ Incorrect password. Try again.</div>
-    <div class="form-group" style="margin-bottom:10px"><input type="email" class="auth-input" id="authEmail" placeholder="Admin email" autocomplete="username" aria-label="Admin email"></div>
     <div class="auth-input-wrap">
-      <input type="password" class="auth-input" id="authPass" placeholder="Firebase password" autocomplete="current-password">
+      <input type="password" class="auth-input" id="authPass" placeholder="Team password" autocomplete="current-password" aria-label="Team password">
       <button class="toggle-pw" onclick="togglePw()" type="button">👁</button>
     </div>
     <button class="auth-btn" id="authSubmitBtn" onclick="doLogin()">🔓 Access Admin Panel</button>
@@ -1137,11 +1136,10 @@ async function doLogin() {
   }
 
   const input = document.getElementById('authPass');
-  const email = document.getElementById('authEmail').value.trim();
   const button = getAuthButton();
   if (button) button.disabled = true;
   try {
-    await ExamReadyFirebaseAuth.signIn(email, input.value);
+    await ExamReadyFirebaseAuth.signIn(input.value);
     input.value = '';
     resetAuthFailures();
     startAdminSession();
@@ -1787,9 +1785,9 @@ async function changePassword(){
     ['currPass','newPass','confirmPass'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     updateStrengthMeter('');
     touchAdminSession();
-    showToast('Firebase admin password updated.');
+    showToast('Shared password updated for all team accounts.');
   } catch(error) {
-    showToast('Password update failed. Verify your current password and Firebase Auth settings.','error');
+    showToast('Password update may be incomplete. Verify all team accounts in Firebase Auth.','error');
   }
 }
 
@@ -2506,7 +2504,7 @@ function initAdmin() {
 async function pushFirebaseData() {
   const status = document.getElementById('firebaseStatus');
   if (!ExamReadyFirebaseAuth.isConfigured()) {
-    if (status) status.textContent = 'Sync is locked. Set firebase.apiKey and firebase.adminUid in examready-config.js, then deploy database.rules.json.';
+    if (status) status.textContent = 'Sync is locked. Configure firebase.apiKey and firebase.adminAccounts in examready-config.js, then deploy database.rules.json.';
     showToast('Firebase admin authentication is not configured.','error');
     return;
   }
@@ -2528,7 +2526,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   localStorage.removeItem('er_admin_pass_hash');
   localStorage.removeItem('er_admin_pass');
   if (!ExamReadyFirebaseAuth.isConfigured()) {
-    showLockoutBar('Admin sign-in is disabled until firebase.apiKey and firebase.adminUid are configured in examready-config.js.');
+    showLockoutBar('Admin sign-in is disabled until firebase.apiKey and firebase.adminAccounts are configured in examready-config.js.');
     const btn = document.getElementById('authSubmitBtn');
     if (btn) btn.disabled = true;
     return;
@@ -2545,7 +2543,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   }
   document.getElementById('authPass')?.addEventListener('keydown', e => { if(e.key==='Enter')doLogin(); });
-  document.getElementById('authEmail')?.addEventListener('keydown', e => { if(e.key==='Enter')doLogin(); });
 });
 </script>
   <script src="adfix_patch.js"></script>
